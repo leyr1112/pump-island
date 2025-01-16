@@ -1,0 +1,122 @@
+import React from "react";
+import { WalletKitProvider } from "@mysten/wallet-kit";
+import AllLaunches from "./container/AllLaunches";
+import CreateBlack from "./container/CreateBlack.tsx";
+import NotFound from "./container/NotFound";
+import BuyPage from "./container/BuyPage";
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { QueryParamProvider } from 'use-query-params';
+import { WagmiProvider } from 'wagmi'
+import { bsc, mainnet, base, polygon, bscTestnet, arbitrum, avalanche } from 'wagmi/chains'
+import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react';
+import Profile from "./container/Profile.tsx";
+import EditProfile from "./container/EditProfile";
+// import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
+// import { InjectedConnector } from 'wagmi/connectors/injected'
+// import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+// import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+// import { Web3Modal } from "@web3modal/react";
+
+import toast, { ToastBar, Toaster } from "react-hot-toast";
+import './index.css';
+import AboutUs from "./container/AboutUs";
+import Faq from "./container/Faq";
+import { config } from "./config.jsx";
+
+// const projectId = '4807d388fe495226b7fc14743af2e1d9'
+const projectId = '166c810a1a76fedfcbfb4a4c442c40ed'
+const metadata = {
+  name: 'My Celo App',
+  description: 'My Website description',
+  url: 'https://blackpump.fun',
+  icons: ['https://avatars.blackpump.fun/']
+};
+
+const chains = [
+  bsc,
+  bscTestnet,
+  mainnet,
+  base,
+  polygon,
+  // arbitrum,
+  // avalanche,
+];
+
+const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
+
+createWeb3Modal({
+  themeVariables: {
+    '--w3m-accent': '#F3CC2F',
+    '--w3m-border-radius-master': '1px'
+  },
+  projectId,
+  metadata,
+  wagmiConfig
+})
+
+const App = () => {
+  return (
+    <Router>
+      <QueryParamProvider>
+        <div>
+          <WalletKitProvider>
+            <WagmiProvider config={config}>
+              <Toaster
+                position="top-right"
+                reverseOrder={true}
+                toastOptions={{ duration: 5000 }}
+              >
+                {(t) => (
+                  <div
+                    style={{ cursor: "pointer" }}
+                    onClick={() => toast.dismiss(t.id)}
+                  >
+                    <ToastBar onClick={() => alert(1)} toast={t} />
+                  </div>
+                )}
+              </Toaster>
+              <Switch>
+                <Route exact path="/">
+                  <AllLaunches />
+                </Route>
+                {/* <Route exact path="/MyContributions">
+                <MyContributions />
+              </Route> */}
+                <Route exact path="/AllLaunches">
+                  <AllLaunches />
+                </Route>
+                <Route exact path="/CreateBlack">
+                  <CreateBlack />
+                </Route>
+                <Route exact path="/Buy">
+                  <BuyPage />
+                </Route>
+                <Route exact path="/Profile">
+                  <Profile />
+                </Route>
+                <Route exact path="/EditProfile">
+                  <EditProfile />
+                </Route>
+                <Route exact path="/about-us">
+                  <AboutUs />
+                </Route>
+                <Route exact path="/FAQ">
+                  <Faq />
+                </Route>
+                <Route exact path="/NotFound">
+                  <NotFound />
+                </Route>
+              </Switch>
+            </WagmiProvider>
+            {/* <Web3Modal
+            projectId={projectId}
+            ethereumClient={ethereumClient}
+          /> */}
+          </WalletKitProvider>
+        </div>
+      </QueryParamProvider>
+    </Router>
+  );
+};
+
+export default App;
