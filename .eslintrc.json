@@ -19,5 +19,5 @@
     "jsx-a11y/anchor-is-valid": "off",
     "no-extra-semi": "off",
     "no-irregular-whitespace": "off"
-  },
+  }
 }
