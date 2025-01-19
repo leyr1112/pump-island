@@ -1660,16 +1660,10 @@ hr {
 }
 
 .launchpad-card {
-  /* max-width: 280px; */
-  /* width: 280px; */
   min-width: 280px;
-  /* height: 520px; */
   background: #101010;
   /* box-shadow: 0px 0px 17.5px 10px rgba(232, 232, 234, 0.37); */
   border-radius: 25px;
-  flex: none;
-  order: 2;
-  flex-grow: 0;
   margin: auto;
   background-position: top center;
   background-repeat: no-repeat;
@@ -2345,7 +2339,6 @@ a {
   width: 54px;
   height: 54px;
   position: absolute;
-  top: -27px;
   left: 20px;
 }
 
@@ -2362,8 +2355,8 @@ a {
 
 .social-section {
   position: absolute;
-  top: -10px;
   right: 12px;
+  display: flex;
 }
 
 .relative {

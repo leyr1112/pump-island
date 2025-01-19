@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/alt-text */
-// @ts-nocheck
 import React, { useState, useRef, useEffect } from 'react'
 import { useAccount, useChainId } from 'wagmi'
 import { readContract } from '@wagmi/core'

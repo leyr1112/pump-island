@@ -21,28 +21,24 @@ const SocialSection = ({ website, telegram, twitter, discord }) => (
         className="social-section"
         style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}
     >
-        {/* Website */}
         {website && (
             <a href={website} target="_blank" rel="noopener noreferrer">
                 <img src={WebsiteIcon} alt="Website" className="social-icon" />
             </a>
         )}
 
-        {/* Telegram */}
         {telegram && (
             <a href={`${telegram}`} target="_blank" rel="noopener noreferrer">
                 <img src={TelegramIcon} alt="Telegram" className="social-icon" />
             </a>
         )}
 
-        {/* Twitter */}
         {twitter && (
             <a href={`${twitter}`} target="_blank" rel="noopener noreferrer">
                 <img src={TwitterIcon} alt="Twitter" className="social-icon" />
             </a>
         )}
 
-        {/* Discord */}
         {discord && (
             <a href={`${discord}`} target="_blank" rel="noopener noreferrer">
                 <img src={DiscordIcon} alt="Discord" className="social-icon" />

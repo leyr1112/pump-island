@@ -1,34 +1,9 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable jsx-a11y/alt-text */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-undef */
-import React, { useState, useEffect } from 'react'
-import Cookies from 'universal-cookie'
-import { useAccount, useChainId, useSwitchChain } from 'wagmi'
+import React, { useState, useEffect, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import '../App.css'
-import ChadAbi from '../config/ChadPumpAbi.json'
-import TokenAbi from '../config/TokenAbi.json'
-import RouterAbi from '../config/RouterAbi.json'
 import '../styles/MainContainer.css'
-import MaxInput from '../components/MaxInput.tsx'
-import {
-  readContract,
-  writeContract,
-  getChainId,
-  switchChain,
-  waitForTransaction
-} from '@wagmi/core'
-import { waitForTransactionReceipt } from '@wagmi/core'
-// import { useWeb3Modal } from '@web3modal/react'
-import Web3 from 'web3'
-import { toast } from 'react-hot-toast'
 import Footer from '../components/Footer'
 import ClaimCard from '../components/ClaimCard.jsx'
-import bnb from '../icons/ETH-logo.svg'
-import eth from '../icons/ETH.svg'
-import pol from '../icons/polygon.svg'
-import pancakeBannerImg from '../icons/pancake-banner.png'
-import uniswapBannerImg from '../icons/uniswap-banner.png'
 import melegaBannerImg from '../icons/melega-banner.png'
 import swapIcon from '../icons/swapIcon.svg'
 import TopBar from '../components/TopBar'
@@ -37,724 +12,92 @@ import { useQueryParam, StringParam } from 'use-query-params'
 import MyChart from '../components/Chart.jsx'
 import { SignMessage } from './SignMessage.jsx'
 import CustomRadioButton from '../components/CustomRadioButton'
-import CopyIcon from '../icons/copy.svg'
-import rot13 from '../../utils/encode.ts'
-import { Link } from 'react-router-dom'
-import {
-  web3Clients,
-  imageUrl,
-  apiUrl,
-  ethPriceApiUrl,
-  scanApiLinks,
-  apiKeys,
-  chainNames1,
-  scanLinks,
-  chainNames,
-  coinNames,
-  melegaRouters,
-  publicClient
-} from '../utils/constants.ts'
-import {
-  getWethAddress,
-  getRouterAddress,
-  getDefaultAddress
-} from '../utils/addressHelpers.ts'
-import ConnectButton from '../components/ConnectButton.jsx'
-import { config } from '../config.jsx'
-import { useChain } from 'react-spring'
 import UpdateBox from '../components/profileUpdateBox.tsx'
+import { useGetPool, useGetSuiBalance, useGetTokenBalance } from '../hooks/index.ts'
+import SuiIcon from '../icons/sui.png'
+import { ConnectButton, useCurrentAccount, useCurrentWallet } from '@mysten/dapp-kit'
+import { format9 } from '../utils/format.ts'
 
 const App = () => {
-  const ethIcon = {
-    1: eth,
-    56: bnb,
-    97: bnb,
-    8453: eth,
-    137: pol
-  }
-  let [addressDatas] = useQueryParam('address', StringParam)
-  let ChadAddress
-  let ref
-  if (addressDatas.includes('/?ref=')) {
-    ChadAddress = addressDatas.split('/?ref=')[0]
-    ref = addressDatas.split('/?ref=')[1]
-  } else {
-    ChadAddress = addressDatas
-  }
+  const defaultLogo = '/logo.png'
+  let [token] = useQueryParam('token', StringParam)
 
-  let [chainId] = useQueryParam('chain', StringParam)
-  const pumpChainId = getChainId(config)
-  const { address, isConnected } = useAccount()
-  const [tokenName, setTokenName] = useState('')
-  const [tokenSymbol, setTokenSymbol] = useState('')
-  const [tokenAddress, setTokenAddress] = useState('')
-  const tokenLogo = imageUrl + ChadAddress + '-logo.png'
-  const tokenBanner = imageUrl + ChadAddress + '-banner.png'
-  const [virtualLp, setVirtualLiquidiity] = useState(0)
-  const [maxBuyAmount, setMaxBuyAmount] = useState(0)
+  const {
+    tokenName,
+    tokenSymbol,
+    logoUrl: tokenLogo,
+    Liquidity: virtualLp,
+    website,
+    twitter,
+    telegram,
+    poolObjectId: contractAddress,
+    devAddress,
+    description,
+    suiPrice: ethPrice,
+    tokenAddress,
+    marketCap
+  } = useGetPool(token)
+
+  const lpCreated = false
+  const { isConnected } = useCurrentWallet()
+  const account = useCurrentAccount()
+  const address = account?.address ?? undefined
+
   const [chatHistory, setChatHistory] = useState([])
-  const [chatContent] = useState('')
-  const [tokenAmount, setAmount] = useState()
-  const [tokenOutAmount, setTokenOutAmount] = useState(0)
-  let [accountBalance, setAccountBalance] = useState(0)
-  let [inputBalance, setInputBalance] = useState(0)
-  let [tokenBalance, setTokenBalance] = useState(0)
-  let [tokenAllowance, setTokenAllowance] = useState(0)
-  const [virtualTokenLp, setVirtualTokenLp] = useState()
-  const [tokenPrice, setTokenPrice] = useState(0)
-  let [creating, setCreating] = useState(false)
-  const [website, setWebsite] = useState()
-  const [twitter, setTwitter] = useState()
-  const [telegram, setTelegram] = useState()
-  const [discord, setDiscord] = useState()
-  const [inputToken, setInputToken] = useState('ETH')
   const [tokenHolders, setTokenHolders] = useState([])
   const [holderDatas, setTokenHolderDatas] = useState()
   const [transactions, setTransactions] = useState([])
   const [transactionDatas, setTransactionDatas] = useState([])
-  const [tokenPriceDatas, setTokenPriceDatas] = useState()
+  const [tokenPriceDatas, setTokenPriceDatas] = useState([])
   const [volume, setVolume] = useState(0)
-  const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
-  const [contractAddress, setContractAddress] = useState('')
-  const [devAddress, setDevAddress] = useState('')
-  const [routerAddress, setRouterAddress] = useState('')
-  const [description, setDescription] = useState('')
-  const [refCounts, setRefCounts] = useState(0)
-  const [totalRefAmounts, setTotalRefAmounts] = useState(0)
-  const [refUserAmount, setRefUserAmout] = useState(0)
-  const [lpCreated, setLpCreated] = useState(false)
-  const [ethPrice, setEthPrice] = useState()
-  
-  // const { open } = useWeb3Modal()
 
-  const [firstConnect, setFirstConnect] = useState(false)
+  const [chatContent] = useState('')
 
-  // const onConnectWallet = async () => {
-  //   await open()
-  //   setFirstConnect(true)
-  // }
+  const [buyAmount, setAmount] = useState()
+  const [maxBuyAmount, setMaxBuyAmount] = useState(0)
+  const [tokenOutAmount, setTokenOutAmount] = useState(0)
 
-  useEffect(() => {
-    const reloadWindow = async () => {
-      try {
-        window.location.reload()
-      } catch (e) {
-        console.error(e)
-      }
-    }
-    if (isConnected === true && firstConnect === true) reloadWindow()
-  }, [isConnected, firstConnect])
+  const { suiBalance: suiBalanceDecimal } = useGetSuiBalance()
+  const suiBalance = useMemo(() => {
+    if (!suiBalanceDecimal) return 0
+    return Math.round(suiBalanceDecimal / 1000000) / 1000
+  }, [suiBalanceDecimal])
 
-  const cookies = new Cookies()
-  if (ref) {
-    if (Web3.utils.isAddress(rot13(ref))) {
-      cookies.set('ref', ref)
-    }
-  }
-  let refAddress
-  if (cookies.get('ref')) {
-    if (Web3.utils.isAddress(rot13(cookies.get('ref')))) {
-      refAddress = rot13(cookies.get('ref'))
-    }
-  } else {
-    refAddress = getDefaultAddress()
-  }
-  const BASE_URL =
-    'https://blackpump.fun/buy/?chain=' + chainId + '&address=' + ChadAddress
-  const referlink = address
-    ? `${BASE_URL}/?ref=${rot13(address)}`
-    : `${BASE_URL}/?ref=`
+  const { tokenBalance: tokenBalanceDecimal, tokenDecimal } = useGetTokenBalance(token)
 
-  const copyAddress = address => async e => {
-    e.stopPropagation()
-    e.preventDefault()
-    if (document.queryCommandSupported('copy')) {
-      const ele = document.createElement('textarea')
-      ele.value = address
-      document.body.appendChild(ele)
-      ele.select()
-      document.execCommand('copy')
-      document.body.removeChild(ele)
-      displayTooltip()
-    }
-  }
+  const tokenBalance = useMemo(() => {
+    if (!suiBalanceDecimal) return 0
+    return Math.round(suiBalanceDecimal / 10 ** tokenDecimal) / 1000
+  }, [tokenBalanceDecimal, tokenDecimal])
 
-  function displayTooltip() {
-    let timeoutId
-    setIsTooltipDisplayed(true)
-    timeoutId = setTimeout(() => {
-      setIsTooltipDisplayed(false)
-    }, 1000)
-    return () => clearTimeout(timeoutId)
-  }
+  const [virtualTokenLp, setVirtualTokenLp] = useState()
+  const [tokenPrice, setTokenPrice] = useState(0)
+  let [creating, setCreating] = useState(false)
 
-  const onTokenSwap = async () => {
-    try {
-      setCreating(true)
-      let swap
-      let sendData
-      if (inputToken === 'ETH') {
-        if (lpCreated) {
-          const path = [getWethAddress(chainId), tokenAddress]
-          const timestamp = new Date().getTime() / 1000 + 300
+  const [inputTokenType, setInputToken] = useState('SUI')
 
-          swap = await writeContract(config, {
-            address: getRouterAddress(chainId),
-            abi: RouterAbi,
-            functionName: 'swapExactETHForTokensSupportingFeeOnTransferTokens',
-            value: web3Clients[chainId].utils.toWei(
-              String(tokenAmount),
-              'ether'
-            ),
-            args: [0, path, address, timestamp.toFixed(0)],
-            chainId: Number(chainId)
-          })
-        } else {
-          if (
-            tokenOutAmount + Number(tokenBalance) >
-            (1000000000 * maxBuyAmount) / 100
-          ) {
-            toast.error("You can't purchase more than max buy limit")
-            setCreating(false)
-            return
-          }
-          swap = await writeContract(config, {
-            address: ChadAddress,
-            abi: ChadAbi,
-            functionName: 'buyToken',
-            value: BigInt(
-              web3Clients[chainId].utils.toWei(String(tokenAmount), 'ether')
-            ),
-            // value: BigInt("0"),
-            args: [refAddress],
-            chainId: Number(chainId),
-            gasLimit: 150_000_000n
-          })
-        }
-        await waitForTransaction(config, {
-          hash: swap
-        })
-
-        toast.success('Transaction confirmed successfully.')
-        sendData = {
-          chainId,
-          buyer: address,
-          type: 'bought',
-          name: tokenSymbol,
-          amount: tokenAmount,
-          token: tokenAddress,
-          contract: contractAddress,
-          timestamp: (Date.now() / 1000).toFixed(0)
-        }
-      } else {
-        if (tokenAllowance > 0) {
-          if (lpCreated) {
-            const path = [tokenAddress, getWethAddress(chainId)]
-            const timestamp = new Date().getTime() / 1000 + 300
-            swap = await writeContract(config, {
-              address: getRouterAddress(chainId),
-              abi: RouterAbi,
-              functionName:
-                'swapExactTokensForETHSupportingFeeOnTransferTokens',
-              value: web3Clients[chainId].utils.toWei(
-                String(tokenAmount),
-                'ether'
-              ),
-              args: [0, path, address, timestamp.toFixed(0)],
-              chainId: Number(chainId)
-            })
-          } else {
-            if (tokenAmount > (1000000000 * maxBuyAmount) / 100) {
-              toast.error("You can't sell more than max sell limit")
-              setCreating(false)
-
-              return
-            }
-
-            swap = await writeContract(config, {
-              address: ChadAddress,
-              abi: ChadAbi,
-              functionName: 'sellToken',
-              args: [
-                web3Clients[chainId].utils.toWei(String(tokenAmount), 'ether'),
-                refAddress
-              ],
-              chainId: Number(chainId)
-            })
-          }
-
-          await waitForTransactionReceipt(config, {
-            hash: swap
-          })
-          sendData = {
-            chainId,
-            buyer: address,
-            type: 'Sold',
-            name: tokenSymbol,
-            amount: tokenAmount,
-            token: tokenAddress,
-            contract: contractAddress,
-            timestamp: (Date.now() / 1000).toFixed(0)
-          }
-        } else {
-          let max =
-            '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
-          let approve
-          let approveAddress
-          if (lpCreated) {
-            approveAddress = getRouterAddress(chainId)
-          } else {
-            approveAddress = ChadAddress
-          }
-          approve = await writeContract(config, {
-            address: tokenAddress,
-            abi: TokenAbi,
-            functionName: 'approve',
-            args: [approveAddress, max],
-            chainId: Number(chainId)
-          })
-          await waitForTransaction(config, {
-            hash: approve
-          })
-        }
-        setInputToken(inputToken)
-      }
-      if (sendData) {
-        const response = await fetch(apiUrl + '/api/addHistory', {
-          method: 'POST',
-          mode: 'cors',
-          cache: 'no-cache',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          redirect: 'error',
-          body: JSON.stringify(sendData)
-        })
-        if (response.status !== 200) {
-          const { error } = await response.json()
-          throw new Error(error)
-        }
-      }
-      setTimeout(function () {
-        setCreating(false)
-      }, 3000)
-      toast.success(
-        `Successfully ${Number(tokenAmount).toLocaleString()}   ${
-          inputToken !== 'ETH' ? tokenSymbol : coinNames[chainId]
-        } approved`
-      )
-    } catch (err) {
-      if (
-        tokenOutAmount + Number(tokenBalance) >
-        (1000000000 * maxBuyAmount) / 100
-      ) {
-        const remainTokenAmount =
-          (1000000000 * maxBuyAmount) / 100 - Number(tokenBalance)
-        toast.error(
-          "You can't purchase more than " +
-            remainTokenAmount.toLocaleString() +
-            ' ' +
-            tokenSymbol
-        )
-      } else {
-        toast.error('There is a problem with your Swap. Please try again later')
-      }
-      setCreating(false)
-    }
-  }
-
-  useEffect(() => {
-    const FetchData = async () => {
-      try {
-        await fetch(ethPriceApiUrl[chainId], {
-          method: 'GET'
-        }).then(async res => {
-          let data = await res.json()
-          setEthPrice(data.USD)
-        })
-
-        const ChadInfo = await readContract(config, {
-          address: ChadAddress,
-          abi: ChadAbi,
-          functionName: 'getFunBasicInfo',
-          chainId: Number(chainId)
-        })
-        const GetAllPrices = await readContract(config, {
-          address: ChadAddress,
-          abi: ChadAbi,
-          functionName: 'getAllPrices',
-          chainId: Number(chainId)
-        })
-        setTokenPriceDatas(GetAllPrices)
-        setTokenName(ChadInfo[1][0])
-        setTokenSymbol(ChadInfo[1][1])
-        setTokenAddress(ChadInfo[2][1])
-        setVirtualLiquidiity(Number(ChadInfo[0][5]) / 10 ** 18)
-        setVirtualTokenLp(Number(ChadInfo[0][4]) / 10 ** 18)
-        setTokenPrice(Number(ChadInfo[0][8]))
-        setMaxBuyAmount(Number(ChadInfo[0][2]))
-        setWebsite(ChadInfo[1][2])
-        setTwitter(ChadInfo[1][3])
-        setTelegram(ChadInfo[1][4])
-        setDiscord(ChadInfo[1][5])
-        setVolume(Number(ChadInfo[0][9]) * ethPrice)
-        setContractAddress(ChadInfo[2][0])
-        setDevAddress(ChadInfo[2][2])
-        setRouterAddress(ChadInfo[2][3])
-        setRefCounts(Number(ChadInfo[0][7]))
-        setTotalRefAmounts(Number(ChadInfo[0][6]) / 10 ** 18)
-        setDescription(ChadInfo[1][6])
-        setLpCreated(ChadInfo[4])
-        if (address) {
-          let accountBalance = await web3Clients[chainId].eth.getBalance(
-            address
-          )
-          accountBalance = web3Clients[chainId].utils.fromWei(
-            accountBalance,
-            'ether'
-          )
-          setAccountBalance(accountBalance)
-          if (inputToken === 'ETH') {
-            setInputBalance(accountBalance)
-          } else {
-            setInputBalance(tokenBalance)
-          }
-          const refUserAmounts = await readContract(config, {
-            address: ChadAddress,
-            abi: ChadAbi,
-            functionName: 'refAmounts',
-            args: [address],
-            chainId: Number(chainId)
-          })
-          setRefUserAmout(Number(refUserAmounts) / 10 ** 18)
-        }
-      } catch (e) {
-        console.error(e)
-      }
-    }
-    if (creating === false) {
-      FetchData()
-    }
-  }, [
-    chainId,
-    creating,
-    ChadAddress,
-    address,
-    web3Clients[chainId].eth,
-    web3Clients[chainId].utils,
-    inputToken,
-    tokenBalance
-  ])
-
-  const getApi = async () => {
-    const GetAllPrices = await readContract(config, {
-      address: ChadAddress,
-      abi: ChadAbi,
-      functionName: 'getAllPrices',
-      chainId: Number(chainId)
-    })
-    setTokenPriceDatas(GetAllPrices)
-
-    try {
-      await fetch(ethPriceApiUrl[chainId], {
-        method: 'GET'
-      }).then(async res => {
-        let data = await res.json()
-        setEthPrice(data.USD)
-      })
-    } catch (e) {
-      console.error(e)
-    }
-
-    try {
-      await fetch(apiUrl + `/api/getOne/${ChadAddress}`, {
-        method: 'GET'
-      }).then(async res => {
-        let data = await res.json()
-        if (!data.message) {
-          let history
-          let historyData = []
-          for (let i = 0; i < data?.length; i++) {
-            let sender = data[i].sender
-            let content = data[i].content
-            let currentDate = Date.now()
-            let date = currentDate / 1000 - Number(data[i].timestamp)
-            if (date > 86400) {
-              date = (date / 86400).toFixed(0) + ' days ago'
-            } else if (date > 3600) {
-              date = (date / 3600).toFixed(0) + ' hours ago'
-            } else if (date > 0) {
-              date = (date / 60).toFixed(0) + ' mins ago'
-            } else {
-              date = ' just now'
-            }
-            let userAvatarUrl = imageUrl + `profile-${sender}.png`
-            history = {
-              Sender: sender,
-              Content: content,
-              Date: date,
-              avatar: userAvatarUrl
-            }
-            historyData.push(history)
-          }
-          setChatHistory(historyData)
-        }
-      })
-    } catch (e) {
-      console.error(e)
-    }
-    // get transaction
-    try {
-      if (ChadAddress) {
-        await fetch(
-          `${scanApiLinks[chainId]}?module=account&action=txlist&address=${ChadAddress}&startblock=0&endblock=99999999&apiKey=${apiKeys[chainId]}`,
-          // `https://api.routescan.io/v2/network/testnet/evm/${chainId}/address/${ChadAddress}/transactions`,
-          {
-            method: 'GET'
-          }
-        ).then(async res => {
-          let data = await res.json()
-          if (data.status === '1') {
-            setTransactions(data.result.filter(item => item.isError === '0'))
-          }
-        })
-      }
-    } catch (e) {
-      console.error(e)
-    }
-    // get holders
-    try {
-      if (tokenAddress) {
-        await fetch(
-          `https://deep-index.moralis.io/api/v2.2/erc20/${tokenAddress}/owners?chain=0x${Number(
-            chainId
-          ).toString(16)}&order=DESC`,
-          // `https://api.routescan.io/v2/network/testnet/evm/${chainId}/erc20/${tokenAddress}/holders`,
-          {
-            method: 'GET',
-            headers: {
-              accept: 'application/json',
-              'X-API-Key':
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6IjRiZGVhNzY3LWY4NGUtNDU4OS05YTMzLTQ0ZTQxMjRmMmQyMSIsIm9yZ0lkIjoiODQ0OTIiLCJ1c2VySWQiOiI4NDEzNiIsInR5cGUiOiJQUk9KRUNUIiwidHlwZUlkIjoiMWY4NzQwZmMtZjg1NS00OWU3LTkzNGYtMjk0ZWQxN2Q0NzM5IiwiaWF0IjoxNzM2NDY1MDMxLCJleHAiOjQ4OTIyMjUwMzF9.o7tTeIqqrtUvX-4Y1O5ycajiNZtOArRkg6PZHXGc2Fk'
-            }
-          }
-        ).then(async res => {
-          let data = await res.json()
-          if (data.result) {
-            setTokenHolderDatas(data.result)
-          }
-        })
-      }
-    } catch (e) {
-      console.error(e)
-    }
-  }
-
-  useEffect(() => {
-    const interval = setInterval(() => getApi(), 10000)
-    return () => clearInterval(interval)
-  }, [])
+  const onTokenSwap = async () => { }
 
   const setMaxAmount = async () => {
-    if (accountBalance > 0) accountBalance = accountBalance - 0.002
-    if (inputToken === 'ETH') {
-      setAmount(accountBalance)
+    if (inputTokenType === 'SUI') {
+      setAmount(suiBalance > 0.1 ? suiBalance - 0.1 : 0)
     } else {
       setAmount(tokenBalance)
     }
   }
 
-  useEffect(() => {
-    const FetchAmount = async () => {
-      try {
-        let id
-        if (inputToken === 'ETH') {
-          id = '1'
-        } else {
-          id = '0'
-        }
-        let amounts
-        if (Number(tokenAmount) > 0) {
-          if (lpCreated) {
-            if (id === '1') {
-              path = [getWethAddress(chainId), tokenAddress]
-            } else {
-              path = [tokenAddress, getWethAddress(chainId)]
-            }
-            amounts = await readContract(config, {
-              address: getRouterAddress(chainId),
-              abi: RouterAbi,
-              functionName: 'getAmountsOut',
-              args: [BaseWeb3.utils.toWei(String(tokenAmount), 'ether'), path],
-              chainId: Number(chainId)
-            })
-          } else {
-            amounts = await readContract(config, {
-              address: ChadAddress,
-              abi: ChadAbi,
-              functionName: 'ethOrTokenAmount',
-              args: [
-                web3Clients[chainId].utils.toWei(String(tokenAmount), 'ether'),
-                id
-              ],
-              chainId: Number(chainId)
-            })
-          }
-
-          setTokenOutAmount(Number((Number(amounts) / 10 ** 18).toFixed(3)))
-        } else {
-          setTokenOutAmount('')
-        }
-
-        // setTokenOutAmount(Number((Number(amounts) / 10 ** 18).toFixed(3)))
-      } catch (e) {
-        console.error(e)
-      }
-    }
-    if (creating === false) {
-      FetchAmount()
-    }
-  }, [inputToken, tokenAmount, creating])
-
   const chanageCurrency = async () => {
-    if (inputToken === 'ETH') {
+    if (inputTokenType === 'SUI') {
       setInputToken('Token')
-      setInputBalance(tokenBalance)
       setAmount(tokenOutAmount)
     } else {
-      setInputToken('ETH')
-      setInputBalance(accountBalance)
+      setInputToken('SUI')
       setAmount(tokenOutAmount)
     }
   }
-  useEffect(() => {
-    const FetchAmount = async () => {
-      try {
-        let amounts
-        amounts = await readContract(config, {
-          address: tokenAddress,
-          abi: TokenAbi,
-          functionName: 'balanceOf',
-          args: [address],
-          chainId: Number(chainId)
-        })
-        let allowance
-        let approveAddress
-        if (lpCreated) {
-          approveAddress = getRouterAddress(chainId)
-        } else {
-          approveAddress = ChadAddress
-        }
-        allowance = await readContract(config, {
-          address: tokenAddress,
-          abi: TokenAbi,
-          functionName: 'allowance',
-          args: [address, approveAddress],
-          chainId: Number(chainId)
-        })
-        setTokenAllowance(Number(allowance) / 10 ** 18)
-        setTokenBalance(
-          web3Clients[chainId].utils.fromWei(String(amounts), 'ether')
-        )
-      } catch (e) {
-        console.error(e)
-      }
-    }
-    if (address && tokenAddress) {
-      FetchAmount()
-    }
-  }, [tokenAddress, address, creating])
-
-  useEffect(() => {
-    const FetchHolder = async () => {
-      try {
-        let tokenHolder
-        let tokenHolders = []
-        for (let i = 0; i < holderDatas?.length; i++) {
-          tokenHolder = {
-            address: holderDatas[i].owner_address,
-            value: Number(holderDatas[i].percentage_relative_to_total_supply)
-          }
-          tokenHolders.push(tokenHolder)
-        }
-        setTokenHolders(tokenHolders)
-      } catch (e) {
-        console.error(e)
-      }
-    }
-    const FetchTransaction = async () => {
-      try {
-        let transaction
-        let transactionData = []
-        for (let i = 0; i < transactions?.length; i++) {
-          if (
-            transactions[i].functionName.includes('buyToken') ||
-            transactions[i].functionName.includes('sellToken')
-          ) {
-            let maker = transactions[i].from
-            let type
-            let amount
-            if (transactions[i].functionName.includes('buyToken')) {
-              type = 'Buy'
-            } else {
-              type = 'Sell'
-            }
-            // amount = tokenPriceDatas[transactions?.length - (i)].usdAmount * ethPrice;
-            amount = tokenPriceDatas[transactions?.length - i].amount
-            amount =
-              '$' +
-              (
-                Number(
-                  web3Clients[chainId].utils.fromWei(String(amount), 'ether')
-                ) * ethPrice
-              ).toLocaleString()
-            let date =
-              new Date(Number(transactions[i].timeStamp) * 1000).getTime() /
-              1000
-            let currentDate = Date.now()
-            date = currentDate / 1000 - date
-            if (date > 86400) {
-              date = (date / 86400).toFixed(0) + ' days ago'
-            } else if (date > 3600) {
-              date = (date / 3600).toFixed(0) + ' hours ago'
-            } else if (date > 0) {
-              date = (date / 60).toFixed(0) + ' mins ago'
-            } else {
-              date = ' just now'
-            }
-            if (date < 0) {
-              date = 'just now'
-            }
-            let tx = transactions[i].hash
-            transaction = {
-              Maker: maker,
-              Type: type,
-              Amount: amount,
-              Date: date,
-              Tx: tx
-            }
-            transactionData.push(transaction)
-          }
-        }
-        setTransactionDatas(transactionData)
-      } catch (e) {
-        console.error(e)
-      }
-    }
-    if (tokenAddress) {
-      if (holderDatas?.length > 0) {
-        FetchHolder()
-      } else if (transactions?.length > 0) {
-        // FetchTransactionApi()
-        FetchTransaction()
-      } else {
-        getApi()
-      }
-    }
-  }, [holderDatas, tokenAddress, transactions])
 
   const [selectedOption, setSelectedOption] = useState('Chat')
-  // Pagination State and Logic for Transactions Table
+
   const [currentTransactionPage, setCurrentTransactionPage] = useState(1)
   const [transactionTotalPages, setTransactionTotalPages] = useState(0)
   const transactionItemsPerPage = 5
@@ -812,16 +155,13 @@ const App = () => {
   }, [transactionDatas])
 
   const poolDate = {
-    chainId: chainId,
-    poolAddress: ChadAddress,
+    poolAddress: token,
     description: description,
     website: website,
     twitter: twitter,
-    telegram: telegram,
-    discord: discord
+    telegram: telegram
   }
 
-  // Error handler for image loading
   const handleImageError = event => {
     event.target.src = '/logo.png'
     event.target.onerror = null // Prevents infinite loop in case the fallback image also fails to load
@@ -840,7 +180,7 @@ const App = () => {
                     tokenName={tokenName}
                     Logo={
                       <img
-                        src={tokenLogo || defaultLogo} // Use tokenLogo if available; otherwise, use defaultLogo
+                        src={tokenLogo || defaultLogo}
                         className="claim-eth-logo"
                         onError={handleImageError} // Handle error if the image fails to load
                         alt={`${tokenName} logo`} // Provide an alt attribute for accessibility
@@ -850,16 +190,15 @@ const App = () => {
                     contractAddress={contractAddress}
                     dexAddress="https://app.uniswap.org/swap"
                     devAddress={devAddress}
-                    dexName="Trader Joe"
                     tokenSymbol={tokenSymbol}
-                    tokenDecimals={18}
+                    tokenDecimals={tokenDecimal}
                     tokenTotalSupply={1000000000}
                     maxBuyAmount={maxBuyAmount}
-                    tokenSupplyUSD={2 * virtualLp * ethPrice}
+                    tokenSupplyUSD={format9(virtualLp)}
                     tokenSupplyLiquidity={virtualTokenLp}
                     tokenPrice={tokenPrice}
                     tokenUnsoldTokens={'Burned 🔥'}
-                    tokenCover={tokenBanner}
+                    tokenCover={``}
                     website={website}
                     telegram={telegram}
                     twitter={twitter}
@@ -867,11 +206,12 @@ const App = () => {
                     description={description}
                     ethPrice={ethPrice}
                     lpCreated={lpCreated}
+                    marketCap={marketCap}
                   />
                   <div className="">
                     {lpCreated ? (
                       <iframe
-                        src={`https://dexscreener.com/${chainNames1[chainId]}/${tokenAddress}?embed=1&trades=0&info=0&theme=light`}
+                        src={`https://dexscreener.com/sui/${tokenAddress}?embed=1&trades=0&info=0&theme=light`}
                         className="chart"
                         title="chart"
                       />
@@ -915,9 +255,9 @@ const App = () => {
                               transactionDatas
                                 .slice(
                                   (currentTransactionPage - 1) *
-                                    transactionItemsPerPage,
+                                  transactionItemsPerPage,
                                   currentTransactionPage *
-                                    transactionItemsPerPage
+                                  transactionItemsPerPage
                                 )
                                 .map(({ Maker, Type, Amount, Date, Tx }) => (
                                   <>
@@ -925,11 +265,7 @@ const App = () => {
                                       <div>
                                         <a
                                           className="holderContent"
-                                          href={
-                                            scanLinks[chainId] +
-                                            'address/' +
-                                            Maker
-                                          }
+                                          href={'sui' + 'address/' + Maker}
                                           target="_blank"
                                           rel="noreferrer"
                                         >
@@ -977,7 +313,7 @@ const App = () => {
                                       <div>
                                         <a
                                           className="holderContent"
-                                          href={scanLinks[chainId] + 'tx/' + Tx}
+                                          href={'tx/' + Tx}
                                           target="_blank"
                                           rel="noreferrer"
                                         >
@@ -1036,11 +372,10 @@ const App = () => {
                                     return (
                                       <button
                                         key={pageNumber}
-                                        className={`px-2 py-1 mx-1 ${
-                                          currentTransactionPage === pageNumber
-                                            ? 'bg-[#297836] text-white'
-                                            : 'bg-[#1a2d1d] text-[#aaa]'
-                                        } rounded-lg border border-[#f3cc2f]`}
+                                        className={`px-2 py-1 mx-1 ${currentTransactionPage === pageNumber
+                                          ? 'bg-[#297836] text-white'
+                                          : 'bg-[#1a2d1d] text-[#aaa]'
+                                          } rounded-lg border border-[#f3cc2f]`}
                                         onClick={() =>
                                           handleTransactionPageChange(
                                             pageNumber
@@ -1172,7 +507,7 @@ const App = () => {
                         )}
                         <div className="ButtonBox mt-4">
                           <SignMessage
-                            ChadAddress={ChadAddress}
+                            token={token}
                             sender={address}
                             content={chatContent}
                             timestamp={(Date.now() / 1000).toFixed(0)}
@@ -1185,31 +520,13 @@ const App = () => {
               </section>
 
               <section className="ClaimLeftColumn px-[16px]">
-                {/*<p className="avoid-scam avoid-scam-text">
-                  Avoid scam links! Make sure the website is Chad
-                </p>*/}
                 {lpCreated ? (
                   <a
-                    href={
-                      routerAddress === melegaRouters[chainId]
-                        ? `https://www.melega.finance/swap/?chain=${chainNames1[chainId]}&outputCurrency=${tokenAddress}`
-                        : chainId === '56' || chainId === '97'
-                        ? `https://pancakeswap.finance/swap?chain=${chainNames1[chainId]}&outputCurrency=${tokenAddress}`
-                        : `https://app.uniswap.org/swap?chain=${chainNames[chainId]}&inputCurrency=ETH&outputCurrency=${tokenAddress}`
-                    }
+                    href={`https://pancakeswap.finance/swap?chain=sui&outputCurrency=${tokenAddress}`}
                     target="_blank"
                   >
                     <div className="overflow-hidden rounded-[25px] sm:mx-0 mx-[-15px]">
-                      <img
-                        src={
-                          routerAddress === melegaRouters[chainId]
-                            ? melegaBannerImg
-                            : chainId === '56' || chainId === '97'
-                            ? pancakeBannerImg
-                            : uniswapBannerImg
-                        }
-                        className=""
-                      />
+                      <img src={melegaBannerImg} className="" />
                     </div>
                   </a>
                 ) : (
@@ -1232,11 +549,7 @@ const App = () => {
                                 decoding="async"
                                 data-nimg="1"
                                 className="flex-shrink-0 w-10 h-10 rounded-full"
-                                src={
-                                  inputToken === 'ETH'
-                                    ? ethIcon[chainId]
-                                    : tokenLogo
-                                }
+                                src={inputTokenType === 'SUI' ? SuiIcon : tokenLogo}
                                 onError={event => {
                                   event.target.src = '/logo.png' // Fallback image
                                   event.target.onerror = null // Prevents infinite loop if fallback image fails
@@ -1247,40 +560,30 @@ const App = () => {
                                   From
                                 </span>
                                 <span className="text-white text-[20px] font-bold whitespace-nowrap overflow-hidden text-ellipsis">
-                                  {inputToken === 'ETH'
-                                    ? coinNames[chainId]
-                                    : tokenSymbol.length > 8
-                                    ? `${tokenSymbol.slice(0, 8)}...`
-                                    : tokenSymbol}
+                                  {inputTokenType === 'SUI' ? 'SUI' : tokenSymbol.length > 8 ? `$tokenSymbol.slice(0, 8)}...` : tokenSymbol}
                                 </span>
                               </div>
                             </div>
-                            <div className="flex flex-col relative items-end">
+                            <div className="flex flex-col justify-between items-end">
                               <input
                                 type="number"
                                 placeholder="0"
-                                className="placeholder:text-[#919191] bg-transparent max-w-[180px] focus:outline-none text-white text-[20px] font-bold text-right"
-                                value={tokenAmount}
+                                className="placeholder:text-[#919191] bg-transparent max-w-[180px] focus:outline-none text-white text-[20px] font-bold text-right h-6"
+                                value={buyAmount}
                                 onChange={e => setAmount(e.target.value)}
                                 required
                               />
                               <div className="flex gap-2 items-center">
                                 <span className="text-[#919191] text-[12px] font-semibold flex gap-1">
                                   Balance: &nbsp;
-                                  {Number(
-                                    inputToken === 'ETH'
-                                      ? accountBalance
-                                      : tokenBalance
-                                  ).toLocaleString()}{' '}
+                                  {Number(inputTokenType === 'SUI' ? suiBalance : tokenBalance).toLocaleString()}
                                   <div
                                     className="cursor-pointer text-[#f3cc2f]"
                                     onClick={setMaxAmount}
                                   >
                                     Max
                                   </div>
-                                  {/* {inputToken === 'ETH' ? 'BNB' : tokenSymbol.length > 8 ? `${tokenSymbol.slice(0, 8)}...` : tokenSymbol} */}
                                 </span>
-                                {/* // <button className='border border-[#f3cc2f] text-[#fff] rounded-md px-1' onClick={setMaxAmount}>Max</button> */}
                               </div>
                             </div>
                           </div>
@@ -1292,11 +595,7 @@ const App = () => {
                                 className="flex-shrink-0 w-10 h-10 rounded-full"
                                 width="40"
                                 height="40"
-                                src={
-                                  inputToken !== 'ETH'
-                                    ? ethIcon[chainId]
-                                    : tokenLogo
-                                }
+                                src={inputTokenType !== 'SUI' ? SuiIcon : tokenLogo}
                                 onError={event => {
                                   event.target.src = '/logo.png' // Fallback image
                                   event.target.onerror = null // Prevents infinite loop if fallback image fails
@@ -1307,32 +606,23 @@ const App = () => {
                                   To
                                 </span>
                                 <span className="text-white text-[20px] font-bold whitespace-nowrap overflow-hidden text-ellipsis">
-                                  {inputToken !== 'ETH'
-                                    ? coinNames[chainId]
-                                    : tokenSymbol}
+                                  {inputTokenType == 'Token' ? 'SUI' : tokenSymbol.length > 8 ? `$tokenSymbol.slice(0, 8)}...` : tokenSymbol}
                                 </span>
                               </div>
                             </div>
-                            <div className="flex flex-col relative items-end flex-grow">
+                            <div className="flex flex-col items-end justify-between">
                               <input
                                 placeholder="0"
                                 label=""
                                 type="number"
                                 value={tokenOutAmount}
-                                className="text-white text-right text-[20px] font-bold"
+                                className="text-white text-right text-[20px] font-bold h-6"
                                 disabled
                               />
                               <div className="flex gap-2 items-center">
                                 <span className="text-[#919191] text-[12px] font-semibold">
                                   Balance: &nbsp;
-                                  {Number(
-                                    inputToken !== 'ETH'
-                                      ? accountBalance
-                                      : tokenBalance
-                                  ).toLocaleString()}{' '}
-                                  {/* {inputToken !== 'ETH'
-                                    ? coinNames[chainId]
-                                    : tokenSymbol} */}
+                                  {Number(inputTokenType !== 'SUI' ? suiBalance : tokenBalance).toLocaleString()}{' '}
                                 </span>
                               </div>
                             </div>
@@ -1353,37 +643,24 @@ const App = () => {
                           </button>
                         </div>
                       </div>
-                      {address === undefined ? (
+                      {!isConnected ? (
                         <div className="self-center">
-                          <w3m-button />
+                          <ConnectButton />
                         </div>
-                      ) : Number(chainId) === pumpChainId ? (
+                      ) : (
                         <button
                           onClick={onTokenSwap}
                           className="text-[16px] focus:outline-none h-[48px] flex justify-center items-center select-none font-bold text-center w-full bg-[#f0f0f0] hover:opacity-90 disabled:bg-[#646464] disabled:text-[#bbb] rounded-[24px] text-[#222]"
                           disabled={
-                            address !== undefined &&
-                            Number(tokenAmount) > 0 &&
-                            (inputToken === 'ETH'
-                              ? accountBalance >= Number(tokenAmount)
-                              : tokenBalance >= Number(tokenAmount))
+                            Number(buyAmount) > 0 &&
+                              (inputTokenType === 'SUI'
+                                ? suiBalance >= Number(buyAmount)
+                                : tokenBalance >= Number(buyAmount))
                               ? false
                               : true
                           }
                         >
-                          {inputToken !== 'ETH' && tokenAllowance === 0 ? (
-                            creating === false ? (
-                              'Approve token First'
-                            ) : (
-                              <ClipLoader
-                                color={'#222'}
-                                loading={creating}
-                                size={30}
-                                aria-label="Loading Spinner"
-                                data-testid="loader"
-                              />
-                            )
-                          ) : creating === false ? (
+                          {creating === false ? (
                             'Swap Tokens'
                           ) : (
                             <ClipLoader
@@ -1395,26 +672,8 @@ const App = () => {
                             />
                           )}
                         </button>
-                      ) : (
-                        <button
-                          onClick={() =>
-                            switchChain(config, { chainId: Number(chainId) })
-                          }
-                          className="text-[16px] focus:outline-none h-[48px] flex justify-center items-center select-none font-bold text-center w-full bg-[#f3cc2f] hover:opacity-90 disabled:bg-[#646464] disabled:text-[#bbb] rounded-[24px] text-[#222]"
-                        >
-                          Switch Network
-                        </button>
                       )}
                     </section>
-                    {/* 
-                    <div
-                      className="token-info-item"
-                      style={{ marginTop: '10px' }}
-                    >
-                      <span className="token-info-label">Current Price</span>
-                      <span className="token-info-value">$
-                        {((tokenPrice) / 10 ** 12).toLocaleString()}</span>
-                    </div> */}
                   </div>
                 )}
                 <br />
@@ -1431,11 +690,6 @@ const App = () => {
                         </h3>
                       </span>
                     </div>
-                    {/* <div className="token-info-item mt-2">
-                      <span className="token-info-label font-light">
-                        You can update some information.
-                      </span>
-                    </div> */}
                     <UpdateBox
                       onCreate={() => setCreating(false)}
                       data={poolDate} // Callback for child component
@@ -1455,93 +709,6 @@ const App = () => {
                       </h3>
                     </span>
                   </div>
-                  <div className="token-info-item mt-2">
-                    <span className="token-info-label font-light">
-                      Share referral link with your friends and earn 0.5% of
-                      every trade they make.
-                    </span>
-                  </div>
-                  <br />
-                  <div className="bg-[#202020] flex w-full items-center gap-2 rounded-[8px] py-[14px] pr-[8px] pl-[16px]">
-                    <span className="text-[16px] text-white font-semibold w-[280px] truncate">
-                      {isTooltipDisplayed ? 'Copied' : referlink}
-                    </span>
-                    <button
-                      className="flex justify-center items-center w-12 h-12 rounded-[8px] bg-[#363636] hover:bg-[#363666]"
-                      onClick={copyAddress(referlink)}
-                    >
-                      <img src={CopyIcon} />
-                    </button>
-                  </div>
-                  {refUserAmount > 0 ? (
-                    <div>
-                      <div className="RefBox">
-                        <p
-                          style={{
-                            textAlign: 'center',
-                            margin: '0px'
-                          }}
-                          className="tokenLists"
-                        >
-                          Total Refferal Amounts:
-                        </p>
-                        <p
-                          style={{
-                            textAlign: 'center',
-                            margin: '0px'
-                          }}
-                          className="tokenLists"
-                        >
-                          {totalRefAmounts} BNB
-                        </p>
-                      </div>
-                      <hr />
-                      <div className="RefBox">
-                        <p
-                          style={{
-                            textAlign: 'center',
-                            margin: '0px'
-                          }}
-                          className="tokenLists"
-                        >
-                          Total Ref Counts:
-                        </p>
-                        <p
-                          style={{
-                            textAlign: 'center',
-                            margin: '0px'
-                          }}
-                          className="tokenLists"
-                        >
-                          {refCounts}
-                        </p>
-                      </div>
-                      <hr />
-                      <div className="RefBox">
-                        <p
-                          style={{
-                            textAlign: 'center',
-                            margin: '0px'
-                          }}
-                          className="tokenLists"
-                        >
-                          Your referral amounts:
-                        </p>
-                        <p
-                          style={{
-                            textAlign: 'center',
-                            margin: '0px'
-                          }}
-                          className="tokenLists"
-                        >
-                          {refUserAmount} BNB
-                        </p>
-                      </div>
-                      <hr />
-                    </div>
-                  ) : (
-                    <></>
-                  )}
                 </div>
                 <br />
                 <div className="claim-card p-6">
@@ -1555,7 +722,7 @@ const App = () => {
                       <div className="holderBox py-1">
                         <a
                           className="holderContent"
-                          href={scanLinks[chainId] + 'address/' + address}
+                          href={'address/' + address}
                           target="_blank"
                           rel="noreferrer"
                         >

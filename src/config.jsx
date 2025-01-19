@@ -19,3 +19,9 @@ export const config = createConfig({
   },
   projectId: projectId,
 })
+
+export const OBJECTS = {
+  Configuration: "0x5c58b3ae84853f0abd83669a357afcd5f6801522aa7d3b5eed60fdf45c369654",
+  Package: "0x85e83633de4c059be9e77bed17ddaa0d5f46db45a53d753f9c25db40c62ef419",
+  Threshold: "0x8a9aa380a0793bb7ea5447730e5e0d86a3fcee66a84cec701f47d0af8d4c8469"
+}

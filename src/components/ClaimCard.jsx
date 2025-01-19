@@ -1,14 +1,8 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import WebsiteIcon from '../icons/website.png'
 import TelegramIcon from '../icons/telegram.png'
 import TwitterIcon from '../icons/x-icon.svg'
-import CopyIcon from '../icons/copy.svg'
-import ProfileIcon from '../icons/rocket.svg'
-import DexIcon from '../icons/trader-joe.webp'
-import InfoIcon from '../icons/info.png'
-import { Link } from 'react-router-dom'
 
 const SocialSection = ({ website, telegram, twitter }) => (
   <div
@@ -33,14 +27,7 @@ const SocialSection = ({ website, telegram, twitter }) => (
   </div>
 )
 
-const ChadPumpInfoSection = ({
-  tokenSupplyUSD,
-  tokenSupplyLiquidity,
-  marketCap,
-  tokenUnsoldTokens,
-  maxBuyAmount,
-  volume
-}) => (
+const ChadPumpInfoSection = ({ tokenSupplyUSD, marketCap, volume }) => (
   <>
     <div className="fields flex justify-between">
       <div className="flex flex-col gap-1">
@@ -68,14 +55,7 @@ const ChadPumpInfoSection = ({
 const ClaimCard = ({
   tokenName,
   Logo,
-  tokenAddress,
-  contractAddress,
-  dexAddress,
-  devAddress,
-  dexName,
   tokenSymbol,
-  tokenDecimals,
-  tokenTotalSupply,
   maxBuyAmount,
   tokenSupplyUSD,
   tokenSupplyLiquidity,
@@ -95,75 +75,9 @@ const ClaimCard = ({
   if (lpCreated) {
     progress = 100
   }
-
-  const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
-
-  const [modalIsOpen, setModalIsOpen] = useState(false)
-
-  const toggleModal = () => {
-    setModalIsOpen(!modalIsOpen)
-  }
-
-  const closeModal = e => {
-    if (e.target.id === 'modal') {
-      setModalIsOpen(false)
-    }
-  }
-
-  const modalContent = (
-    <div
-      id="modal"
-      onClick={closeModal}
-      className={`modal ${modalIsOpen ? 'show-modal' : ''}`}
-    >
-      <div className="modal-content">
-        <p>{description}</p>
-        <button onClick={toggleModal} className="save-button">
-          Close
-        </button>
-      </div>
-    </div>
-  )
-
-  const copyAddress = address => async e => {
-    e.stopPropagation()
-    e.preventDefault()
-    if (document.queryCommandSupported('copy')) {
-      const ele = document.createElement('textarea')
-      ele.value = address
-      document.body.appendChild(ele)
-      ele.select()
-      document.execCommand('copy')
-      document.body.removeChild(ele)
-      displayTooltip()
-    }
-  }
-
-  function displayTooltip() {
-    let timeoutId
-    setIsTooltipDisplayed(true)
-    timeoutId = setTimeout(() => {
-      setIsTooltipDisplayed(false)
-    }, 1000)
-    return () => clearTimeout(timeoutId)
-  }
-
   return (
     <div className="relative overflow-hidden">
-      <div className="relative flex flex-row items-center justify-center aspect-w-[208] w-full aspect-h-[85] overflow-hidden aspect-video z-1">
-        <img
-          src={tokenCover}
-          sizes="100vw"
-          width={208}
-          height={85}
-          onError={event => {
-            event.target.src = '/banner.png' // Fallback image
-            event.target.onerror = null // Prevents infinite loop if fallback image fails
-          }}
-          className="object-cover object-center"
-        />
-      </div>
-      <div className="flex flex-col relative rounded-[25px] mt-[-42px] bg-[#090909] z-2 !rounded-b-none p-6 gap-[16px]">
+      <div className="flex flex-col relative rounded-[25px] bg-[#090909] z-2 !rounded-b-none p-6 gap-[16px]">
         <div className="flex justify-between gap-4">
           <div className="flex gap-4 flex-grow">
             {Logo}
@@ -204,6 +118,7 @@ const ClaimCard = ({
             tokenUnsoldTokens={tokenUnsoldTokens}
             maxBuyAmount={maxBuyAmount}
             volume={volume}
+            
           />
         </div>
       </div>
@@ -214,15 +129,7 @@ const ClaimCard = ({
 ClaimCard.propTypes = {
   tokenName: PropTypes.string.isRequired,
   Logo: PropTypes.element.isRequired,
-  // about: PropTypes.string.isRequired,
-  // tokenAddress: PropTypes.string.isRequired,
-  // contractAddress: PropTypes.string.isRequired,
-  // dexAddress: PropTypes.string.isRequired,
-  // devAddress: PropTypes.string.isRequired,
-  // dexName: PropTypes.string.isRequired,
   tokenSymbol: PropTypes.string.isRequired,
-  // tokenDecimals: PropTypes.number.isRequired,
-  // tokenTotalSupply: PropTypes.number.isRequired,
   maxBuyAmount: PropTypes.number.isRequired,
   tokenSupplyLiquidity: PropTypes.number,
   tokenPrice: PropTypes.number,

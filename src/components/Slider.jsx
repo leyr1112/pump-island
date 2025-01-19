@@ -76,7 +76,7 @@ const Slider = ({ items, isListed }) => {
                             key={index}
                             className="flex-shrink-0 w-full flex flex-col items-center justify-center px-2"
                             style={{ width: `${100 / itemsToShow}%` }}
-                            to={`/buy/?chain=${pool.chainId}&address=${pool.address}`}
+                            to={`/buy/?token=${pool.address}`}
                         >
                             <div className='relative flex w-full flex-col items-center justify-center rounded-[25px] bg-[#101010] overflow-hidden'>
                                 <img src={pool.blockchainLogoUrl} className='w-8 h-8 absolute top-0 right-0 z-10'/>

@@ -10,7 +10,7 @@ const BalanceCard = ({
     Logo,
     balance
 }) => {
-    const link = `/buy/?chain=${chainId}&address=${tokenAddress}`
+    const link = `/buy?address=${tokenAddress}`
     return (
         <div className="balances-box">
             <Link to={link}>

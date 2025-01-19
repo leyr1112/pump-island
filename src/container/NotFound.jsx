@@ -26,7 +26,7 @@ const App = () => {
                     The BSC Network's Black Pump
                   </p>
                   <p style={{ textAlign: 'center' }}>
-                    <Link to="/CreateBlack" className="create-token-button">
+                    <Link to="/create" className="create-token-button">
                       Create&nbsp;Token&nbsp;Launch
                     </Link>
                   </p>

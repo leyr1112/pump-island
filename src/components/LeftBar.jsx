@@ -61,7 +61,7 @@ const LeftBar = ({ isExpanded, onHamburgerClick }) => {
         {(isHovered || showLinks) && (
           <>
             <li>
-              <Link to="/AllLaunches" className="left-bar-link">
+              <Link to="/dashboard" className="left-bar-link">
                 <img
                   src={iconChadPump}
                   alt="All Launches"
@@ -69,7 +69,7 @@ const LeftBar = ({ isExpanded, onHamburgerClick }) => {
                 />
                 <span
                   className={
-                    currentPath === '/' || currentPath === '/AllLaunches'
+                    currentPath === '/' || currentPath === '/dashboard'
                       ? 'listSelected ' + textClass
                       : 'listUnselected ' + textClass
                   }
@@ -79,7 +79,7 @@ const LeftBar = ({ isExpanded, onHamburgerClick }) => {
               </Link>
             </li>
             <li>
-              <Link to="/CreateBlack" className="left-bar-link">
+              <Link to="/create" className="left-bar-link">
                 <img
                   src={iconCreateChad}
                   alt="Create Token"
@@ -87,7 +87,7 @@ const LeftBar = ({ isExpanded, onHamburgerClick }) => {
                 />
                 <span
                   className={
-                    currentPath === '/CreateBlack'
+                    currentPath === '/create'
                       ? 'listSelected ' + textClass
                       : 'listUnselected ' + textClass
                   }
@@ -96,7 +96,7 @@ const LeftBar = ({ isExpanded, onHamburgerClick }) => {
                 </span>
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link to={'/profile/?address=' + address} target={currentPath.includes('profile') ? '_blank' : ''} className="left-bar-link">
                 <img
                   src={iconTokerCreator}
@@ -113,7 +113,7 @@ const LeftBar = ({ isExpanded, onHamburgerClick }) => {
                   Profile
                 </span>
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link to="/about-us" className="left-bar-link">
                 <img

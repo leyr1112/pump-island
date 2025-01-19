@@ -1,9 +1,9 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react'
-import { useSignMessage, useAccount } from 'wagmi'
+import { useSignMessage } from 'wagmi'
 import { recoverMessageAddress } from 'viem'
 import { apiUrl } from '../utils/constants.ts'
 import { toast } from 'react-hot-toast'
+import { useCurrentWallet } from '@mysten/dapp-kit'
 
 export function SignMessage({ ChadAddress, sender, content, timestamp }) {
   const {
@@ -13,9 +13,9 @@ export function SignMessage({ ChadAddress, sender, content, timestamp }) {
     variables,
     reset
   } = useSignMessage()
-  const { address } = useAccount()
+  const { isConnected } = useCurrentWallet()
   React.useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       if (variables?.message && signMessageData) {
         const recoveredAddress = await recoverMessageAddress({
           message: variables?.message,
@@ -70,14 +70,14 @@ export function SignMessage({ ChadAddress, sender, content, timestamp }) {
         />
       </div>
       <button
-        disabled={isLoading || address === undefined}
+        disabled={isLoading || !isConnected}
         className="SendButton rounded-full text-[#222] py-2"
       >
-        {address === undefined
+        {!isConnected
           ? 'Connect Wallet First'
           : isLoading
-          ? 'Check Wallet'
-          : 'Send Message'}
+            ? 'Check Wallet'
+            : 'Send Message'}
       </button>
     </form>
   )

@@ -21,7 +21,7 @@ const App = () => {
   const { address } = useAccount()
   let [loading, setLoading] = useState(false)
   const [chadLists, setChadListData] = useState([])
-  const [currentLength, ] = useState(0)
+  const [currentLength,] = useState(0)
   const [totalLength, setTotalLength] = useState(0)
 
   useEffect(() => {
@@ -451,7 +451,7 @@ const App = () => {
                     BlackPump.Fun on BSC Network
                   </p>
                   <p style={{ textAlign: 'center' }}>
-                    <Link to="/CreateBlack" className="create-token-button">
+                    <Link to="/create" className="create-token-button">
                       Create&nbsp;Token
                     </Link>
                   </p>
@@ -459,7 +459,7 @@ const App = () => {
                   <p>
                     <div className="launches-switch">
                       <Link
-                        to="/AllLaunches"
+                        to="/dashboard"
                         className="launches-switch-passive"
                       >
                         All&nbsp;Launches

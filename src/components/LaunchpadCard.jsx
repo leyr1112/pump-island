@@ -3,76 +3,33 @@ import PropTypes from 'prop-types'
 import WebsiteIcon from '../icons/website.png'
 import TwitterIcon from '../icons/x-icon.svg'
 import TelegramIcon from '../icons/telegram.png'
-import jonIcon from '../icons/x-icon.svg'
 import LaunchpadChangeUp from '../icons/launchpad-change-up.svg'
 import LaunchpadChangeDown from '../icons/launchpad-change-down.svg'
-import CopyIcon from '../icons/copy.svg'
-import ProfileIcon from '../icons/rocket.svg'
-import DexIcon from '../icons/trader-joe.webp'
 import { Link } from 'react-router-dom'
 
 const LaunchpadCard = ({
-  chainId,
   progress,
   Liquidity,
   tokenName,
   Logo,
-  Banner,
   chadAddress,
   depositedAmount,
-  contractAddress,
-  dexAddress,
   devAddress,
-  dexName,
   marketCap,
   website,
   twitter,
   telegram,
-  BlockchainLogo,
-  raisingPercent,
-  onMouseEnter,
-  onMouseLeave
+  raisingPercent
 }) => {
-  const link = `/buy/?chain=${chainId}&address=${chadAddress}`
-  const defaultBanner = '/banner.png'
+  const link = `/buy?token=${chadAddress}`
   const defaultLogo = '/logo.png'
-  const [imgSrc, setImgSrc] = useState(Banner)
   const [imgLogo, setImgLogo] = useState(Logo)
-  const progressText = progress
   if (progress > 100) {
     progress = 100
   }
 
-  const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
-
-  const copyAddress = address => async e => {
-    e.stopPropagation()
-    e.preventDefault()
-    if (document.queryCommandSupported('copy')) {
-      const ele = document.createElement('textarea')
-      ele.value = address
-      document.body.appendChild(ele)
-      ele.select()
-      document.execCommand('copy')
-      document.body.removeChild(ele)
-      displayTooltip()
-    }
-  }
-
-  function displayTooltip() {
-    let timeoutId
-    setIsTooltipDisplayed(true)
-    timeoutId = setTimeout(() => {
-      setIsTooltipDisplayed(false)
-    }, 1000)
-    return () => clearTimeout(timeoutId)
-  }
-
   const SocialSection = ({ website, telegram, twitter }) => (
-    <div
-      className="social-section"
-      style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}
-    >
+    <div className="social-section"    >
       {twitter && (
         <a href={`${twitter}`} target="_blank" rel="noopener noreferrer">
           <img src={TwitterIcon} alt="Twitter" className="social-icon" />
@@ -93,19 +50,7 @@ const LaunchpadCard = ({
 
   return (
     <Link to={link}>
-      <div className="launchpad-card overflow-hidden relative hover:scale-95 h-auto">
-        {BlockchainLogo}
-        <div className="relative flex flex-row items-center justify-center aspect-w-[208] w-full aspect-h-[85]  aspect-video">
-          <img
-            src={imgSrc}
-            sizes="100vw"
-            width={208}
-            height={85}
-            className="object-cover object-center"
-            onError={() => setImgSrc(defaultBanner)}
-            alt="Banner"
-          />
-        </div>
+      <div className="launchpad-card overflow-hidden relative h-auto">
         {raisingPercent !== undefined && (
           <div
             className="launchpad-change-tag"
@@ -116,20 +61,13 @@ const LaunchpadCard = ({
           >
             {raisingPercent >= 0 ? '+' : ''}
             {raisingPercent}%
-            <img
-              src={
-                raisingPercent >= 0 ? LaunchpadChangeUp : LaunchpadChangeDown
-              }
-              alt=""
-            />
+            <img src={raisingPercent >= 0 ? LaunchpadChangeUp : LaunchpadChangeDown} alt="" />
           </div>
         )}
         <div className="p-4 sm:p-[20px] relative">
-          <div className="flex flex-row justify-between items-center">
-            {/* {Logo} */}
+          <div className="flex flex-row justify-between items-center h-10">
             <img
               src={imgLogo}
-              // sizes="100vw"
               width={30}
               height={30}
               className="claim-card-logo"
@@ -155,12 +93,11 @@ const LaunchpadCard = ({
               {devAddress.slice(0, 2) + '..' + devAddress.slice(-3)}
             </a>
           </div>
-          {isTooltipDisplayed && <span className="tooltiptext">Copied!</span>}
 
           <div className="launchpad-progress-container">
             <div className="launchpad-progress-text">
-              Progress&#x20;
-              <span className="text-[#00f3ef]">
+              Progress
+              <span className="text-[#00f3ef] ml-1">
                 ({Number(progress).toLocaleString()}%)
               </span>
             </div>

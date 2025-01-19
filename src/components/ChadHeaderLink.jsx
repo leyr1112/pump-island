@@ -5,7 +5,7 @@ import logo from '../icons/logo.svg'
 const ChadHeaderLink = ({ className }) => {
   return (
     <Link
-      to="/AllLaunches"
+      to="/dashboard"
       style={{ width: '100%', textDecoration: 'blink' }}
       className="logo-header"
     >

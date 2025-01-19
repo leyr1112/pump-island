@@ -1,7 +1,8 @@
+import '@mysten/dapp-kit/dist/index.css';
+
 import React from "react";
-import { WalletKitProvider } from "@mysten/wallet-kit";
-import AllLaunches from "./container/AllLaunches";
-import CreateBlack from "./container/CreateBlack.tsx";
+import Dashboard from "./container/Dashboard";
+import CreateToken from "./container/CreateToken.tsx";
 import NotFound from "./container/NotFound";
 import BuyPage from "./container/BuyPage";
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
@@ -22,6 +23,11 @@ import './index.css';
 import AboutUs from "./container/AboutUs";
 import Faq from "./container/Faq";
 import { config } from "./config.jsx";
+
+import { SuiClientProvider, WalletProvider } from '@mysten/dapp-kit';
+import { getFullnodeUrl } from '@mysten/sui/client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import AppProvider from './context/index.jsx'
 
 // const projectId = '4807d388fe495226b7fc14743af2e1d9'
 const projectId = '166c810a1a76fedfcbfb4a4c442c40ed'
@@ -54,65 +60,78 @@ createWeb3Modal({
   wagmiConfig
 })
 
+const queryClient = new QueryClient();
+const networks = {
+  devnet: { url: getFullnodeUrl('testnet') },
+  mainnet: { url: getFullnodeUrl('mainnet') },
+};
+
+
 const App = () => {
   return (
     <Router>
       <QueryParamProvider>
         <div>
-          <WalletKitProvider>
-            <WagmiProvider config={config}>
-              <Toaster
-                position="top-right"
-                reverseOrder={true}
-                toastOptions={{ duration: 5000 }}
-              >
-                {(t) => (
-                  <div
-                    style={{ cursor: "pointer" }}
-                    onClick={() => toast.dismiss(t.id)}
-                  >
-                    <ToastBar onClick={() => alert(1)} toast={t} />
-                  </div>
-                )}
-              </Toaster>
-              <Switch>
-                <Route exact path="/">
-                  <AllLaunches />
-                </Route>
-                {/* <Route exact path="/MyContributions">
-                <MyContributions />
-              </Route> */}
-                <Route exact path="/AllLaunches">
-                  <AllLaunches />
-                </Route>
-                <Route exact path="/CreateBlack">
-                  <CreateBlack />
-                </Route>
-                <Route exact path="/Buy">
-                  <BuyPage />
-                </Route>
-                <Route exact path="/Profile">
-                  <Profile />
-                </Route>
-                <Route exact path="/EditProfile">
-                  <EditProfile />
-                </Route>
-                <Route exact path="/about-us">
-                  <AboutUs />
-                </Route>
-                <Route exact path="/FAQ">
-                  <Faq />
-                </Route>
-                <Route exact path="/NotFound">
-                  <NotFound />
-                </Route>
-              </Switch>
-            </WagmiProvider>
-            {/* <Web3Modal
-            projectId={projectId}
-            ethereumClient={ethereumClient}
-          /> */}
-          </WalletKitProvider>
+          <QueryClientProvider client={queryClient}>
+            <SuiClientProvider networks={networks} defaultNetwork="devnet">
+              <WalletProvider>
+                <AppProvider>
+                  <WagmiProvider config={config}>
+                    <Toaster
+                      position="top-right"
+                      reverseOrder={true}
+                      toastOptions={{ duration: 5000 }}
+                    >
+                      {(t) => (
+                        <div
+                          style={{ cursor: "pointer" }}
+                          onClick={() => toast.dismiss(t.id)}
+                        >
+                          <ToastBar onClick={() => alert(1)} toast={t} />
+                        </div>
+                      )}
+                    </Toaster>
+                    <Switch>
+                      <Route exact path="/">
+                        <Dashboard />
+                      </Route>
+                      {/* <Route exact path="/MyContributions">
+                        <MyContributions />
+                      </Route> */}
+                      <Route exact path="/dashboard">
+                        <Dashboard />
+                      </Route>
+                      <Route exact path="/create">
+                        <CreateToken />
+                      </Route>
+                      <Route exact path="/Buy">
+                        <BuyPage />
+                      </Route>
+                      {/* <Route exact path="/Profile">
+                        <Profile />
+                      </Route> */}
+                      <Route exact path="/EditProfile">
+                        <EditProfile />
+                      </Route>
+                      <Route exact path="/about-us">
+                        <AboutUs />
+                      </Route>
+                      <Route exact path="/FAQ">
+                        <Faq />
+                      </Route>
+                      <Route exact path="/NotFound">
+                        <NotFound />
+                      </Route>
+                    </Switch>
+                  </WagmiProvider>
+                  {/* <Web3Modal
+                    projectId={projectId}
+                    ethereumClient={ethereumClient}
+                  /> */}
+                </AppProvider>
+              </WalletProvider>
+            </SuiClientProvider>
+          </QueryClientProvider>
         </div>
       </QueryParamProvider>
     </Router>

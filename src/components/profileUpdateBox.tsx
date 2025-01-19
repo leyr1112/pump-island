@@ -144,7 +144,7 @@ const UpdateBox = ({ data, onCreate }) => {
               const logoResponse = await res.json()
               logoUrl = logoResponse.fileInfo.filename
               toast.success(`Successfully updated logo`)
-              const link = `/buy/?chain=${chainId}&address=${poolAddress}`
+              const link = `/buy?token=${poolAddress}`
               window.location.href = link
             })
             .catch(error => {
@@ -162,7 +162,7 @@ const UpdateBox = ({ data, onCreate }) => {
               const bannerResponse = await res.json()
               bannerUrl = bannerResponse.fileInfo.filename
               toast.success(`Successfully updated banner`)
-              const link = `/buy/?chain=${chainId}&address=${poolAddress}`
+              const link = `/buy?token=${poolAddress}`
               window.location.href = link
             })
             .catch(error => {
@@ -172,7 +172,7 @@ const UpdateBox = ({ data, onCreate }) => {
         } else {
           console.log('No files to update')
           toast.success('refreshing the page...')
-          const link = `/buy/?chain=${chainId}&address=${poolAddress}`
+          const link = `/buy?token=${poolAddress}`
           window.location.href = link
         }
         setCreating(false)
