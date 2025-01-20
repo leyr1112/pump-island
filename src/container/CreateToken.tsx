@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import '../App.css'
 import '../styles/MainContainer.css'
 import Input from '../components/Input.tsx'
@@ -37,6 +37,13 @@ const CreateToken = () => {
       setInputAmount('0')
     }
   }
+
+  useEffect(() => {
+    if (!isFirstBuy) {
+      setInputAmount('0')
+    }
+
+  }, [isFirstBuy])
 
   const format9Suibalance = format9(state.suiBalance)
 
