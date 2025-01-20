@@ -8,6 +8,7 @@ import {
 } from '@mysten/dapp-kit'
 import { Transaction } from '@mysten/sui/transactions'
 import { intoBase64 } from '../utils/pkg.ts'
+import toast from 'react-hot-toast'
 
 const client = new SuiClient({ url: getFullnodeUrl('testnet') })
 
@@ -69,17 +70,27 @@ export const useGetTokenBalances = () => {
         if (account) getTokenBalance(account.address)
     }, [account])
 
-    return { tokenBalances }
+    const refetch = useCallback(() => {
+        if (account) {
+            getTokenBalance(account.address)
+        }
+    }, [account])
+
+    return { tokenBalances, refetch }
 }
 
 export const useGetTokenBalance = (token) => {
     const [tokenBalance, setTokenBalance] = useState(0)
-    const [decimal, setDecimal] = useState(0)
-    const { tokenBalances } = useGetTokenBalances()
-    const tokenData = tokenBalances.filter((balance) => balance.coinType == token)
-    if (tokenData.length > 0) {
-        setTokenBalance(tokenData[0].totalBalance)
-    }
+    const [decimal, setDecimal] = useState(6)
+    const { state } = useApp()
+    console.log(state)
+    useEffect(() => {
+        const tokenData = state.tokenBalances.filter((balance) => balance.coinType == token)
+        if (tokenData.length > 0) {
+            setTokenBalance(tokenData[0].totalBalance)
+        }
+    }, [state])
+
     const getCoinData = async (token) => {
         const result: any = await client.getCoinMetadata({ coinType: token })
         setDecimal(result?.decimals)
@@ -110,117 +121,97 @@ export const useGetSuiPrice = () => {
 // Action
 export const useCreate = () => {
     const account = useCurrentAccount()
-    const [digest, setDigest] = useState<any>()
     const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction()
-    const createToken = async () => {
-        if (account) {
-            const tx = new Transaction()
-            const pkg = intoBase64({
-                symbol: 'TEST',
-                name: 'Test',
-                description: 'Test token',
-                iconUrl: 'test token'
-            })
-            const dependencies = [
-                '0x0000000000000000000000000000000000000000000000000000000000000001',
-                '0x0000000000000000000000000000000000000000000000000000000000000002'
-            ]
-
-            const [upgradeCap] = tx.publish({
-                modules: [pkg],
-                dependencies
-            })
-            tx.transferObjects(
-                [upgradeCap],
-                tx.pure(new Uint8Array(account.publicKey))
-            )
-
-            signAndExecuteTransaction(
-                { transaction: tx },
-                {
-                    onSuccess: async (result) => {
-                        console.log('executed transaction', result)
-                        setDigest(result.digest)
-                        const transactionResult = await client.getTransactionBlock({
-                            digest: result.digest,
-                            options: { showObjectChanges: true }
-                        })
-                        const { objectChanges } = transactionResult
-                    },
-                    onError: (error: any) => {
-                        throw new Error(error)
-                    }
-                }
-            )
-        }
-    }
-
-    const creatPool = async () => {
-        if (account) {
-            // const txid = '3BjBNVrDENzdqwjAkh3Vu5jb77ddAu7ihhNwRhguzp9X'
-            // console.log(txid, client)
-            // const transactionResult = await client.getTransactionBlock({
-            //     digest: txid,
-            //     options: { showObjectChanges: true }
-            // })
-            // const { objectChanges } = transactionResult
-            // console.log(transactionResult)
-            let treasuryCap, packageId, suiCoin
-            // objectChanges?.forEach((objectChange: any) => {
-            //     if (objectChange?.objectType?.includes('::coin::TreasuryCap<')) {
-            //         treasuryCap = objectChange?.objectId
-            //     }
-            //     if (objectChange?.type === 'published') {
-            //         packageId = objectChange?.packageId
-            //     }
-            //     if (objectChange?.objectType?.includes("0x2::coin::Coin<0x2::sui::SUI>")) {
-            //         suiCoin = objectChange?.objectId
-            //     }
-            // })
-            treasuryCap = '0x8bb04717a5a730e9cb05d4325d997afaff0c974d4ee040a2967fafa1e4f1fa78'
-            packageId = '0xbc508900fd867d3edf6f92c8f69a28bcd2eae38d97bfe52b0de456341983df08'
-            if (treasuryCap && packageId) {
+    const createToken = async (tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter) => {
+        tokenSymbol = tokenSymbol.toUpperCase()
+        try {
+            if (account?.publicKey) {
                 const tx = new Transaction()
-
-                // tx.setSender(account.address)
-                // const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(1000000000)])
-
-                tx.moveCall({
-                    arguments: [
-                        tx.object(OBJECTS.Configuration),
-                        tx.object(treasuryCap),
-                        // coin,
-                        // tx.pure.u64(1),
-                        tx.object('0x6'),
-                        tx.pure.string('Test'),
-                        tx.pure.string('TEST'),
-                        tx.pure.string('test token'),
-                        tx.pure.string('Test Token'),
-                        tx.pure.string('twitter'),
-                        tx.pure.string('telegram'),
-                        tx.pure.string('website'),
-                    ],
-                    typeArguments: [`${packageId}::test::TEST`],
-                    target: `${OBJECTS.Package}::move_pump::create`
+                const pkg = intoBase64({
+                    symbol: tokenSymbol,
+                    name: tokenName,
+                    description: tokenDescription,
+                    iconUrl: tokenLogo
                 })
-
-                // tx.setGasBudget(500000000)
-
+                const dependencies = [
+                    '0x0000000000000000000000000000000000000000000000000000000000000001',
+                    '0x0000000000000000000000000000000000000000000000000000000000000002'
+                ]
+                const [upgradeCap] = tx.publish({
+                    modules: [pkg],
+                    dependencies
+                })
+                tx.transferObjects(
+                    [upgradeCap],
+                    tx.pure(new Uint8Array(account?.publicKey))
+                )
                 signAndExecuteTransaction(
+                    { transaction: tx },
                     {
-                        transaction: tx
-                    },
-                    {
-                        onSuccess: result => {
-                            console.log(result)
+                        onSuccess: async (result) => {
+                            console.log('executed transaction', result)
+                            const digest = result.digest
+                            if (digest) {
+                                toast.success('Successfully created token!')
+                                creatPool(digest, tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter)
+                            }
                         }
                     }
                 )
             }
+        } catch (e) {
+            console.error(e)
         }
     }
 
-    return { digest, createToken, creatPool }
+    const creatPool = async (digest, tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter) => {
+        if (account) {
+            const transactionResult = await client.getTransactionBlock({
+                digest: digest,
+                options: { showObjectChanges: true }
+            })
+            const { objectChanges } = transactionResult
+            let treasuryCap, packageId
+            objectChanges?.forEach((objectChange: any) => {
+                if (objectChange?.objectType?.includes('::coin::TreasuryCap<')) {
+                    treasuryCap = objectChange?.objectId
+                }
+                if (objectChange?.type === 'published') {
+                    packageId = objectChange?.packageId
+                }
+            })
+            if (treasuryCap && packageId) {
+                const tx = new Transaction()
+                const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(1000000000)])
+                tx.moveCall({
+                    arguments: [
+                        tx.object(OBJECTS.Configuration),
+                        tx.object(treasuryCap),
+                        coin,
+                        tx.pure.u64(1000000000),
+                        tx.object('0x6'),
+                        tx.pure.string(tokenName),
+                        tx.pure.string(tokenSymbol),
+                        tx.pure.string(tokenLogo),
+                        tx.pure.string(tokenDescription),
+                        tx.pure.string(twitter),
+                        tx.pure.string(telegram),
+                        tx.pure.string(website),
+                    ],
+                    typeArguments: [`${packageId}::${tokenSymbol.toLowerCase()}::${tokenSymbol.toUpperCase()}`],
+                    target: `${OBJECTS.Package}::move_pump::create_and_first_buy`
+                })
+
+                signAndExecuteTransaction({ transaction: tx }, {
+                    onSuccess: result => {
+                        console.log(result)
+                    }
+                })
+            }
+        }
+    }
+
+    return { createToken }
 }
 
 export const useTrade = () => {
@@ -228,14 +219,15 @@ export const useTrade = () => {
     const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction()
     const buy = async () => {
         if (account?.address) {
+            console.log(account?.address)
             const tx = new Transaction()
             const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(100000000)])
             tx.moveCall({
                 arguments: [
                     tx.object(OBJECTS.Configuration),
-                    tx.object(OBJECTS.Threshold_config),
+                    tx.object(OBJECTS.Threshold),
                     coin,
-                    tx.pure.u64(10000000000),
+                    tx.pure.u64(1000000000000),
                     tx.object('0x6')
                 ],
                 typeArguments: [`${'0xd9b96ebee3d8c37c3a99b84682abaea48e76823731e353162bb2a945bc25eabe'}::test::TEST`],
@@ -320,7 +312,8 @@ export const useGetPools = () => {
                         marketCap: virtualTokenReserves / virtualSuiReserves * suiPrice,
                         Liquidity: virtualSuiReserves * suiPrice * 2,
                         poolObjectId,
-                        raisingPercent: undefined
+                        raisingPercent: 0,
+                        suiPrice,
                     }
 
                     changeVariable(address, result)
@@ -344,7 +337,6 @@ export const useGetPool = (token) => {
     const tokenAddress = token
     const { suiPrice } = useGetSuiPrice()
     const { pools } = useGetPools()
-    const { state } = useApp()
     const [tokenName, setTokenName] = useState('---')
     const [tokenSymbol, setTokenSymbol] = useState('---')
     const [logoUrl, setLogoUrl] = useState('')
@@ -356,7 +348,7 @@ export const useGetPool = (token) => {
     const [Liquidity, setLiquidity] = useState('0')
     const [marketCap, setMarketCap] = useState('0')
     useEffect(() => {
-        const pool = state[token]
+        const pool = pools.find((pool) => pool.address == token)
         if (pool) {
             setTokenName(pool.tokenName)
             setTokenSymbol(pool.tokenSymbol)
@@ -369,7 +361,7 @@ export const useGetPool = (token) => {
             setLiquidity(pool.Liquidity)
             setMarketCap(pool.marketCap)
         }
-    }, [state])
+    }, [pools, token])
     return {
         tokenName,
         tokenSymbol,

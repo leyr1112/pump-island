@@ -12,6 +12,7 @@ import { useGetPools } from '../hooks/index.ts'
 const App = () => {
   const [search, setSearch] = useState('')
   const { pools, loading } = useGetPools()
+  console.log(pools)
 
   const sortOptions = [
     { value: 'Market Cap', label: 'Market Cap' },
@@ -137,10 +138,11 @@ const App = () => {
   }
 
   const sortChadLists = useCallback(async () => {
-    const latestChatsRes = await fetch(apiUrl + `/api/getLatestChats`, {
-      method: 'GET'
-    })
-    const latestChats = await latestChatsRes.json()
+    // const latestChatsRes = await fetch(apiUrl + `/api/getLatestChats`, {
+    //   method: 'GET'
+    // })
+    // const latestChats = await latestChatsRes.json()
+    const latestChats = []
 
     let sortedList = []
     const timestampMap = latestChats.length > 0 ? new Map(

@@ -18,6 +18,10 @@ input {
     min-height: 24px;
 }
 
+button:disabled {
+    cursor: not-allowed !important;
+}
+
 .main-content {
     display: flex;
     justify-content: center;

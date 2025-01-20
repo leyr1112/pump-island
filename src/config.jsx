@@ -1,5 +1,5 @@
 import { http, createConfig } from '@wagmi/core'
-import {bsc, mainnet, base, polygon, arbitrum, avalanche, bscTestnet } from '@wagmi/core/chains'
+import { bsc, mainnet, base, polygon, arbitrum, avalanche, bscTestnet } from '@wagmi/core/chains'
 
 const projectId = '4807d388fe495226b7fc14743af2e1d9'
 
@@ -21,7 +21,14 @@ export const config = createConfig({
 })
 
 export const OBJECTS = {
-  Configuration: "0x5c58b3ae84853f0abd83669a357afcd5f6801522aa7d3b5eed60fdf45c369654",
-  Package: "0x85e83633de4c059be9e77bed17ddaa0d5f46db45a53d753f9c25db40c62ef419",
-  Threshold: "0x8a9aa380a0793bb7ea5447730e5e0d86a3fcee66a84cec701f47d0af8d4c8469"
+  Configuration: "0xcc765dd591f5ff48b58814f0579e0e8d4d015f3b0259a46faf041142dc65aa16",
+  Package: "0x297bc71b964e641382ef6d2819773cecceb778c43c930734225e1b99d9fe2fe7",
+  Threshold: "0xd8ab21b030e670104ad7938dbd419d91822f8556779d1aca86f38364ec6bd6e6"
+}
+
+export const ScanUrl = {
+  Coin: 'https://suivision.xyz/coin/',
+  Package: 'https://suivision.xyz/package/',
+  TxBlock: 'https://suivision.xyz/txblock/',
+  Object: 'https://suivision.xyz/object/'
 }

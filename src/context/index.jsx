@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useEffect, useReducer } from 'react'
-import { useGetConfiguration, useGetSuiBalance, useGetSuiPrice, useGetPools } from '../hooks/index.ts'
+import { useGetConfiguration, useGetSuiBalance, useGetSuiPrice, useGetPools, useGetTokenBalances } from '../hooks/index.ts'
 
 const INIT_STATE = {
-    suiBalance: '0.000'
+    suiBalance: '0.000',
+    tokenBalances: []
 }
 
 const AppContext = createContext()
@@ -46,7 +47,7 @@ export default function Provider({ children }) {
     useEffect(() => {
         const interval = setInterval(() => {
             refetchSuiprice();
-        }, 10000);
+        }, 60000);
 
         return () => clearInterval(interval);
     }, [refetchSuiprice]);
@@ -62,7 +63,7 @@ export default function Provider({ children }) {
     useEffect(() => {
         const interval = setInterval(() => {
             refetchSuiBalance();
-        }, 10000);
+        }, 60000);
 
         return () => clearInterval(interval);
     }, [refetchSuiBalance]);
@@ -72,6 +73,21 @@ export default function Provider({ children }) {
             changeVariable('suiBalance', suiBalance)
         }
     }, [suiBalance]);
+
+    const { tokenBalances, refetch: refetchtokenBalances } = useGetTokenBalances()
+    useEffect(() => {
+        const interval = setInterval(() => {
+            refetchtokenBalances();
+        }, 60000);
+
+        return () => clearInterval(interval);
+    }, [refetchtokenBalances]);
+
+    useEffect(() => {
+        if (tokenBalances) {
+            changeVariable('tokenBalances', tokenBalances)
+        }
+    }, [tokenBalances]);
 
     return (
         <AppContext.Provider value={{ state, changeVariable }}>

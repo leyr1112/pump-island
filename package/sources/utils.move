@@ -365,7 +365,7 @@ module pump_island::utils {
     
     fun overflowing_sub(arg0: u64, arg1: u64) : (u64, bool) {
         if (arg0 < arg1) {
-            ((18446744073709551615 as u64) - arg1 - arg0 + 1, true)
+            ((18446744073709551615 as u64) - arg1 + arg0 + 1, true)
         } else {
             (arg0 - arg1, false)
         }
