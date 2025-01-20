@@ -16,7 +16,7 @@ import UpdateBox from '../components/profileUpdateBox.tsx'
 import { useGetPool, useGetSuiBalance, useGetTokenBalance } from '../hooks/index.ts'
 import SuiIcon from '../icons/sui.png'
 import { ConnectButton, useCurrentAccount, useCurrentWallet } from '@mysten/dapp-kit'
-import { format9 } from '../utils/format.ts'
+import { format6 } from '../utils/format.ts'
 
 const Trade = () => {
   const defaultLogo = '/logo.png'
@@ -67,7 +67,7 @@ const Trade = () => {
 
   const tokenBalance = useMemo(() => {
     if (!suiBalanceDecimal) return 0
-    return Math.round(suiBalanceDecimal / 10 ** tokenDecimal) / 1000
+    return Math.round(tokenBalanceDecimal / 1000) / 1000
   }, [tokenBalanceDecimal, tokenDecimal])
 
   const [virtualTokenLp, setVirtualTokenLp] = useState()
@@ -194,7 +194,7 @@ const Trade = () => {
                     tokenDecimals={tokenDecimal}
                     tokenTotalSupply={1000000000}
                     maxBuyAmount={maxBuyAmount}
-                    tokenSupplyUSD={format9(virtualLp)}
+                    tokenSupplyUSD={format6(virtualLp)}
                     tokenSupplyLiquidity={virtualTokenLp}
                     tokenPrice={tokenPrice}
                     tokenUnsoldTokens={'Burned 🔥'}

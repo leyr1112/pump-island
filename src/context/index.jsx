@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useReducer } from 'react'
 import { useGetConfiguration, useGetSuiBalance, useGetSuiPrice, useGetPools, useGetTokenBalances } from '../hooks/index.ts'
 
 const INIT_STATE = {
-    suiBalance: '0.000',
+    suiBalance: 0,
     tokenBalances: []
 }
 

@@ -121,8 +121,10 @@ export const useGetSuiPrice = () => {
 // Action
 export const useCreate = () => {
     const account = useCurrentAccount()
+    const [loading, setLoading] = useState(false)
     const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction()
-    const createToken = async (tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter) => {
+    const createToken = async (tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmout) => {
+        setLoading(true)
         tokenSymbol = tokenSymbol.toUpperCase()
         try {
             if (account?.publicKey) {
@@ -153,7 +155,7 @@ export const useCreate = () => {
                             const digest = result.digest
                             if (digest) {
                                 toast.success('Successfully created token!')
-                                creatPool(digest, tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter)
+                                creatPool(digest, tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmout)
                             }
                         }
                     }
@@ -161,15 +163,41 @@ export const useCreate = () => {
             }
         } catch (e) {
             console.error(e)
+            toast.error('There is some problem to create token!')
+        } finally {
+            setLoading(false)
         }
     }
 
-    const creatPool = async (digest, tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter) => {
+    const waitForTransaction = async (digest, retries = 10, delay = 2000) => {
+        let transactionResult;
+        for (let attempt = 0; attempt < retries; attempt++) {
+            try {
+                transactionResult = await client.getTransactionBlock({
+                    digest: digest,
+                    options: { showObjectChanges: true },
+                });
+
+                if (transactionResult) {
+                    console.log('Transaction found:', transactionResult);
+                    return transactionResult;
+                }
+            } catch (error) {
+                console.error('Error fetching transaction:', error);
+            }
+
+            console.log(`Retrying in ${delay / 1000} seconds...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+
+        // If all retries fail, throw an error
+        throw new Error(`Transaction not found after ${retries} attempts.`);
+    };
+
+    const creatPool = async (digest, tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmout) => {
         if (account) {
-            const transactionResult = await client.getTransactionBlock({
-                digest: digest,
-                options: { showObjectChanges: true }
-            })
+            const transactionResult = await waitForTransaction(digest)
+            console.log(transactionResult)
             const { objectChanges } = transactionResult
             let treasuryCap, packageId
             objectChanges?.forEach((objectChange: any) => {
@@ -182,36 +210,57 @@ export const useCreate = () => {
             })
             if (treasuryCap && packageId) {
                 const tx = new Transaction()
-                const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(1000000000)])
-                tx.moveCall({
-                    arguments: [
-                        tx.object(OBJECTS.Configuration),
-                        tx.object(treasuryCap),
-                        coin,
-                        tx.pure.u64(1000000000),
-                        tx.object('0x6'),
-                        tx.pure.string(tokenName),
-                        tx.pure.string(tokenSymbol),
-                        tx.pure.string(tokenLogo),
-                        tx.pure.string(tokenDescription),
-                        tx.pure.string(twitter),
-                        tx.pure.string(telegram),
-                        tx.pure.string(website),
-                    ],
-                    typeArguments: [`${packageId}::${tokenSymbol.toLowerCase()}::${tokenSymbol.toUpperCase()}`],
-                    target: `${OBJECTS.Package}::move_pump::create_and_first_buy`
-                })
+
+                if (inputAmout == 0) {
+                    tx.moveCall({
+                        arguments: [
+                            tx.object(OBJECTS.Configuration),
+                            tx.object(treasuryCap),
+                            tx.object('0x6'),
+                            tx.pure.string(tokenName),
+                            tx.pure.string(tokenSymbol),
+                            tx.pure.string(tokenLogo),
+                            tx.pure.string(tokenDescription),
+                            tx.pure.string(twitter),
+                            tx.pure.string(telegram),
+                            tx.pure.string(website),
+                        ],
+                        typeArguments: [`${packageId}::${tokenSymbol.toLowerCase()}::${tokenSymbol.toUpperCase()}`],
+                        target: `${OBJECTS.Package}::move_pump::create`
+                    })
+                } else {
+                    const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(inputAmout * 1000000000)])
+                    tx.moveCall({
+                        arguments: [
+                            tx.object(OBJECTS.Configuration),
+                            tx.object(treasuryCap),
+                            coin,
+                            tx.pure.u64((inputAmout - 1) * 1000000000 * 200000),
+                            tx.object('0x6'),
+                            tx.pure.string(tokenName),
+                            tx.pure.string(tokenSymbol),
+                            tx.pure.string(tokenLogo),
+                            tx.pure.string(tokenDescription),
+                            tx.pure.string(twitter),
+                            tx.pure.string(telegram),
+                            tx.pure.string(website),
+                        ],
+                        typeArguments: [`${packageId}::${tokenSymbol.toLowerCase()}::${tokenSymbol.toUpperCase()}`],
+                        target: `${OBJECTS.Package}::move_pump::create_and_first_buy`
+                    })
+                }
 
                 signAndExecuteTransaction({ transaction: tx }, {
                     onSuccess: result => {
                         console.log(result)
+                        toast.success('Successfully pump created!')
                     }
                 })
             }
         }
     }
 
-    return { createToken }
+    return { loading, createToken }
 }
 
 export const useTrade = () => {
@@ -234,16 +283,11 @@ export const useTrade = () => {
                 target: `${OBJECTS.Package}::move_pump::buy_v2`
             })
 
-            signAndExecuteTransaction(
-                {
-                    transaction: tx
-                },
-                {
-                    onSuccess: result => {
-                        console.log(result)
-                    }
+            signAndExecuteTransaction({ transaction: tx }, {
+                onSuccess: result => {
+                    console.log(result)
                 }
-            )
+            })
 
         }
 
@@ -312,7 +356,7 @@ export const useGetPools = () => {
                         marketCap: virtualTokenReserves / virtualSuiReserves * suiPrice,
                         Liquidity: virtualSuiReserves * suiPrice * 2,
                         poolObjectId,
-                        raisingPercent: 0,
+                        raisingPercent: undefined,
                         suiPrice,
                     }
 
@@ -376,4 +420,8 @@ export const useGetPool = (token) => {
         Liquidity,
         marketCap
     }
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
