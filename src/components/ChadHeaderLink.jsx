@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import logo from '../icons/logo.svg'
+import logo from '../assets/logo.png'
 
 const ChadHeaderLink = ({ className }) => {
   return (

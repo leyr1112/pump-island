@@ -2,22 +2,140 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favico.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="description" content="PumpIsland" />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Dela+Gothic+One&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/favico.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="PumpIsland" />
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Dela+Gothic+One&display=swap" rel="stylesheet">
+  <title>PumpIsland</title>
 
-    <title>PumpIsland</title>
+  <style>
+    /* Stile generale */
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background: radial-gradient(50% 50% at 50% 50%, #02126a3d 0%, rgba(255, 255, 255, 0) 100%);
+      position: relative;
+    }
+
+    #particleCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    #root {
+      flex: 1;
+      padding: 20px;
+    }
+
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+  </style>
 </head>
 
 <body>
-    <div id="root"></div>
+  <!-- Canvas per le particelle -->
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- Root div per la tua applicazione React -->
+  <div id="root">
+   
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 PumpIsland. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particlesArray = [];
+    const numParticles = 150;
+
+    // Classe particelle
+    class Particle {
+      constructor(x, y, size, color, velocityX, velocityY) {
+        this.x = x;
+        this.y = y;
+        this.size = size;
+        this.color = color;
+        this.velocityX = velocityX;
+        this.velocityY = velocityY;
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      }
+
+      update() {
+        this.x += this.velocityX;
+        this.y += this.velocityY;
+
+        // Rimbalza ai bordi
+        if (this.x + this.size > canvas.width || this.x - this.size < 0) {
+          this.velocityX = -this.velocityX;
+        }
+        if (this.y + this.size > canvas.height || this.y - this.size < 0) {
+          this.velocityY = -this.velocityY;
+        }
+
+        this.draw();
+      }
+    }
+
+    function initParticles() {
+      for (let i = 0; i < numParticles; i++) {
+        const size = Math.random() * 1 + 0.5;
+        const x = Math.random() * (canvas.width - size * 2) + size;
+        const y = Math.random() * (canvas.height - size * 2) + size;
+        const velocityX = (Math.random() - 0.5) * 1.5;
+        const velocityY = (Math.random() - 0.5) * 1.5;
+        particlesArray.push(new Particle(x, y, size, '#cd8e60', velocityX, velocityY));
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particlesArray.forEach(particle => particle.update());
+      requestAnimationFrame(animate);
+    }
+
+    // Adatta il canvas al ridimensionamento della finestra
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      particlesArray.length = 0;
+      initParticles();
+    });
+
+    initParticles();
+    animate();
+  </script>
 </body>
 
 </html>

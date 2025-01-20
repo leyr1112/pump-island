@@ -99,7 +99,7 @@ const ClaimCard = ({
 
         <div className=" font-light text-white text-[14px]">{description}</div>
 
-        <div className="launchpad-progress-container bg-[#101010] p-4 rounded-[16px] flex flex-col gap-6">
+        <div className="launchpad-progress-container bg-[#1d1d1d] p-4 rounded-[16px] flex flex-col gap-6">
           <div className="h-6">
             <div className="relative w-full h-full bg-[#00f3ef17] rounded-[16px]">
               <div

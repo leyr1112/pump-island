@@ -88,8 +88,8 @@ const LaunchpadCard = ({
             <p className="launchpad-token-name left-aligned">{tokenName}</p>
           </div>
           <div className="flex flex-row items-center gap-2 text-[12px]">
-            <div className="text-[#00f3ef]">Created by:</div>
-            <a href={'/profile?' + devAddress} className="text-[#00f3ef]">
+            <div className="text-[#cd8e60]">Created by:</div>
+            <a href={'/profile?' + devAddress} className="text-[#cd8e60]">
               {devAddress.slice(0, 2) + '..' + devAddress.slice(-3)}
             </a>
           </div>
@@ -97,7 +97,7 @@ const LaunchpadCard = ({
           <div className="launchpad-progress-container">
             <div className="launchpad-progress-text">
               Progress
-              <span className="text-[#00f3ef] ml-1">
+              <span className="text-[#cd8e60] ml-1">
                 ({Number(progress).toLocaleString()}%)
               </span>
             </div>
