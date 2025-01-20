@@ -235,7 +235,7 @@ export const useCreate = () => {
                             tx.object(OBJECTS.Configuration),
                             tx.object(treasuryCap),
                             coin,
-                            tx.pure.u64((inputAmout - 1) * 1000000000 * 200000),
+                            tx.pure.u64((inputAmout * 1000000000 - 1) * 200000),
                             tx.object('0x6'),
                             tx.pure.string(tokenName),
                             tx.pure.string(tokenSymbol),
