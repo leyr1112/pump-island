@@ -97,7 +97,7 @@ const LaunchpadCard = ({
           <div className="launchpad-progress-container">
             <div className="launchpad-progress-text">
               Progress
-              <span className="text-[#cd8e60] ml-1">
+              <span className="text-[#cd8e60  ] ml-1">
                 ({Number(progress).toLocaleString()}%)
               </span>
             </div>

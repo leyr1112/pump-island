@@ -297,7 +297,7 @@
   transition: 0.1s ease-in-out;
   height: 50px;
   cursor: pointer;
-  background: #fbfbfb;
+  background: #cd8e60;
   padding: 10px 10px;
   text-align: center;
   transition: 0.5s;
@@ -306,10 +306,11 @@
   display: block;
   font-weight: 600;
   transform: scale(1, 1);
+ 
 }
 
 .ConnectButton:active {
-  background-color: transparent;
+  background-color: #cd8e60;
   color: #26c5eb;
   transform: scale(1);
   cursor: pointer;
@@ -718,6 +719,7 @@ input[type='number'] {
   justify-content: center;
   flex-direction: column;
   width: 100%;
+
 }
 
 .navConnectButtonBox {
