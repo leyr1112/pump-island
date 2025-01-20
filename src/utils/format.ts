@@ -3,5 +3,5 @@ export const format6 = (v: any) => {
 }
 
 export const format9 = (v: any) => {
-    return Math.round(Number(v) / 10000000) / 1000
+    return Math.round(Number(v) / 1000000) / 1000
 }

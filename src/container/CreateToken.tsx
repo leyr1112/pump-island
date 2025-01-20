@@ -37,13 +37,14 @@ const CreateToken = () => {
       setInputAmount('0')
     }
   }
+  console.log(isFirstBuy)
 
   useEffect(() => {
     if (!isFirstBuy) {
       setInputAmount('0')
     }
 
-  }, [isFirstBuy])
+  }, [isFirstBuy, setInputAmount])
 
   const format9Suibalance = format9(state.suiBalance)
 
