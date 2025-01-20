@@ -48,7 +48,7 @@ const App = () => {
             ...styles,
             color: 'black',
             padding: '4px 0px',
-            backgroundColor: '#f3f3f3',
+            backgroundColor: '#cd8e60',
             border: '1px solid black',
             boxShadow: 'rgb(0, 0, 0) 1px 1px 0px 0px',
             borderRadius: '25px',
@@ -68,15 +68,15 @@ const App = () => {
             ...styles,
             backgroundColor: isFocused
               ? isSelected
-                ? '#00f3ef'
-                : '#00f3ef'
-              : '#f3f3f3',
-            color: 'black',
+                ? '#1d1d1d'
+                : '#1d1d1d'
+              : '#cd8e60',
+            color: 'white',
             cursor: 'pointer'
           }),
           singleValue: styles => ({
             ...styles,
-            color: 'black',
+            color: 'white',
             outline: 'none'
           }),
           indicatorSeparator: styles => ({
@@ -85,11 +85,11 @@ const App = () => {
           }),
           dropdownIndicator: styles => ({
             ...styles,
-            color: 'black'
+            color: 'white'
           }),
           menuList: styles => ({
             ...styles,
-            background: '#f3f3f3',
+            background: '#cd8e60',
             borderRadius: '5px'
           })
         }}
@@ -310,9 +310,9 @@ const App = () => {
           <div className="max-w-7xl m-auto pt-36 pb-24 px-4 sm:px-12 sm:py-10">
             <div className="py-[32px] w-full h-auto">
               <div className="flex flex-col lg:flex-row gap-3 lg:gap-2.5 h-full justify-between">
-                <div className="border border-[#f3f3f3] rounded-full relative w-full xl:w-[calc(1200px_-_435px)] lg:w-[calc(100vw_-_484px)] h-10 lg:h-full">
+                <div className="border border-[#f6f7f9] rounded-full relative w-full xl:w-[calc(1200px_-_435px)] lg:w-[calc(100vw_-_484px)] h-10 lg:h-full">
                   <svg
-                    fill="#222"
+                    fill="#f6f7f9"
                     viewBox="0 0 18 18"
                     width="18"
                     className="top-3 left-[14px] absolute"
@@ -323,7 +323,7 @@ const App = () => {
                     </g>
                   </svg>
                   <input
-                    className="bg-transparent placeholder:text-[#222] placeholder:text-sm focus:outline-none py-[12px] pr-8 pl-[44px] border rounded-2xl w-full h-full text-[#f8ffe8]"
+                    className="bg-transparent placeholder:text-[#f6f7f9] placeholder:text-sm focus:outline-none py-[12px] pr-8 pl-[44px] border rounded-2xl w-full h-full text-[#f6f7f9]"
                     placeholder="Search Token"
                     onChange={onSearchChanged}
                   />
@@ -340,7 +340,7 @@ const App = () => {
                     onChange={onStatusChange}
                   />
                   <button
-                    className="bg-[#f3f3f3] rounded-full p-2"
+                    className="bg-[#cd8e60] rounded-full p-2"
                     onClick={onOrderChange}
                     style={{
                       border: '1px solid black',
@@ -350,7 +350,7 @@ const App = () => {
                   >
                     {orderValue.label === 'Ascending' ? (
                       <svg
-                        fill="#545C68"
+                        fill="#e5e7eb"
                         viewBox="0 0 21 17"
                         width="21"
                         className="fill-primary transition-transform "
@@ -361,7 +361,7 @@ const App = () => {
                       </svg>
                     ) : (
                       <svg
-                        fill="#545C68"
+                        fill="#e5e7eb"
                         viewBox="0 0 21 17"
                         width="21"
                         className="fill-primary transition-transform rotate-180"

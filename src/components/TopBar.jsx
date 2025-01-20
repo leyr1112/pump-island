@@ -96,7 +96,7 @@ const TopBar = () => {
         <div className="flex items-center gap-4">
           <div className="hidden lg:flex flex-row gap-4">
             <a
-              href="https://x.com/BlackPumpofc"
+              href="https://x.com/popislandsui"
               target="_blank"
               rel="noreferrer"
               className="p-2 text-white"
@@ -104,7 +104,7 @@ const TopBar = () => {
               <img src={iconX1} className="w-[24px] h-[24px]" alt="X" />
             </a>
             <a
-              href="https://t.me/blackpumpchat"
+              href="https://t.me/popislandsui"
               target="_blank"
               rel="noreferrer"
               className="p-2"
@@ -119,7 +119,14 @@ const TopBar = () => {
                 {suiBalance} SUI
               </div>
             )}
-            <ConnectButton />
+           <ConnectButton
+    style={{
+      backgroundColor: '#cd8e60 ',
+      color: 'white',
+      padding: '8px 16px',
+      borderRadius: '8px',
+    }}
+  />
           </div>
           {/* Hamburger Menu Button */}
           <button

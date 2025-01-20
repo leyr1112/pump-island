@@ -510,7 +510,7 @@ const Trade = () => {
                             token={token}
                             sender={address}
                             content={chatContent}
-                            timestamp={(Date.now() / 1000).toFixed(0)}
+                            timestamp={(Date.now() / 1000).toFixed(0)} 
                           />
                         </div>
                       </section>
@@ -645,7 +645,12 @@ const Trade = () => {
                       </div>
                       {!isConnected ? (
                         <div>
-                          <ConnectButton className='w-full' />
+                          <ConnectButton className='w-full' style={{
+      backgroundColor: '#cd8e60 ',
+      color: 'white',
+      padding: '8px 16px',
+      borderRadius: '8px',
+    }}/>
                         </div>
                       ) : (
                         <button
@@ -704,7 +709,7 @@ const Trade = () => {
                         className="text-white font-bold text-[24px]"
                         style={{ marginTop: '0px' }}
                       >
-                        Earn <span className="text-[#00f3ef]">0.5%</span> of
+                        Earn <span className="text-[#cd8e60]">0.5%</span> of
                         each trade
                       </h3>
                     </span>
