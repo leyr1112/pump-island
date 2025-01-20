@@ -193,7 +193,7 @@ const CreateToken = () => {
                             <span style={{ color: 'red' }}>*</span>
                           </p>
                           <section className="inputPanel">
-                            <section className="inputPanelHeader w-full">
+                            <section className="inputPanelHeader w-full text-white">
                               <TextArea
                                 rows={6}
                                 placeholder="Enter Token Description"
@@ -263,9 +263,8 @@ const CreateToken = () => {
                           width: '100%'
                         }}
                       >
-                        <>
-                          Launch Cost
-                        </>
+                          <span>Fee:</span>
+                          <span>1 SUI</span>
                       </div>
                       <div
                         style={{

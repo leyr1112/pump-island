@@ -2,23 +2,23 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import '../App.css'
 import '../styles/MainContainer.css'
-import Footer from '../components/Footer'
+import Footer from '../components/Footer.jsx'
 import ClaimCard from '../components/ClaimCard.jsx'
 import melegaBannerImg from '../icons/melega-banner.png'
 import swapIcon from '../icons/swapIcon.svg'
-import TopBar from '../components/TopBar'
+import TopBar from '../components/TopBar.jsx'
 import ClipLoader from 'react-spinners/ClipLoader'
 import { useQueryParam, StringParam } from 'use-query-params'
 import MyChart from '../components/Chart.jsx'
 import { SignMessage } from './SignMessage.jsx'
-import CustomRadioButton from '../components/CustomRadioButton'
+import CustomRadioButton from '../components/CustomRadioButton.jsx'
 import UpdateBox from '../components/profileUpdateBox.tsx'
 import { useGetPool, useGetSuiBalance, useGetTokenBalance } from '../hooks/index.ts'
 import SuiIcon from '../icons/sui.png'
 import { ConnectButton, useCurrentAccount, useCurrentWallet } from '@mysten/dapp-kit'
 import { format9 } from '../utils/format.ts'
 
-const App = () => {
+const Trade = () => {
   const defaultLogo = '/logo.png'
   let [token] = useQueryParam('token', StringParam)
 
@@ -644,8 +644,8 @@ const App = () => {
                         </div>
                       </div>
                       {!isConnected ? (
-                        <div className="self-center">
-                          <ConnectButton />
+                        <div>
+                          <ConnectButton className='w-full' />
                         </div>
                       ) : (
                         <button
@@ -778,4 +778,4 @@ const App = () => {
   )
 }
 
-export default App
+export default Trade

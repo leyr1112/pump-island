@@ -3,7 +3,7 @@ import { useSignMessage } from 'wagmi'
 import { recoverMessageAddress } from 'viem'
 import { apiUrl } from '../utils/constants.ts'
 import { toast } from 'react-hot-toast'
-import { useCurrentWallet } from '@mysten/dapp-kit'
+import { ConnectButton, useCurrentWallet } from '@mysten/dapp-kit'
 
 export function SignMessage({ ChadAddress, sender, content, timestamp }) {
   const {
@@ -69,16 +69,18 @@ export function SignMessage({ ChadAddress, sender, content, timestamp }) {
           className="rounded-[25px] p-6 text-white"
         />
       </div>
-      <button
-        disabled={isLoading || !isConnected}
-        className="SendButton rounded-full text-[#222] py-2"
-      >
-        {!isConnected
-          ? 'Connect Wallet First'
-          : isLoading
-            ? 'Check Wallet'
-            : 'Send Message'}
-      </button>
+      <div className='flex justify-center'>
+        {isConnected ? (
+          <button
+            disabled={isLoading || !isConnected}
+            className="SendButton rounded-full text-[#222] py-2"
+          >
+            {isLoading ? 'Check Wallet' : 'Send Message'}
+          </button>
+        ) : (
+          <ConnectButton connectText="Connect Wallet First" className='w-full' />
+        )}
+      </div>
     </form>
   )
 }

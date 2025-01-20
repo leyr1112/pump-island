@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { ConnectButton, useCurrentAccount, useCurrentWallet } from '@mysten/dapp-kit'
+import { ConnectButton, useCurrentWallet } from '@mysten/dapp-kit'
 import iconHamburger from '../icons/hamburger.svg'
 import iconCross from '../icons/cross-icon.svg'
 import iconTg1 from '../icons/tg-1.svg'
@@ -131,7 +131,7 @@ const TopBar = () => {
                 </a>
               </div>
               <div className="navConnectButtonBox">
-                {isConnected && <div className='text-white flex items-center mr-4 lg:hidden'>{suiBalance} SUI</div>}
+                {isConnected && <div className='text-white items-center mr-4 hidden md:flex'>{suiBalance} SUI</div>}
                 <ConnectButton />
               </div>
               <button

@@ -4,7 +4,7 @@ import React from "react";
 import Dashboard from "./container/Dashboard";
 import CreateToken from "./container/CreateToken.tsx";
 import NotFound from "./container/NotFound";
-import BuyPage from "./container/BuyPage";
+import Trade from "./container/Trade";
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { QueryParamProvider } from 'use-query-params';
 import { WagmiProvider } from 'wagmi'
@@ -105,7 +105,7 @@ const App = () => {
                         <CreateToken />
                       </Route>
                       <Route exact path="/Buy">
-                        <BuyPage />
+                        <Trade />
                       </Route>
                       {/* <Route exact path="/Profile">
                         <Profile />

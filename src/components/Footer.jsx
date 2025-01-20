@@ -92,7 +92,7 @@ const Footer = () => {
         </p>
         <p className='mt-5'>
           <span className="chadfun">
-            (C) 2025 BlackPump.fun | All rights reserved
+            (C) 2025 PumpIsland | All rights reserved
           </span>
         </p>
       </div>

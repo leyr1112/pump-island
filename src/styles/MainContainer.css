@@ -378,6 +378,10 @@
   align-items: center;
 }
 
+.inputPanelHeader textarea {
+  padding: 12px;
+}
+
 .InputBox {
   width: 90%;
   display: flex;

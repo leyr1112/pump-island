@@ -448,7 +448,7 @@ const App = () => {
               <section className="FairLaunchFlexLayout">
                 <section>
                   <p className="ContractContentTextTitle h1">
-                    BlackPump.Fun on BSC Network
+                    PumpIsland
                   </p>
                   <p style={{ textAlign: 'center' }}>
                     <Link to="/create" className="create-token-button">

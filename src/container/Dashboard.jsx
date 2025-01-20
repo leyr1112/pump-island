@@ -141,10 +141,11 @@ const App = () => {
       method: 'GET'
     })
     const latestChats = await latestChatsRes.json()
+
     let sortedList = []
-    const timestampMap = new Map(
+    const timestampMap = latestChats.length > 0 ? new Map(
       latestChats.map(chat => [chat.ChadAddress, chat.timestamp])
-    )
+    ) : undefined
     switch (sortValue.value) {
       case 'Market Cap':
         sortedList = [...filteredChadLists].sort((a, b) => {
