@@ -655,7 +655,7 @@ const Trade = () => {
                       ) : (
                         <button
                           onClick={onTokenSwap}
-                          className="text-[16px] focus:outline-none h-[48px] flex justify-center items-center select-none font-bold text-center w-full bg-[#f0f0f0] hover:opacity-90 disabled:bg-[#646464] disabled:text-[#bbb] rounded-[24px] text-[#222]"
+                          className="text-[16px] focus:outline-none h-[48px] flex justify-center items-center select-none font-bold text-center w-full bg-[#cd8e60] hover:opacity-90 disabled:bg-[#646464] disabled:text-[#bbb] rounded-[24px] text-[#222]"
                           disabled={
                             Number(buyAmount) > 0 &&
                               (inputTokenType === 'SUI'
@@ -691,13 +691,14 @@ const Trade = () => {
                           style={{ marginTop: '0px' }}
                         >
                           Update{' '}
-                          <span className="text-[#00f3ef]">Information</span>
+                          <span className="text-[#cd8e60]">Information</span>
                         </h3>
                       </span>
                     </div>
                     <UpdateBox
                       onCreate={() => setCreating(false)}
                       data={poolDate} // Callback for child component
+                      
                     />
                   </div>
                 )}

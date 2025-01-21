@@ -352,7 +352,7 @@ const UpdateBox = ({ data, onCreate }) => {
           </section>
           <div className="pt-4 rounded-md shadow-md justify-items-center">
             <div
-              className="text-[16px] focus:outline-none h-[48px] flex justify-center items-center select-none font-bold text-center w-full bg-[#f0f0f0] hover:opacity-90 disabled:bg-[#646464] disabled:text-[#bbb] rounded-[24px] text-[#222]"
+              className="text-[16px] focus:outline-none h-[48px] flex justify-center items-center select-none font-bold text-center w-full bg-[#cd8e60] hover:opacity-90 disabled:bg-[#646464] disabled:text-[#bbb] rounded-[24px] text-[#FFFF]"
               onClick={onBlackPumpUpdate}
             >
               {creating === false ? (

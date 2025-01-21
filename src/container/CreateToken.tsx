@@ -58,11 +58,11 @@ const CreateToken = () => {
                   <section className="my-4">
                     <p className="ContractContentTextTitle h1">Create Token</p>
                   </section>
-                  <div className="flex flex-col justify-center items-center gap-[10px] bg-[#121212] rounded-[25px] py-[45px] px-3 sm:px-[25px]">
+                  <div className="flex flex-col justify-center items-center gap-[10px] bg-[#1d1d1d] rounded-[25px] py-[45px] px-3 sm:px-[25px]">
                     <section className="flex flex-col gap-4 w-[90%]">
                       <div className="LpBalance">
                         <p className="Text1">
-                          Name<span style={{ color: 'red' }}>*</span>
+                          Name<span style={{ color: '#cd8f61' }}>*</span>
                         </p>
                       </div>
                       <section className="inputPanel">
@@ -80,7 +80,7 @@ const CreateToken = () => {
                     <section className="flex flex-col gap-4 w-[90%]">
                       <div className="LpBalance">
                         <p className="Text1">
-                          Symbol<span style={{ color: 'red' }}>*</span>
+                          Symbol<span style={{ color: '#cd8f61' }}>*</span>
                         </p>
                       </div>
                       <section className="inputPanel">
@@ -98,7 +98,7 @@ const CreateToken = () => {
                     <section className="flex flex-col gap-4 w-[90%]">
                       <div className="LpBalance">
                         <p className="Text1">
-                          Logo Url<span style={{ color: 'red' }}>*</span>
+                          Logo Url<span style={{ color: '#cd8f61' }}>*</span>
                         </p>
                       </div>
                       <section className="inputPanel">
@@ -116,15 +116,17 @@ const CreateToken = () => {
                     <section className="flex flex-col gap-4 w-[90%]">
                       <p className="Text1">
                         Description (Max 1000 characters)
-                        <span style={{ color: 'red' }}>*</span>
+                        <span style={{ color: '#cd8f61' }}>*</span>
                       </p>
-                      <section className="inputPanel">
+                      <section className="inputPanel" >
                         <section className="inputPanelHeader w-full text-white">
                           <TextArea
                             rows={6}
                             placeholder="Enter Token Description"
                             changeValue={setTokenDescription}
                             value={tokenDescription}
+                           
+                            
                           />
                         </section>
                       </section>

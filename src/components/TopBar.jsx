@@ -71,8 +71,8 @@ const TopBar = () => {
               <span
                 className={`text-[20px] ${
                   currentPath === '/' || currentPath === '/dashboard'
-                    ? 'text-[#f3f3f3]'
-                    : 'text-[#8b8b8b] hover:text-[#f3f3f3]'
+                    ? 'text-[#cd8f61]'
+                    : 'text-[#f6f7f9] hover:text-[#cd8f61]'
                 }`}
               >
                 Board
@@ -82,13 +82,49 @@ const TopBar = () => {
               <span
                 className={`text-[20px] ${
                   currentPath === '/create'
-                    ? 'text-[#f3f3f3]'
-                    : 'text-[#8b8b8b] hover:text-[#f3f3f3]'
+                    ? 'text-[#cd8f61]'
+                    : 'text-[#f6f7f9] hover:text-[#cd8f61]'
                 }`}
               >
                 Create&nbsp;Token
               </span>
             </Link>
+            <div className="left-bar-link">
+            <span
+                className={`text-[20px] ${
+                  currentPath === 'https://www.popisland.it/#/swap?chain=sui'
+                    ? 'text-[#cd8f61]'
+                    : 'text-[#f6f7f9] hover:text-[#cd8f61]'
+                }`}
+              >
+            <a
+              href="https://www.popisland.it/#/swap?chain=sui"
+              target="_blank"
+              rel="noreferrer"
+              
+            >
+              Swap
+            </a>
+            </span>
+            </div>
+            <div className="left-bar-link">
+            <span
+                className={`text-[20px] ${
+                  currentPath === 'https://www.popisland.it/#/bridge'
+                    ? 'text-[#cd8f61]'
+                    : 'text-[#f6f7f9] hover:text-[#cd8f61]'
+                }`}
+              >
+            <a
+              href="https://www.popisland.it/#/bridge"
+              target="_blank"
+              rel="noreferrer"
+              
+            >
+              Bridge
+            </a>
+            </span>
+            </div>
           </div>
         </div>
 

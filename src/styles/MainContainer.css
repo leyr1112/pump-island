@@ -356,6 +356,7 @@
   justify-content: space-between;
   width: 100%;
   margin-bottom: 10px;
+  
 }
 
 .inputPanel>p {
@@ -1129,7 +1130,7 @@ input[type='number'] {
 }
 
 .SendButton {
-  background: #eeeeee;
+  background: #cd8e60;
   border-radius: 5px;
   border: 0px solid transparent;
   /* flex: none; */

@@ -73,7 +73,7 @@ export function SignMessage({ ChadAddress, sender, content, timestamp }) {
         {isConnected ? (
           <button
             disabled={isLoading || !isConnected}
-            className="SendButton rounded-full text-[#222] py-2"
+            className="SendButton rounded-full text-[#FFFF] py-2"
           >
             {isLoading ? 'Check Wallet' : 'Send Message'}
           </button>
