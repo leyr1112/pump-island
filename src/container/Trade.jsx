@@ -141,6 +141,7 @@ const Trade = () => {
                         onError={handleImageError}
                         alt={`${tokenName} logo`}
                       />
+                      
                     }
                     tokenSymbol={tokenSymbol}
                     website={website}
@@ -154,6 +155,15 @@ const Trade = () => {
                     tokenSuiPrice={tokenSuiPrice}
                     tokenAddress={tokenAddress}
                   />
+                <div className="block lg:hidden">
+                <TradeCardBox
+                  token={token}
+                  lpCreated={lpCreated}
+                  tokenAddress={tokenAddress}
+                  tokenLogo={tokenLogo}
+                  tokenSymbol={tokenSymbol}
+                />
+                 </div>
                   <div className="">
                     {lpCreated ? (
                       <iframe
@@ -465,13 +475,17 @@ const Trade = () => {
               </section>
 
               <section className="ClaimLeftColumn px-[16px]">
-                <TradeCardBox
-                  token={token}
-                  lpCreated={lpCreated}
-                  tokenAddress={tokenAddress}
-                  tokenLogo={tokenLogo}
-                  tokenSymbol={tokenSymbol}
-                />
+              <div className="hidden lg:block">
+              <TradeCardBox
+                token={token}
+                lpCreated={lpCreated}
+                tokenAddress={tokenAddress}
+                tokenLogo={tokenLogo}
+                tokenSymbol={tokenSymbol}
+              />
+            </div>
+
+
                 <br />
                 {(address === devAddress) & isConnected && (
                   <div className="claim-card p-6">
