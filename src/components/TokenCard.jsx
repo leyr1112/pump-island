@@ -125,7 +125,7 @@ const TokenSection = ({
                         {tokenAddress}
                     </span>
                     <span className="token-info-value token-info-address-warning">
-                        DO NOT send BNB to this address.
+                        DO NOT send SUI to this address.
                     </span>
                 </div>
             </div>

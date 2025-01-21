@@ -186,8 +186,8 @@ const TopBar = () => {
               to="/dashboard"
               className={`text-[20px] ${
                 currentPath === '/' || currentPath === '/dashboard'
-                  ? 'text-[#e2fea5]'
-                  : 'text-[#f8ffe8] hover:text-[#e2fea5]'
+                  ? 'text-[#cd8f61]'
+                  : 'text-[#f6f7f9] hover:text-[#cd8f61]'
               }`}
             >
               Board
@@ -196,13 +196,49 @@ const TopBar = () => {
               to="/create"
               className={`text-[20px] ${
                 currentPath === '/create'
-                  ? 'text-[#e2fea5]'
-                  : 'text-[#f8ffe8] hover:text-[#e2fea5]'
+                  ? 'text-[#cd8f61]'
+                  : 'text-[#f6f7f9] hover:text-[#cd8f61]'
               }`}
             >
               Create&nbsp;Token
             </Link>
-          </nav>
+        
+          
+            <span
+                className={`text-[20px] ${
+                  currentPath === 'https://www.popisland.it/#/swap?chain=sui'
+                    ? 'text-[#cd8f61]'
+                    : 'text-[#f6f7f9] hover:text-[#cd8f61]'
+                }`}
+              >
+            <a
+              href="https://www.popisland.it/#/swap?chain=sui"
+              target="_blank"
+              rel="noreferrer"
+              
+            >
+              Swap
+            </a>
+            </span>
+           
+            
+            <span
+                className={`text-[20px] ${
+                  currentPath === 'https://www.popisland.it/#/bridge'
+                    ? 'text-[#cd8f61]'
+                    : 'text-[#f6f7f9] hover:text-[#cd8f61]'
+                }`}
+              >
+            <a
+              href="https://www.popisland.it/#/bridge"
+              target="_blank"
+              rel="noreferrer"
+              
+            >
+              Bridge
+            </a>
+            </span>
+            </nav>
         </div>
       )}
     </div>
