@@ -13,10 +13,11 @@ import MyChart from '../components/Chart.jsx'
 import { SignMessage } from './SignMessage.jsx'
 import CustomRadioButton from '../components/CustomRadioButton.jsx'
 import UpdateBox from '../components/profileUpdateBox.tsx'
-import { useGetPool, useGetSuiBalance, useGetTokenBalance } from '../hooks/index.ts'
+import { useGetEstimateOut, useGetPool, useGetSuiBalance, useGetTokenBalance } from '../hooks/index.ts'
 import SuiIcon from '../icons/sui.png'
 import { ConnectButton, useCurrentAccount, useCurrentWallet } from '@mysten/dapp-kit'
 import { format6 } from '../utils/format.ts'
+import { useApp } from '../context/index.jsx'
 
 const Trade = () => {
   const defaultLogo = '/logo.png'
@@ -55,26 +56,33 @@ const Trade = () => {
 
   const [buyAmount, setAmount] = useState()
   const [maxBuyAmount, setMaxBuyAmount] = useState(0)
+
   const [tokenOutAmount, setTokenOutAmount] = useState(0)
 
-  const { suiBalance: suiBalanceDecimal } = useGetSuiBalance()
+  const { state } = useApp()
+  console.log(state)
+  const {suiBalance: suiBalanceDecimal, tokenBalances} = state
+  
   const suiBalance = useMemo(() => {
     if (!suiBalanceDecimal) return 0
     return Math.round(suiBalanceDecimal / 1000000) / 1000
   }, [suiBalanceDecimal])
 
-  const { tokenBalance: tokenBalanceDecimal, tokenDecimal } = useGetTokenBalance(token)
+  const tokenDecimal = 6
 
   const tokenBalance = useMemo(() => {
-    if (!suiBalanceDecimal) return 0
-    return Math.round(tokenBalanceDecimal / 1000) / 1000
-  }, [tokenBalanceDecimal, tokenDecimal])
+    if (tokenBalances && tokenBalances[token])
+      return Math.round(tokenBalances[token] / 1000) / 1000
+    return 0
+  }, [tokenBalances])
 
   const [virtualTokenLp, setVirtualTokenLp] = useState()
   const [tokenPrice, setTokenPrice] = useState(0)
   let [creating, setCreating] = useState(false)
 
   const [inputTokenType, setInputToken] = useState('SUI')
+
+  const { estimateInput, estimateOutput } = useGetEstimateOut(1000000000, 0, token)
 
   const onTokenSwap = async () => { }
 
@@ -510,7 +518,7 @@ const Trade = () => {
                             token={token}
                             sender={address}
                             content={chatContent}
-                            timestamp={(Date.now() / 1000).toFixed(0)} 
+                            timestamp={(Date.now() / 1000).toFixed(0)}
                           />
                         </div>
                       </section>
@@ -646,11 +654,11 @@ const Trade = () => {
                       {!isConnected ? (
                         <div>
                           <ConnectButton className='w-full' style={{
-      backgroundColor: '#cd8e60 ',
-      color: 'white',
-      padding: '8px 16px',
-      borderRadius: '8px',
-    }}/>
+                            backgroundColor: '#cd8e60 ',
+                            color: 'white',
+                            padding: '8px 16px',
+                            borderRadius: '8px',
+                          }} />
                         </div>
                       ) : (
                         <button

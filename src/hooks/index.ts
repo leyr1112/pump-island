@@ -9,6 +9,7 @@ import {
 import { Transaction } from '@mysten/sui/transactions'
 import { intoBase64 } from '../utils/pkg.ts'
 import toast from 'react-hot-toast'
+import { bcs } from '@mysten/sui/bcs'
 
 const client = new SuiClient({ url: getFullnodeUrl('testnet') })
 
@@ -17,17 +18,21 @@ export const useGetConfiguration = () => {
     const [config, setConfig] = useState<{}>()
 
     const getConfiguration = async () => {
-        const configuration = await client.getObject({
-            id: OBJECTS.Configuration,
-            options: { showContent: true }
-        })
-        const configurationFields = (configuration?.data?.content as any)?.fields
-        const threshold = await client.getObject({
-            id: OBJECTS.Threshold,
-            options: { showContent: true }
-        })
-        const thresholdFields = (threshold?.data?.content as any)?.fields
-        setConfig({ ...configurationFields, ...thresholdFields })
+        try {
+            const configuration = await client.getObject({
+                id: OBJECTS.Configuration,
+                options: { showContent: true }
+            })
+            const configurationFields = (configuration?.data?.content as any)?.fields
+            const threshold = await client.getObject({
+                id: OBJECTS.Threshold,
+                options: { showContent: true }
+            })
+            const thresholdFields = (threshold?.data?.content as any)?.fields
+            setConfig({ ...configurationFields, ...thresholdFields })
+        } catch (e) {
+            console.error(e)
+        }
     }
 
     useEffect(() => {
@@ -42,9 +47,13 @@ export const useGetSuiBalance = () => {
     const [suiBalance, setSuiBalance] = useState<any>()
     const account = useCurrentAccount()
     const getSuiBalance = async (address) => {
-        const result = await client.getBalance({ owner: address })
-        const totalBalance = result.totalBalance
-        setSuiBalance(totalBalance)
+        try {
+            const result = await client.getBalance({ owner: address })
+            const totalBalance = result.totalBalance
+            setSuiBalance(totalBalance)
+        } catch (e) {
+            console.error(e)
+        }
     }
     useEffect(() => {
         if (account) {
@@ -63,8 +72,13 @@ export const useGetTokenBalances = () => {
     const [tokenBalances, setTokenBalances] = useState<any[]>([])
     const account = useCurrentAccount()
     const getTokenBalance = async (address) => {
-        const result = await client.getAllBalances({ owner: address })
-        setTokenBalances(result)
+        try {
+            const result = await client.getAllBalances({ owner: address })
+            setTokenBalances(result)
+
+        } catch (e) {
+            console.error(e)
+        }
     }
     useEffect(() => {
         if (account) getTokenBalance(account.address)
@@ -102,11 +116,15 @@ export const useGetTokenBalance = (token) => {
 }
 
 export const useGetSuiPrice = () => {
-    const [suiPrice, setSuiPrice] = useState(4.5)
+    const [suiPrice, setSuiPrice] = useState(0)
     const getSuiprice = async () => {
-        const response = await fetch('https://api.diadata.org/v1/assetQuotation/Sui/0x2::sui::SUI')
-        const data = await response.json()
-        setSuiPrice(data.Price)
+        try {
+            const response = await fetch('https://api.diadata.org/v1/assetQuotation/Sui/0x2::sui::SUI')
+            const data = await response.json()
+            setSuiPrice(data.Price)
+        } catch (e) {
+            console.error(e)
+        }
     }
     useEffect(() => {
         getSuiprice()
@@ -268,7 +286,6 @@ export const useTrade = () => {
     const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction()
     const buy = async () => {
         if (account?.address) {
-            console.log(account?.address)
             const tx = new Transaction()
             const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(100000000)])
             tx.moveCall({
@@ -295,6 +312,40 @@ export const useTrade = () => {
 
     return { buy }
 
+}
+
+export const useGetEstimateOut = (input, output, token) => {
+    const [estimateInput, setEstimateInput] = useState(0)
+    const [estimateOutput, setEstimateOutput] = useState(0)
+
+    const getEstimateOut = async (input, output) => {
+        try {
+            const tx = new Transaction()
+            tx.moveCall({
+                arguments: [
+                    tx.object(OBJECTS.Configuration),
+                    tx.pure.u64(input),
+                    tx.pure.u64(output)
+                ],
+                typeArguments: [token],
+                target: `${OBJECTS.Package}::move_pump::estimate_amount_out`
+            })
+            const data = await client.devInspectTransactionBlock({
+                sender: '0x0000000000000000000000000000000000000000000000000000000000000006',
+                transactionBlock: tx
+            })
+            const returnValues = data!["results"]![0]!["returnValues"];
+            const r0 = Buffer.from(returnValues![0]![0]).toString()
+            const r1 = Buffer.from(returnValues![1]![0]).toString()
+            console.log(r0, r1)            
+        } catch (e) {
+            console.error(e)
+        }
+    }
+    useEffect(() => {
+        getEstimateOut(input, output)
+    }, [input, output])
+    return { estimateInput, estimateOutput }
 }
 
 // Dashboard page hook
