@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from 'react'
+
 import '../App.css'
 import '../styles/MainContainer.css'
+import { useCreate } from '../hooks/index.ts'
+import { useApp } from '../context/index.jsx'
+
+import { ConnectButton, useCurrentWallet } from '@mysten/dapp-kit'
+import 'react-datepicker/dist/react-datepicker.css'
+import Checkbox from 'antd/es/checkbox/Checkbox'
+import ClipLoader from 'react-spinners/ClipLoader'
 import Input from '../components/Input.tsx'
 import TextArea from '../components/TextArea.tsx'
 import Footer from '../components/Footer.jsx'
-import 'react-datepicker/dist/react-datepicker.css'
 import TopBar from '../components/TopBar.jsx'
-import { ConnectButton, useCurrentWallet } from '@mysten/dapp-kit'
-import { useCreate } from '../hooks/index.ts'
-import { useApp } from '../context/index.jsx'
 import { format9 } from '../utils/format.ts'
-import Checkbox from 'antd/es/checkbox/Checkbox'
-import ClipLoader from 'react-spinners/ClipLoader'
 
 const CreateToken = () => {
   const { isConnected } = useCurrentWallet();
   const { state } = useApp()
 
   const { loading, createToken } = useCreate()
-  console.log(loading)
 
   const [tokenName, setTokenName] = useState('Name')
   const [tokenSymbol, setTokenSymbol] = useState('Symbol')
@@ -216,19 +217,18 @@ const CreateToken = () => {
                 >
                   {isConnected ? (
                     <button
-                      disabled={!tokenName || !tokenSymbol || !tokenDescription || !tokenLogo || loading || Number(inputAmount) + 0.2 > format9Suibalance}
+                      disabled={!tokenName || !tokenSymbol || !tokenDescription || !tokenLogo || Number(inputAmount) + 0.2 > format9Suibalance || loading != 'False'}
                       onClick={handleCreate}
                       className="bg-[#cd8e60] flex justify-center items-center h-12 disabled:bg-[#434947] text-white py-[8px] px-[16px] rounded-[8px]"
                     >
-                      {loading ?
+                      {loading != 'False' ?
                         <ClipLoader
                           color={'#222'}
-                          loading={loading}
                           size={30}
                           aria-label="Loading Spinner"
                           data-testid="loader"
                         /> :
-                        isFirstBuy? 'Create and Buy' : 'Create'
+                        isFirstBuy ? 'Create and Buy' : 'Create'
                       }
                     </button  >
                   ) : (
