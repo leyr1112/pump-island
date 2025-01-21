@@ -125,7 +125,7 @@ const Trade = () => {
 
   return (
     <div>
-      <div className="GlobalContainer">
+      <div className="GlobalContainer launches-all-padding">
         <div style={{ zIndex: 1 }}>
           <TopBar />
           <div className="max-w-7xl m-auto pt-36 pb-24 px-4 sm:px-12 sm:py-10">

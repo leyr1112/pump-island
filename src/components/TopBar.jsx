@@ -8,12 +8,19 @@ import iconTg1 from '../icons/tg-1.svg';
 import iconX1 from '../icons/x-1.svg';
 import ChadHeaderLink from '../components/ChadHeaderLink';
 
+
+
 const TopBar = () => {
   const [isExpanded, setIsExpanded] = useState(false); // Stato del menu mobile
   const [isScrolled, setIsScrolled] = useState(false); // Stato per il colore della barra superiore
   const { isConnected } = useCurrentWallet();
   const { state } = useApp();
-
+  
+    const [isOpen, setIsOpen] = useState(false);
+  
+    const toggleCard = () => {
+      setIsOpen(!isOpen);
+    };
   // Calcolo del saldo SUI
   const suiBalance = useMemo(() => {
     return Math.round(state.suiBalance / 1000000) / 1000;
@@ -51,6 +58,9 @@ const TopBar = () => {
   }, []);
 
   let currentPath = window.location.pathname;
+
+
+  
 
   return (
     <div className={`fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${isScrolled ? 'bg-[#1d1d1d]' : 'bg-transparent'}`}>
@@ -114,7 +124,58 @@ const TopBar = () => {
                   Bridge
                 </a>
               </span>
+              
             </div>
+            <div className="left-bar-link">
+            <span
+                className={`text-[20px] animate-pulse`}
+                style={{ color: isOpen ? '#cd8f61' : '#f3cc30' }}
+              >
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    toggleCard();
+                  }}
+                  className="whitespace-nowrap"
+                >
+                  How it works?
+                </a>
+                </span>
+
+                {isOpen && (
+                  <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                  <div
+                className="bg-[#1d1d1d] border-2 border-[#cd8e60] rounded-lg shadow-lg p-6 w-96"
+              >
+                <h2 className="text-xl font-bold mb-4 text-white">How it works</h2>
+                <p className="mb-2 text-white">
+                  PumpIsland prevents rugs by making sure that all created tokens are safe.
+                  Each coin on PumpIsland is a fair-launch with no presale and no team
+                  allocation.
+                </p>
+                <ol className="list-decimal pl-5 mb-4 text-white">
+                  <li>Pick a coin that you like</li>
+                  <li>Buy the coin on the bonding curve</li>
+                  <li>Sell at any time to lock in your profits or losses</li>
+                  <li>
+                    When enough people buy on the bonding curve and 1,800 SUI is raised
+                    during the fair-launch
+                  </li>
+                  <li>The liquidity is then deposited in Cetus Dex</li>
+                </ol>
+                <button
+                  onClick={toggleCard}
+                  className="bg-[#cd8e60] text-white rounded-full px-4 py-2 mt-4 w-full hover:bg-[#b87450] transition"
+                >
+                  OK
+                </button>
+              </div>
+
+                  </div>
+                )}
+              </div>
+
           </div>
         </div>
 
@@ -156,7 +217,7 @@ const TopBar = () => {
           </div>
           {/* Hamburger Menu Button */}
           <button
-            className="bg-black hover:bg-[#222] rounded-full p-2 flex lg:hidden"
+            className="  rounded-full p-2 flex lg:hidden"
             onClick={handleHamburgerClick}
           >
             <img
@@ -219,7 +280,59 @@ const TopBar = () => {
               >
                 Bridge
               </a>
-            </span>
+
+              </span>
+              
+              <span
+                className={`text-[20px] animate-pulse`}
+                style={{ color: isOpen ? '#cd8f61' : '#f3cc30' }}
+              >
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    toggleCard();
+                  }}
+                  className="whitespace-nowrap"
+                >
+                  How it works?
+                </a>
+                </span>
+
+                {isOpen && (
+                  <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                  <div
+                className="bg-[#1d1d1d] border-2 border-[#cd8e60] rounded-lg shadow-lg p-6 w-96"
+              >
+                <h2 className="text-xl font-bold mb-4 text-white">How it works</h2>
+                <p className="mb-2 text-white">
+                  PumpIsland prevents rugs by making sure that all created tokens are safe.
+                  Each coin on PumpIsland is a fair-launch with no presale and no team
+                  allocation.
+                </p>
+                <ol className="list-decimal pl-5 mb-4 text-white">
+                  <li>Pick a coin that you like</li>
+                  <li>Buy the coin on the bonding curve</li>
+                  <li>Sell at any time to lock in your profits or losses</li>
+                  <li>
+                    When enough people buy on the bonding curve and 1,800 SUI is raised
+                    during the fair-launch
+                  </li>
+                  <li>The liquidity is then deposited in Cetus Dex</li>
+                </ol>
+                <button
+                  onClick={toggleCard}
+                  className="bg-[#cd8e60] text-white rounded-full px-4 py-2 mt-4 w-full hover:bg-[#b87450] transition"
+                >
+                  OK
+                </button>
+              </div>
+
+                  </div>
+                )}
+            
+            
+           
           </nav>
         </div>
       )}

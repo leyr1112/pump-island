@@ -50,7 +50,7 @@ const CreateToken = () => {
 
   return (
     <div>
-      <div className="GlobalContainer">
+      <div className="GlobalContainer launches-all-padding">
         <div style={{ zIndex: 1 }}>
           <TopBar />
           <div className="max-w-7xl m-auto px-4 md:px-12">
