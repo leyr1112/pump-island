@@ -78,7 +78,7 @@ export function SignMessage({ ChadAddress, sender, content, timestamp }) {
             {isLoading ? 'Check Wallet' : 'Send Message'}
           </button>
         ) : (
-          <ConnectButton connectText="Connect Wallet First" className='w-full' style={{
+          <ConnectButton connectText="Connect Wallet First" className='w-full h-12' style={{
             backgroundColor: '#cd8e60',
             color: 'white',
             padding: '8px 16px',

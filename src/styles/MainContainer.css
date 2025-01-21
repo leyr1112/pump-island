@@ -162,45 +162,6 @@
   cursor: pointer;
 }
 
-.CreateButton {
-  background: #f1f1f1;
-  border-radius: 25px;
-  border: 1px solid black;
-  box-shadow: rgb(0, 0, 0) 1px 1px 0px 0px;
-  flex: none;
-  order: 1;
-  flex-grow: 0;
-  z-index: 0;
-  width: 100%;
-  margin: 0 auto;
-  height: 48px;
-  color: black;
-  font-style: normal;
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 25px;
-}
-
-.CreateButton:hover {
-  transform: scale(1.03);
-}
-
-.CreateButton:hover {
-  color: black;
-  cursor: pointer;
-}
-
-.CreateButton:active {
-  color: black;
-  cursor: pointer;
-}
-
-.CreateButton:disabled {
-  /*background: #c4b7c533;*/
-  color: #434947;
-  cursor: unset;
-}
-
 .LockBox {
   margin: auto;
   display: flex;

@@ -145,7 +145,7 @@ const TopBar = () => {
                 {suiBalance} SUI
               </div>
             )}
-            <ConnectButton className='w-full'
+            <ConnectButton className='w-full h-12'
               style={{
                 backgroundColor: '#cd8e60',
                 color: 'white',

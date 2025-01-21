@@ -11,12 +11,14 @@ import { useCreate } from '../hooks/index.ts'
 import { useApp } from '../context/index.jsx'
 import { format9 } from '../utils/format.ts'
 import Checkbox from 'antd/es/checkbox/Checkbox'
+import ClipLoader from 'react-spinners/ClipLoader'
 
 const CreateToken = () => {
   const { isConnected } = useCurrentWallet();
   const { state } = useApp()
 
   const { loading, createToken } = useCreate()
+  console.log(loading)
 
   const [tokenName, setTokenName] = useState('Name')
   const [tokenSymbol, setTokenSymbol] = useState('Symbol')
@@ -216,18 +218,22 @@ const CreateToken = () => {
                     <button
                       disabled={!tokenName || !tokenSymbol || !tokenDescription || !tokenLogo || loading || Number(inputAmount) + 0.2 > format9Suibalance}
                       onClick={handleCreate}
-                      className="CreateButton flex justify-center items-center"
-                      style={{
-                        backgroundColor: '#cd8e60 ',
-                        color: 'white',
-                        padding: '8px 16px',
-                        borderRadius: '8px',
-                      }} >
-                      {loading ? 'Creating...' : isFirstBuy ? 'Create and Buy' : 'Create'}
+                      className="bg-[#cd8e60] flex justify-center items-center h-12 disabled:bg-[#434947] text-white py-[8px] px-[16px] rounded-[8px]"
+                    >
+                      {loading ?
+                        <ClipLoader
+                          color={'#222'}
+                          loading={loading}
+                          size={30}
+                          aria-label="Loading Spinner"
+                          data-testid="loader"
+                        /> :
+                        isFirstBuy? 'Create and Buy' : 'Create'
+                      }
                     </button  >
                   ) : (
                     <div className="justify-center flex">
-                      <ConnectButton className='w-full'
+                      <ConnectButton className='w-full h-12'
                         style={{
                           backgroundColor: '#cd8e60',
                           color: 'white',

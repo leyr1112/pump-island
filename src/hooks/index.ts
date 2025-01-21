@@ -277,6 +277,7 @@ export const useTrade = (token) => {
                     signAndExecuteTransaction({ transaction: tx }, {
                         onSuccess: result => {
                             console.log(result)
+                            toast.success('Successfully bought!')
                         }
                     })
                 } else {
@@ -294,12 +295,14 @@ export const useTrade = (token) => {
                     signAndExecuteTransaction({ transaction: tx }, {
                         onSuccess: result => {
                             console.log(result)
+                            toast.success('Successfully sold!')
                         }
                     })
                 }
             }
         } catch (e) {
             console.error(e)
+            toast.error('There is some problem to trade!')
         } finally {
             setLoading(false)
         }
