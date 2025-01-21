@@ -250,37 +250,121 @@ export const useCreate = () => {
     return { loading, createToken }
 }
 
-export const useTrade = () => {
+export const useTrade = (token) => {
     const account = useCurrentAccount()
     const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction()
-    const buy = async () => {
-        if (account?.address) {
-            const tx = new Transaction()
-            const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(100000000)])
-            tx.moveCall({
-                arguments: [
-                    tx.object(OBJECTS.Configuration),
-                    tx.object(OBJECTS.Threshold),
-                    coin,
-                    tx.pure.u64(1000000000000),
-                    tx.object('0x6')
-                ],
-                typeArguments: [`${'0xd9b96ebee3d8c37c3a99b84682abaea48e76823731e353162bb2a945bc25eabe'}::test::TEST`],
-                target: `${OBJECTS.Package}::move_pump::buy_v2`
-            })
-
-            signAndExecuteTransaction({ transaction: tx }, {
-                onSuccess: result => {
-                    console.log(result)
+    const [estimateOut, setEstimateOut] = useState(0n)
+    const [ouput, setOutput] = useState(0)
+    const [loading, setLoading] = useState(false)
+    const buy = async (inputTokenType, inputAmout) => {
+        setLoading(true)
+        try {
+            if (account?.address) {
+                const tx = new Transaction()
+                if (inputTokenType == "SUI") {
+                    const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(inputAmout * 1000000000)])
+                    tx.moveCall({
+                        arguments: [
+                            tx.object(OBJECTS.Configuration),
+                            tx.object(OBJECTS.Threshold),
+                            coin,
+                            tx.pure.u64(estimateOut),
+                            tx.object('0x6')
+                        ],
+                        typeArguments: [token],
+                        target: `${OBJECTS.Package}::move_pump::buy_v2`
+                    })
+                    signAndExecuteTransaction({ transaction: tx }, {
+                        onSuccess: result => {
+                            console.log(result)
+                        }
+                    })
+                } else {
+                    const [coin] = tx.splitCoins(token, [tx.pure.u64(inputAmout * 1000000)])
+                    tx.moveCall({
+                        arguments: [
+                            tx.object(OBJECTS.Configuration),
+                            coin,
+                            tx.pure.u64(inputAmout * 1000000),
+                            tx.object('0x6')
+                        ],
+                        typeArguments: [token],
+                        target: `${OBJECTS.Package}::move_pump::sell`
+                    })
+                    signAndExecuteTransaction({ transaction: tx }, {
+                        onSuccess: result => {
+                            console.log(result)
+                        }
+                    })
                 }
-            })
-
+            }
+        } catch (e) {
+            console.error(e)
+        } finally {
+            setLoading(false)
         }
-
     }
 
-    return { buy }
+    const getEstimateOut = async (inputTokenType, amount) => {
+        if (Number(amount) == 0 || isNaN(Number(amount))) {
+            setEstimateOut(0n)
+            setOutput(0)
+            return
+        }
+        setLoading(true)
+        try {
+            let u64Value = 0n
+            const tx = new Transaction()
+            if (inputTokenType == 'SUI') {
+                tx.moveCall({
+                    arguments: [
+                        tx.object(OBJECTS.Configuration),
+                        tx.pure.u64(Number(amount) * 1000000000),
+                        tx.pure.u64(0)
+                    ],
+                    typeArguments: [token],
+                    target: `${OBJECTS.Package}::move_pump::estimate_amount_out`
+                })
+                const result = await client.devInspectTransactionBlock({
+                    transactionBlock: tx,
+                    sender: '0x0000000000000000000000000000000000000000000000000000000000000000'
+                })
+                const returnValues = result!["results"]![0]!["returnValues"];
+                const byteArray2 = returnValues![1][0]
+                const buffer2 = Buffer.from(byteArray2);
+                u64Value = buffer2.readBigUInt64LE();
+                setEstimateOut(u64Value)
+                setOutput(Number(u64Value / 1000n) / 1000)
 
+            } else {
+                tx.moveCall({
+                    arguments: [
+                        tx.object(OBJECTS.Configuration),
+                        tx.pure.u64(0),
+                        tx.pure.u64(Number(amount) * 1000000)
+                    ],
+                    typeArguments: [token],
+                    target: `${OBJECTS.Package}::move_pump::estimate_amount_out`
+                })
+                const result = await client.devInspectTransactionBlock({
+                    transactionBlock: tx,
+                    sender: '0x0000000000000000000000000000000000000000000000000000000000000000'
+                })
+                const returnValues = result!["results"]![0]!["returnValues"];
+                const byteArray = returnValues![0][0]
+                const buffer = Buffer.from(byteArray);
+                u64Value = buffer.readBigUInt64LE();
+                setEstimateOut(u64Value)
+                setOutput(Number(u64Value / 1000n) / 1000000)
+            }
+        } catch (e) {
+            console.error(e)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    return { buy, getEstimateOut, estimateOut, ouput, loading }
 }
 
 export const useGetEstimateOut = (input, output, token) => {

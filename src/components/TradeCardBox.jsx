@@ -1,7 +1,9 @@
-import React, { useState, useMemo, } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { ConnectButton, useCurrentWallet } from "@mysten/dapp-kit";
 import { useApp } from "../context";
+import { useTrade } from "../hooks/index.ts";
 
+import ClipLoader from 'react-spinners/ClipLoader'
 import SuiIcon from '../icons/sui.png'
 import melegaBannerImg from '../icons/melega-banner.png'
 import swapIcon from '../icons/swapIcon.svg'
@@ -9,6 +11,7 @@ import swapIcon from '../icons/swapIcon.svg'
 const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }) => {
   const { isConnected } = useCurrentWallet()
   const { state } = useApp()
+  const { buy, getEstimateOut, ouput, loading } = useTrade(token)
 
   const { suiBalance: suiBalanceDecimal, tokenBalances } = state
   const suiBalance = useMemo(() => {
@@ -17,8 +20,12 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
   }, [suiBalanceDecimal])
 
   const tokenBalance = useMemo(() => {
-    if (tokenBalances && tokenBalances[token])
-      return Math.round(tokenBalances[token] / 1000) / 1000
+    if (tokenBalances) {
+      const tokenBalance = tokenBalances.filter((item) => item.coinType == token)
+      if (tokenBalance.length > 0) {
+        return Math.round(tokenBalance[0].totalBalance / 1000) / 1000
+      }
+    }
     return 0
   }, [tokenBalances])
 
@@ -26,18 +33,27 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
   const chanageCurrency = async () => {
     if (inputTokenType === 'SUI') {
       setInputToken('Token')
-      setInputAmount(tokenOutAmount)
+      setInputAmount('')
     } else {
       setInputToken('SUI')
-      setInputAmount(tokenOutAmount)
+      setInputAmount('')
     }
   }
-  const [maxBuyAmount, setMaxBuyAmount] = useState(0)
-
+  
   const [inputAmount, setInputAmount] = useState()
-  const tokenOutAmount = useMemo(() => {
-    
-  }, [])
+  const [debouncedAmount, setDebouncedAmount] = useState(inputAmount);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedAmount(inputAmount);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [inputAmount]);
+
+  useEffect(() => {
+    getEstimateOut(inputTokenType, debouncedAmount)
+  }, [inputTokenType, debouncedAmount])
 
   const setMaxAmount = async () => {
     if (inputTokenType === 'SUI') {
@@ -47,16 +63,8 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
     }
   }
 
-  const [creating, setCreating] = useState(false)
-
-  const onTokenSwap = async () => {
-    try {
-      setCreating(true)
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setCreating(false)
-    }
+  const handleTrade = () => {
+    buy(inputTokenType, inputAmount)
   }
 
   return lpCreated ? (
@@ -79,7 +87,7 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
         <div className="swap-cards-container ">
           <div className="flex flex-col gap-1 relative">
             <div className="w-full rounded-[16px] bg-[#1A1A1A] px-4 py-6 flex justify-between">
-              <div className="flex gap-[16px]">
+              <div className="flex gap-[16px] items-center">
                 <img
                   alt="token icon"
                   fetchpriority="high"
@@ -99,7 +107,7 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
                     From
                   </span>
                   <span className="text-white text-[20px] font-bold whitespace-nowrap overflow-hidden text-ellipsis">
-                    {inputTokenType === 'SUI' ? 'SUI' : tokenSymbol.length > 8 ? `$tokenSymbol.slice(0, 8)}...` : tokenSymbol}
+                    {inputTokenType == 'SUI' ? 'SUI' : tokenSymbol.length > 4 ? `${tokenSymbol.slice(0, 4)}...` : tokenSymbol}
                   </span>
                 </div>
               </div>
@@ -109,7 +117,14 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
                   placeholder="0"
                   className="placeholder:text-[#919191] bg-transparent max-w-[180px] focus:outline-none text-white text-[20px] font-bold text-right h-6"
                   value={inputAmount}
-                  onChange={e => setInputAmount(e.target.value)}
+                  onChange={e => {
+                    if (inputTokenType == "SUI") {
+                      if (Number(e.target.value) < Number(18446744073709551615n / 1000000000n)) setInputAmount(e.target.value)
+                    }
+                    else {
+                      if (Number(e.target.value) < Number(18446744073709551615n / 1000000n)) setInputAmount(e.target.value)
+                    }
+                  }}
                   required
                 />
                 <div className="flex gap-2 items-center">
@@ -127,7 +142,7 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
               </div>
             </div>
             <div className="w-full rounded-[16px] bg-[#1A1A1A] px-4 py-6 flex justify-between">
-              <div className="flex gap-[16px]">
+              <div className="flex gap-[16px] items-center">
                 <img
                   alt="token icon"
                   fetchpriority="high"
@@ -154,8 +169,8 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
                   placeholder="0"
                   label=""
                   type="number"
-                  value={tokenOutAmount}
-                  className="text-white text-right text-[20px] font-bold h-6"
+                  value={ouput}
+                  className="text-[#919191] text-right text-[20px] font-bold h-6"
                   disabled
                 />
                 <div className="flex gap-2 items-center">
@@ -193,12 +208,21 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
           </div>
         ) : (
           <button
-            onClick={onTokenSwap}
-            className="text-[16px] focus:outline-none h-[48px] flex justify-center items-center select-none font-bold text-center w-full bg-[#cd8e60] hover:opacity-90 disabled:bg-[#646464] disabled:text-[#bbb] rounded-[24px] text-[#222]"
-            disabled={(Number(inputAmount) > 0 && (inputTokenType === 'SUI' ? suiBalance >= Number(inputAmount) : tokenBalance >= Number(inputAmount)) ? false : true) || creating
+            onClick={handleTrade}
+            className="text-[16px] focus:outline-none h-[48px] flex justify-center items-center select-none font-bold text-center w-full bg-[#cd8e60] hover:opacity-90 disabled:bg-[#646464] disabled:text-[#bbb] rounded-[24px] text-white"
+            disabled={(Number(inputAmount) > 0 && (inputTokenType === 'SUI' ? suiBalance >= Number(inputAmount) : tokenBalance >= Number(inputAmount)) ? false : true) || loading
             }
           >
-            {inputTokenType == 'SUI' ? creating ? 'Buying' : 'Buy' : creating ? 'Selling' : 'Sell'}
+            {loading ?
+              <ClipLoader
+                color={'#222'}
+                loading={loading}
+                size={30}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+              /> :
+              inputTokenType == 'SUI' ? 'Buy' : 'Sell'
+            }
           </button>
         )}
       </section>

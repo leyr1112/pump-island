@@ -126,17 +126,4 @@ const UpdateBox = ({ data }) => {
   )
 }
 
-UpdateBox.propTypes = {
-  imageUrl: PropTypes.string,
-  handleClick: PropTypes.func.isRequired,
-  className: PropTypes.string,
-  style: PropTypes.object
-}
-
-UpdateBox.defaultProps = {
-  imageUrl: undefined,
-  className: '',
-  style: {}
-}
-
 export default UpdateBox

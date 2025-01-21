@@ -59,13 +59,13 @@ const ClaimCard = ({
             <div className="flex gap-1 flex-row md:flex-col place-content-between items-center">
               <span className="font-semibold text-[#999999] text-[12px]">Price</span>
               <span className="font-bold text-white text-[20px]">
-                ${new Intl.NumberFormat().format(tokenSuiPrice)}
+                {tokenSuiPrice.toFixed(9)} SUI
               </span>
             </div>
             <div className="flex gap-1 flex-row md:flex-col place-content-between items-center">
               <span className="font-semibold text-[#999999] text-[12px]">MC</span>
               <span className="font-bold text-white text-[20px]">
-                ${new Intl.NumberFormat().format(marketCap)}
+                ${marketCap.toLocaleString()}
               </span>
             </div>
             <div className="flex gap-1 flex-row md:flex-col place-content-between items-center">

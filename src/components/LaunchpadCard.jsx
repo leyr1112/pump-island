@@ -101,7 +101,7 @@ const LaunchpadCard = ({
                 ({Number(progress).toLocaleString()}%)
               </span>
             </div>
-            <div className="launchpad-progress-bar">
+            <div className="launchpad-progress-bar overflow-hidden">
               <div
                 className="launchpad-progress-bar-filled"
                 style={{ width: `${progress}%` }}
