@@ -3622,3 +3622,31 @@ a {
     min-width: 80px;
   }
 }
+.Button_buttonVariants__x1s81q0.Button_buttonVariants_variant_primary__x1s81q1 {
+  background-color: #cd8e60 !important; /* Cambia il colore di sfondo */
+  color: white !important; /* Cambia il colore del testo */
+  border-color: #cd8e60 !important; /* Cambia il colore del bordo */
+
+}
+.AccountDropdownMenu_menuContainer__div2ql1{
+  background-color: #cd8e60 !important; 
+
+}
+
+.Text_textVariants_size_sm__2bv1ur1{
+color: #FFFF !important; 
+
+}
+.Text_textVariants_size_sm__2bv1ur1:hover{
+  color: #222 !important; 
+  
+  }
+
+.AccountDropdownMenu_menuItem__div2ql3{
+  color: #FFFF !important; 
+  
+  }
+  .AccountDropdownMenu_menuItem__div2ql3:hover{
+    color: #222 !important; 
+    
+    }
