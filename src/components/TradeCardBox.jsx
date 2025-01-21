@@ -186,7 +186,7 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
         {!isConnected ? (
           <div>
             <ConnectButton className='w-full' style={{
-              backgroundColor: '#cd8e60 ',
+              backgroundColor: '#cd8e60',
               color: 'white',
               padding: '8px 16px',
               borderRadius: '8px',

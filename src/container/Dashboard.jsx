@@ -139,10 +139,6 @@ const App = () => {
   }
 
   const sortChadLists = useCallback(async () => {
-    // const latestChatsRes = await fetch(apiUrl + `/api/getLatestChats`, {
-    //   method: 'GET'
-    // })
-    // const latestChats = await latestChatsRes.json()
     const latestChats = []
 
     let sortedList = []
@@ -285,32 +281,10 @@ const App = () => {
 
   return (
     <div>
-      <style jsx={true}>{`
-        .modal {
-          opacity: 0;
-          visibility: hidden;
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-color:#FFFFF;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          transition: all 0.3s ease;
-          z-index: 10;
-        }
-
-        .show-modal {
-          opacity: 1;
-          visibility: visible;
-        }
-      `}</style>
       <div className="GlobalContainer launches-all-padding">
         <div>
           <TopBar />
-          <div className="max-w-7xl m-auto pt-36 pb-24 px-4 sm:px-12 sm:py-10">
+          <div className="max-w-7xl m-auto px-4 md:px-12">
             <div className="py-[32px] w-full h-auto">
               <div className="flex flex-col lg:flex-row gap-3 lg:gap-2.5 h-full justify-between">
                 <div className="border border-[#f6f7f9] rounded-full relative w-full xl:w-[calc(1200px_-_435px)] lg:w-[calc(100vw_-_484px)] h-10 lg:h-full">

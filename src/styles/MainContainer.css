@@ -250,39 +250,6 @@
   justify-content: flex-end;
 }
 
-.ConnectButton {
-  width: 25%;
-  outline: none;
-  border: 0px solid transparent;
-  border-image-slice: 1;
-  align-items: center;
-  font-size: 17px;
-  margin-left: -60px;
-  margin-bottom: -15px;
-  font-weight: 500;
-  color: white;
-  transition: 0.1s ease-in-out;
-  height: 90%;
-  cursor: pointer;
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.25)),
-    linear-gradient(90deg,
-      rgb(174, 37, 174) -3.12%,
-      rgb(238, 138, 247) 29.71%,
-      rgb(210, 71, 203) 73.6%,
-      rgb(215, 103, 237) 102.14%) !important;
-  backdrop-filter: blur(38.5864px) !important;
-  padding: 10px 30px;
-  text-align: center;
-  transition: 0.5s;
-  background-size: 200% auto;
-  color: white;
-  border-radius: 10px;
-  /* text-shadow: 1px 1px 4px black; */
-  display: block;
-  font-weight: 600;
-  transform: scale(1, 1);
-}
-
 .navConnectButton {
   width: 184px;
   outline: none;
@@ -345,7 +312,7 @@
   display: flex;
   flex-direction: column;
   margin-bottom: auto;
-  padding-top: 120px;
+  padding-top: 5rem;
   overflow-x: hidden;
   overflow-y: hidden !important;
   min-height: 100vh;
