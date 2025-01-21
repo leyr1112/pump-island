@@ -8,15 +8,9 @@ import Trade from "./container/Trade";
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { QueryParamProvider } from 'use-query-params';
 import { WagmiProvider } from 'wagmi'
-import { bsc, mainnet, base, polygon, bscTestnet, arbitrum, avalanche } from 'wagmi/chains'
+import { bsc, mainnet, base, polygon, bscTestnet } from 'wagmi/chains'
 import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react';
-import Profile from "./container/Profile.tsx";
 import EditProfile from "./container/EditProfile";
-// import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
-// import { InjectedConnector } from 'wagmi/connectors/injected'
-// import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
-// import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
-// import { Web3Modal } from "@web3modal/react";
 
 import toast, { ToastBar, Toaster } from "react-hot-toast";
 import './index.css';
@@ -104,7 +98,7 @@ const App = () => {
                       <Route exact path="/create">
                         <CreateToken />
                       </Route>
-                      <Route exact path="/Buy">
+                      <Route exact path="/trade">
                         <Trade />
                       </Route>
                       {/* <Route exact path="/Profile">
@@ -124,10 +118,6 @@ const App = () => {
                       </Route>
                     </Switch>
                   </WagmiProvider>
-                  {/* <Web3Modal
-                    projectId={projectId}
-                    ethereumClient={ethereumClient}
-                  /> */}
                 </AppProvider>
               </WalletProvider>
             </SuiClientProvider>

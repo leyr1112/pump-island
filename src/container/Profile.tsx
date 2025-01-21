@@ -113,7 +113,7 @@ const Profile = () => {
                 const chadData = {
                   chainId: chainId,
                   progress: progress,
-                  Liquidity: liquidity,
+                  liquidity: liquidity,
                   tokenName: name,
                   logoUrl: logoUrl,
                   bannerUrl: bannerUrl,
@@ -640,7 +640,7 @@ const Profile = () => {
                           {
                             chainId,
                             progress,
-                            Liquidity,
+                            liquidity,
                             tokenName,
                             logoUrl,
                             bannerUrl,
@@ -662,7 +662,7 @@ const Profile = () => {
                             <LaunchpadCard
                               chainId={chainId}
                               progress={progress}
-                              Liquidity={Liquidity}
+                              liquidity={liquidity}
                               tokenName={tokenName}
                               Logo={
                                 <img

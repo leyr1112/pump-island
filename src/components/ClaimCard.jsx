@@ -1,92 +1,36 @@
-import React, { useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import WebsiteIcon from '../icons/website.png'
-import TelegramIcon from '../icons/telegram.png'
-import TwitterIcon from '../icons/x-icon.svg'
-
-const SocialSection = ({ website, telegram, twitter }) => (
-  <div
-    className="buy-social-section"
-    style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}
-  >
-    {twitter && (
-      <a href={`${twitter}`} target="_blank" rel="noopener noreferrer">
-        <img src={TwitterIcon} alt="Twitter" className="social-icon" />
-      </a>
-    )}
-    {telegram && (
-      <a href={`${telegram}`} target="_blank" rel="noopener noreferrer">
-        <img src={TelegramIcon} alt="Telegram" className="social-icon" />
-      </a>
-    )}
-    {website && (
-      <a href={website} target="_blank" rel="noopener noreferrer">
-        <img src={WebsiteIcon} alt="Website" className="social-icon" />
-      </a>
-    )}
-  </div>
-)
-
-const ChadPumpInfoSection = ({ tokenSupplyUSD, marketCap, volume }) => (
-  <>
-    <div className="fields flex justify-between">
-      <div className="flex flex-col gap-1">
-        <span className="font-semibold text-[#999999] text-[12px]">MC</span>
-        <span className="font-bold text-white text-[20px]">
-          ${new Intl.NumberFormat().format(marketCap)}
-        </span>
-      </div>
-      <div className="flex flex-col gap-1">
-        <span className="font-semibold text-[#999999] text-[12px]">VL</span>
-        <span className="font-bold text-white text-[20px]">
-          ${tokenSupplyUSD.toLocaleString()}
-        </span>
-      </div>
-      <div className="flex flex-col gap-1">
-        <span className="font-semibold text-[#999999] text-[12px]">Volume</span>
-        <span className="font-bold text-white text-[20px]">
-          ${(volume / 10 ** 18).toLocaleString()}
-        </span>
-      </div>
-    </div>
-  </>
-)
+import { SocialSection } from './SocialSection'
+import { Link } from 'react-alice-carousel'
+import { ScanUrl } from '../config'
 
 const ClaimCard = ({
   tokenName,
   Logo,
   tokenSymbol,
-  maxBuyAmount,
-  tokenSupplyUSD,
-  tokenSupplyLiquidity,
-  tokenPrice,
-  tokenUnsoldTokens,
-  tokenCover,
   website,
   telegram,
   twitter,
   volume,
   description,
-  ethPrice,
-  lpCreated
+  progress,
+  marketCap,
+  liquidity,
+  tokenSuiPrice,
+  tokenAddress
 }) => {
-  let marketCap = (tokenPrice * 1000000000 * Number(ethPrice)) / 10 ** 12
-  let progress = (marketCap * 100) / 69000
-  if (lpCreated) {
-    progress = 100
-  }
   return (
     <div className="relative overflow-hidden">
       <div className="flex flex-col relative rounded-[25px] bg-[#090909] z-2 !rounded-b-none p-6 gap-[16px]">
-        <div className="flex justify-between gap-4">
-          <div className="flex gap-4 flex-grow">
+        <div className="flex justify-between gap-4 flex-col md:flex-row">
+          <div className="flex gap-4 items-center">
             {Logo}
             <div className="flex flex-col gap-0">
-              <span className="text-white font-bold text-[20px]">
-                {tokenSymbol}
+              <span className="text-white font-bold text-[28px]">
+                {tokenName} ({tokenSymbol})
               </span>
-              <span className="font-semibold text-[#919191] text-[16px]">
-                {tokenName}
+              <span className="font-semibold text-[#919191] text-[18px]">
+                Contract: <a href={`${ScanUrl.Coin}${tokenAddress}`} target='_blank' className="text-[#cd8e60]">{tokenAddress.slice(0, 8)}...{tokenAddress.slice(-3)}</ a>
               </span>
             </div>
           </div>
@@ -97,7 +41,7 @@ const ClaimCard = ({
           />
         </div>
 
-        <div className=" font-light text-white text-[14px]">{description}</div>
+        <div className=" font-light text-white text-[16px]">{description}</div>
 
         <div className="launchpad-progress-container bg-[#1d1d1d] p-4 rounded-[16px] flex flex-col gap-6">
           <div className="h-6">
@@ -111,15 +55,32 @@ const ClaimCard = ({
               </span>
             </div>
           </div>
-          <ChadPumpInfoSection
-            tokenSupplyLiquidity={tokenSupplyLiquidity}
-            marketCap={(tokenSupplyUSD / tokenSupplyLiquidity / 2) * 10 ** 9}
-            tokenSupplyUSD={tokenSupplyUSD}
-            tokenUnsoldTokens={tokenUnsoldTokens}
-            maxBuyAmount={maxBuyAmount}
-            volume={volume}
-            
-          />
+          <div className="fields flex justify-between flex-col md:flex-row">
+            <div className="flex gap-1 flex-row md:flex-col place-content-between items-center">
+              <span className="font-semibold text-[#999999] text-[12px]">Price</span>
+              <span className="font-bold text-white text-[20px]">
+                ${new Intl.NumberFormat().format(tokenSuiPrice)}
+              </span>
+            </div>
+            <div className="flex gap-1 flex-row md:flex-col place-content-between items-center">
+              <span className="font-semibold text-[#999999] text-[12px]">MC</span>
+              <span className="font-bold text-white text-[20px]">
+                ${new Intl.NumberFormat().format(marketCap)}
+              </span>
+            </div>
+            <div className="flex gap-1 flex-row md:flex-col place-content-between items-center">
+              <span className="font-semibold text-[#999999] text-[12px]">VL</span>
+              <span className="font-bold text-white text-[20px]">
+                ${liquidity.toLocaleString()}
+              </span>
+            </div>
+            <div className="flex gap-1 flex-row md:flex-col place-content-between items-center">
+              <span className="font-semibold text-[#999999] text-[12px]">Volume</span>
+              <span className="font-bold text-white text-[20px]">
+                ${(volume / 10 ** 18).toLocaleString()}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -130,12 +91,8 @@ ClaimCard.propTypes = {
   tokenName: PropTypes.string.isRequired,
   Logo: PropTypes.element.isRequired,
   tokenSymbol: PropTypes.string.isRequired,
-  maxBuyAmount: PropTypes.number.isRequired,
   tokenSupplyLiquidity: PropTypes.number,
   tokenPrice: PropTypes.number,
-  tokenSupplyUSD: PropTypes.number.isRequired,
-  tokenUnsoldTokens: PropTypes.string.isRequired,
-  tokenCover: PropTypes.string.isRequired,
   website: PropTypes.string,
   telegram: PropTypes.string,
   twitter: PropTypes.string,

@@ -66,7 +66,7 @@ const App = () => {
             let dexName = 'Trader Joe'
             chadData = {
               progress: progress,
-              Liquidity: liquidity,
+              liquidity: liquidity,
               tokenName: name,
               logoUrl: logoUrl,
               bannerUrl: bannerUrl,
@@ -380,7 +380,7 @@ const App = () => {
           (
             {
               progress,
-              Liquidity,
+              liquidity,
               tokenName,
               logoUrl,
               bannerUrl,
@@ -409,7 +409,7 @@ const App = () => {
 
               <LaunchpadCard
                 progress={progress}
-                Liquidity={Liquidity}
+                liquidity={liquidity}
                 tokenName={tokenName}
                 Logo={<img src={logoUrl} className="claim-card-logo" />}
                 Banner={bannerUrl}

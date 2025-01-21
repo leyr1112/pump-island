@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom'
 
 const LaunchpadCard = ({
   progress,
-  Liquidity,
+  liquidity,
   tokenName,
   Logo,
   chadAddress,
@@ -21,7 +21,7 @@ const LaunchpadCard = ({
   telegram,
   raisingPercent
 }) => {
-  const link = `/buy?token=${chadAddress}`
+  const link = `/trade?token=${chadAddress}`
   const defaultLogo = '/logo.png'
   const [imgLogo, setImgLogo] = useState(Logo)
   if (progress > 100) {
@@ -87,10 +87,10 @@ const LaunchpadCard = ({
           <div className="launchpad-header-container">
             <p className="launchpad-token-name left-aligned">{tokenName}</p>
           </div>
-          <div className="flex flex-row items-center gap-2 text-[12px]">
+          <div className="flex flex-row items-center gap-2 text-[16px]">
             <div className="text-[#cd8e60]">Created by:</div>
-            <a href={'/profile?' + devAddress} className="text-[#cd8e60]">
-              {devAddress.slice(0, 2) + '..' + devAddress.slice(-3)}
+            <a href={'/profile?address=' + devAddress} className="text-[#cd8e60]">
+              {devAddress.slice(0, 6) + '..' + devAddress.slice(-4)}
             </a>
           </div>
 
@@ -122,7 +122,7 @@ const LaunchpadCard = ({
               <b>${Math.round(marketCap).toLocaleString()}</b>
             </span>
             <span className="right-aligned">
-              <b>${(Math.round(Liquidity * 1000) / 1000).toLocaleString()}</b>
+              <b>${(Math.round(liquidity * 1000) / 1000).toLocaleString()}</b>
             </span>
           </div>
         </div>
@@ -133,9 +133,8 @@ const LaunchpadCard = ({
 
 LaunchpadCard.propTypes = {
   progress: PropTypes.number.isRequired,
-  Liquidity: PropTypes.number.isRequired,
+  liquidity: PropTypes.number.isRequired,
   tokenName: PropTypes.string.isRequired,
-  raisingPercent: PropTypes.number.isRequired
 }
 
 LaunchpadCard.defaultProps = {

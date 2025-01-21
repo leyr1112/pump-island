@@ -97,7 +97,7 @@ const RightPanel = () => {
               let dexName = 'Trader Joe'
               chadData = {
                 progress: progress,
-                Liquidity: liquidity,
+                liquidity: liquidity,
                 tokenName: name,
                 logoUrl: logoUrl,
                 bannerUrl: bannerUrl,
@@ -135,7 +135,7 @@ const RightPanel = () => {
           (
             {
               progress,
-              Liquidity,
+              liquidity,
               tokenName,
               logoUrl,
               bannerUrl,
@@ -157,7 +157,7 @@ const RightPanel = () => {
               <img src={i === 0 ? trophy1 : i === 1 ? trophy2 : trophy3} className="trophy absolute" width="64px" alt="" />
               <LaunchpadCard
                 progress={progress}
-                Liquidity={Liquidity}
+                liquidity={liquidity}
                 tokenName={tokenName}
                 Logo={<img src={logoUrl} className="claim-card-logo" />}
                 Banner={bannerUrl}

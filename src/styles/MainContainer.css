@@ -306,7 +306,7 @@
   display: block;
   font-weight: 600;
   transform: scale(1, 1);
- 
+
 }
 
 .ConnectButton:active {
@@ -356,7 +356,7 @@
   justify-content: space-between;
   width: 100%;
   margin-bottom: 10px;
-  
+
 }
 
 .inputPanel>p {
@@ -1670,7 +1670,7 @@ hr {
   min-width: 280px;
   background: #1d1d1d;
   /* box-shadow: 0px 0px 17.5px 10px rgba(232, 232, 234, 0.37); */
-  border-radius: 25px;
+  border-radius: 16px;
   margin: auto;
   background-position: top center;
   background-repeat: no-repeat;
@@ -2353,10 +2353,10 @@ a {
   filter: drop-shadow(0px 0px 2px #000);
   border-radius: 50%;
   position: absolute;
-  top: 8px!important;
-  right: 8px!important;
-  width: 32px!important;
-  height: 32px!important;
+  top: 8px !important;
+  right: 8px !important;
+  width: 32px !important;
+  height: 32px !important;
   z-index: 10;
 }
 
@@ -3579,11 +3579,13 @@ a {
     transform: translateY(3px);
     fill: #75f95128;
   }
+
   100% {
     transform: translateY(-3px);
     fill: #75f951f0;
   }
 }
+
 .carousel-container {
   overflow: hidden;
   position: relative;
@@ -3596,11 +3598,15 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex: 1 0 auto; /* Flex grow/shrink, base size is auto */
-  min-width: 150px; /* Minimum width of each card */
-  max-width: 350px; /* Maximum width of each card */
+  flex: 1 0 auto;
+  /* Flex grow/shrink, base size is auto */
+  min-width: 150px;
+  /* Minimum width of each card */
+  max-width: 350px;
+  /* Maximum width of each card */
   height: 100%;
   background: #101010;
+
   &:hover {
     transform: scale(0.95);
     box-shadow: 1px 1px 1px rgb(14, 14, 14);
@@ -3613,8 +3619,10 @@ a {
   left: 0;
   height: 100%;
   gap: 1px;
-  width: max-content; /* Track width is based on content */
+  width: max-content;
+  /* Track width is based on content */
   animation: slide 40s linear infinite;
+
   /* animation: slide 20s linear(1.13 -11.31%, 0.05 100.71%) infinite; */
   &:hover {
     animation-play-state: paused;
@@ -3625,8 +3633,10 @@ a {
   0% {
     transform: translateX(0);
   }
+
   100% {
-    transform: translateX(calc(-100% + 100vw)); /* Slide based on screen size */
+    transform: translateX(calc(-100% + 100vw));
+    /* Slide based on screen size */
   }
 }
 

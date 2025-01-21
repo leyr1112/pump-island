@@ -235,7 +235,7 @@ const App = () => {
           ({
             chainId,
             progress,
-            Liquidity,
+            liquidity,
             tokenName,
             logoUrl,
             bannerUrl,
@@ -255,7 +255,7 @@ const App = () => {
             <LaunchpadCard
               chainId={chainId}
               progress={progress}
-              Liquidity={Liquidity}
+              liquidity={liquidity}
               tokenName={tokenName}
               Logo={logoUrl}
               Banner={bannerUrl}

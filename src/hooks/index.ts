@@ -337,7 +337,7 @@ export const useGetEstimateOut = (input, output, token) => {
             const returnValues = data!["results"]![0]!["returnValues"];
             const r0 = Buffer.from(returnValues![0]![0]).toString()
             const r1 = Buffer.from(returnValues![1]![0]).toString()
-            console.log(r0, r1)            
+            console.log(r0, r1)
         } catch (e) {
             console.error(e)
         }
@@ -407,10 +407,11 @@ export const useGetPools = () => {
                         progress: realSuiReserves / 2000000000000 * 100,
                         marketCap: tokenPrice * 10000000000,
                         tokenPrice,
-                        Liquidity: realSuiReserves / 1000000000 * suiPrice,
+                        liquidity: realSuiReserves / 1000000000 * suiPrice,
                         poolObjectId,
                         raisingPercent: undefined,
                         suiPrice,
+                        tokenSuiPrice: virtualSuiReserves / virtualTokenReserves / 1000
                     }
 
                     changeVariable(address, result)
@@ -442,8 +443,11 @@ export const useGetPool = (token) => {
     const [telegram, setTelegram] = useState('')
     const [devAddress, setDevAddress] = useState('')
     const [description, setDescription] = useState('')
-    const [Liquidity, setLiquidity] = useState('0')
+    const [liquidity, setLiquidity] = useState('0')
     const [marketCap, setMarketCap] = useState('0')
+    const [tokenPrice, setTokenPrice] = useState('0')
+    const [progress, setProgress] = useState(0)
+    const [tokenSuiPrice, setTokenSuiPrice] = useState(0)
     useEffect(() => {
         const pool = pools.find((pool) => pool.address == token)
         if (pool) {
@@ -455,8 +459,11 @@ export const useGetPool = (token) => {
             setTelegram(pool.telegram)
             setDevAddress(pool.devAddress)
             setDescription(pool.description)
-            setLiquidity(pool.Liquidity)
+            setLiquidity(pool.liquidity)
             setMarketCap(pool.marketCap)
+            setTokenPrice(pool.tokenPrice)
+            setProgress(pool.progress)
+            setTokenSuiPrice(pool.tokenSuiPrice)
         }
     }, [pools, token])
     return {
@@ -470,8 +477,11 @@ export const useGetPool = (token) => {
         description,
         suiPrice,
         tokenAddress,
-        Liquidity,
-        marketCap
+        liquidity,
+        marketCap,
+        tokenPrice,
+        progress,
+        tokenSuiPrice
     }
 }
 

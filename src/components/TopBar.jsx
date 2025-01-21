@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { ConnectButton, useCurrentWallet } from '@mysten/dapp-kit';
+import { useApp } from '../context';
 import iconHamburger from '../icons/hamburger.svg';
 import iconCross from '../icons/cross-icon.svg';
 import iconTg1 from '../icons/tg-1.svg';
 import iconX1 from '../icons/x-1.svg';
-import logo from '../icons/logo.png';
 import ChadHeaderLink from '../components/ChadHeaderLink';
-import { Link } from 'react-router-dom';
-import { useApp } from '../context';
 
 const TopBar = () => {
   const [isExpanded, setIsExpanded] = useState(false); // Stato del menu mobile
@@ -54,13 +53,8 @@ const TopBar = () => {
   let currentPath = window.location.pathname;
 
   return (
-    <div
-      className={`fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${
-        isScrolled ? 'bg-[#1d1d1d]' : 'bg-transparent'
-      }`}
-    >
-      <div className="max-w-7xl m-auto w-full lg:h-[70px] flex items-center justify-between px-4">
-        {/* Logo e collegamenti principali */}
+    <div className={`fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${isScrolled ? 'bg-[#1d1d1d]' : 'bg-transparent'}`}>
+      <div className="max-w-7xl m-auto w-full h-[70px] flex items-center justify-between px-4">
         <div className="flex items-center">
           <ChadHeaderLink className="w-[50px] h-[50px] mr-4" />
           <div
@@ -69,61 +63,57 @@ const TopBar = () => {
           >
             <Link to="/dashboard" className="left-bar-link">
               <span
-                className={`text-[20px] ${
-                  currentPath === '/' || currentPath === '/dashboard'
-                    ? 'text-[#cd8f61]'
-                    : 'text-[#f6f7f9] hover:text-[#cd8f61]'
-                }`}
+                className={`text-[20px] ${currentPath === '/' || currentPath === '/dashboard'
+                  ? 'text-[#cd8f61]'
+                  : 'text-[#f6f7f9] hover:text-[#cd8f61]'
+                  }`}
               >
                 Board
               </span>
             </Link>
             <Link to="/create" className="left-bar-link">
               <span
-                className={`text-[20px] ${
-                  currentPath === '/create'
-                    ? 'text-[#cd8f61]'
-                    : 'text-[#f6f7f9] hover:text-[#cd8f61]'
-                }`}
+                className={`text-[20px] ${currentPath === '/create'
+                  ? 'text-[#cd8f61]'
+                  : 'text-[#f6f7f9] hover:text-[#cd8f61]'
+                  }`}
               >
                 Create&nbsp;Token
               </span>
             </Link>
             <div className="left-bar-link">
-            <span
-                className={`text-[20px] ${
-                  currentPath === 'https://www.popisland.it/#/swap?chain=sui'
-                    ? 'text-[#cd8f61]'
-                    : 'text-[#f6f7f9] hover:text-[#cd8f61]'
-                }`}
+              <span
+                className={`text-[20px] ${currentPath === 'https://www.popisland.it/#/swap?chain=sui'
+                  ? 'text-[#cd8f61]'
+                  : 'text-[#f6f7f9] hover:text-[#cd8f61]'
+                  }`}
               >
-            <a
-              href="https://www.popisland.it/#/swap?chain=sui"
-              target="_blank"
-              rel="noreferrer"
-              
-            >
-              Swap
-            </a>
-            </span>
+                <a
+                  href="https://www.popisland.it/#/swap?chain=sui"
+                  target="_blank"
+                  rel="noreferrer"
+
+                >
+                  Swap
+                </a>
+              </span>
             </div>
             <div className="left-bar-link">
-            <span
-                className={`text-[20px] ${
-                  currentPath === 'https://www.popisland.it/#/bridge'
-                    ? 'text-[#cd8f61]'
-                    : 'text-[#f6f7f9] hover:text-[#cd8f61]'
-                }`}
+              <span
+                className={`text-[20px] ${currentPath === 'https://www.popisland.it/#/bridge'
+                  ? 'text-[#cd8f61]'
+                  : 'text-[#f6f7f9] hover:text-[#cd8f61]'
+                  }`}
               >
-            <a
-              href="https://www.popisland.it/#/bridge"
-              target="_blank"
-              rel="noreferrer"
-              
-            >
-              Bridge
-            </a>
-            </span>
+                <a
+                  href="https://www.popisland.it/#/bridge"
+                  target="_blank"
+                  rel="noreferrer"
+
+                >
+                  Bridge
+                </a>
+              </span>
             </div>
           </div>
         </div>
@@ -155,14 +145,14 @@ const TopBar = () => {
                 {suiBalance} SUI
               </div>
             )}
-           <ConnectButton
-    style={{
-      backgroundColor: '#cd8e60 ',
-      color: 'white',
-      padding: '8px 16px',
-      borderRadius: '8px',
-    }}
-  />
+            <ConnectButton
+              style={{
+                backgroundColor: '#cd8e60',
+                color: 'white',
+                padding: '8px 16px',
+                borderRadius: '8px',
+              }}
+            />
           </div>
           {/* Hamburger Menu Button */}
           <button
@@ -184,61 +174,53 @@ const TopBar = () => {
           <nav className="flex flex-col gap-4">
             <Link
               to="/dashboard"
-              className={`text-[20px] ${
-                currentPath === '/' || currentPath === '/dashboard'
-                  ? 'text-[#cd8f61]'
-                  : 'text-[#f6f7f9] hover:text-[#cd8f61]'
-              }`}
+              className={`text-[20px] ${currentPath === '/' || currentPath === '/dashboard'
+                ? 'text-[#cd8f61]'
+                : 'text-[#f6f7f9] hover:text-[#cd8f61]'
+                }`}
             >
               Board
             </Link>
             <Link
               to="/create"
-              className={`text-[20px] ${
-                currentPath === '/create'
-                  ? 'text-[#cd8f61]'
-                  : 'text-[#f6f7f9] hover:text-[#cd8f61]'
-              }`}
+              className={`text-[20px] ${currentPath === '/create'
+                ? 'text-[#cd8f61]'
+                : 'text-[#f6f7f9] hover:text-[#cd8f61]'
+                }`}
             >
               Create&nbsp;Token
             </Link>
-        
-          
             <span
-                className={`text-[20px] ${
-                  currentPath === 'https://www.popisland.it/#/swap?chain=sui'
-                    ? 'text-[#cd8f61]'
-                    : 'text-[#f6f7f9] hover:text-[#cd8f61]'
+              className={`text-[20px] ${currentPath === 'https://www.popisland.it/#/swap?chain=sui'
+                ? 'text-[#cd8f61]'
+                : 'text-[#f6f7f9] hover:text-[#cd8f61]'
                 }`}
-              >
-            <a
-              href="https://www.popisland.it/#/swap?chain=sui"
-              target="_blank"
-              rel="noreferrer"
-              
             >
-              Swap
-            </a>
+              <a
+                href="https://www.popisland.it/#/swap?chain=sui"
+                target="_blank"
+                rel="noreferrer"
+
+              >
+                Swap
+              </a>
             </span>
-           
-            
             <span
-                className={`text-[20px] ${
-                  currentPath === 'https://www.popisland.it/#/bridge'
-                    ? 'text-[#cd8f61]'
-                    : 'text-[#f6f7f9] hover:text-[#cd8f61]'
+              className={`text-[20px] ${currentPath === 'https://www.popisland.it/#/bridge'
+                ? 'text-[#cd8f61]'
+                : 'text-[#f6f7f9] hover:text-[#cd8f61]'
                 }`}
-              >
-            <a
-              href="https://www.popisland.it/#/bridge"
-              target="_blank"
-              rel="noreferrer"
-              
             >
-              Bridge
-            </a>
+              <a
+                href="https://www.popisland.it/#/bridge"
+                target="_blank"
+                rel="noreferrer"
+
+              >
+                Bridge
+              </a>
             </span>
-            </nav>
+          </nav>
         </div>
       )}
     </div>

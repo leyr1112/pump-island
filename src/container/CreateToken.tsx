@@ -51,7 +51,7 @@ const CreateToken = () => {
       <div className="GlobalContainer">
         <div style={{ zIndex: 1 }}>
           <TopBar />
-          <div className="max-w-7xl m-auto pt-36 pb-24 px-4 sm:px-12 sm:py-10">
+          <div className="max-w-7xl m-auto pb-24 px-4 sm:px-12 sm:pb-10">
             <section className="lg:mx-auto pt-8 lg:py-[30px] w-full lg:w-[741px] min-w-0">
               <>
                 <section>
@@ -125,8 +125,8 @@ const CreateToken = () => {
                             placeholder="Enter Token Description"
                             changeValue={setTokenDescription}
                             value={tokenDescription}
-                           
-                            
+
+
                           />
                         </section>
                       </section>
@@ -224,7 +224,14 @@ const CreateToken = () => {
                         </button>
                       ) : (
                         <div className="justify-center flex">
-                          <ConnectButton />
+                          <ConnectButton
+                            style={{
+                              backgroundColor: '#cd8e60',
+                              color: 'white',
+                              padding: '8px 16px',
+                              borderRadius: '8px',
+                            }}
+                          />
                         </div>
                       )}
                     </div>
