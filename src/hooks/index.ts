@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { OBJECTS } from '../config'
+import { OBJECTS, PumpConfig } from '../config'
 import { useApp } from '../context'
 import { getFullnodeUrl, SuiClient } from '@mysten/sui/client'
 import {
@@ -9,39 +9,8 @@ import {
 import { Transaction } from '@mysten/sui/transactions'
 import { intoBase64 } from '../utils/pkg.ts'
 import toast from 'react-hot-toast'
-import { bcs } from '@mysten/sui/bcs'
 
 const client = new SuiClient({ url: getFullnodeUrl('testnet') })
-
-// Global Hook
-export const useGetConfiguration = () => {
-    const [config, setConfig] = useState<{}>()
-
-    const getConfiguration = async () => {
-        try {
-            const configuration = await client.getObject({
-                id: OBJECTS.Configuration,
-                options: { showContent: true }
-            })
-            const configurationFields = (configuration?.data?.content as any)?.fields
-            const threshold = await client.getObject({
-                id: OBJECTS.Threshold,
-                options: { showContent: true }
-            })
-            const thresholdFields = (threshold?.data?.content as any)?.fields
-            setConfig({ ...configurationFields, ...thresholdFields })
-        } catch (e) {
-            console.error(e)
-        }
-    }
-
-    useEffect(() => {
-        getConfiguration()
-    }, [])
-
-    const refetch = useCallback(() => { getConfiguration() }, [])
-    return { config, refetch }
-}
 
 export const useGetSuiBalance = () => {
     const [suiBalance, setSuiBalance] = useState<any>()
@@ -352,17 +321,12 @@ export const useGetEstimateOut = (input, output, token) => {
 export const useGetPools = () => {
     const [data, setData] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
-    const { state, changeVariable } = useApp()
+    const { changeVariable } = useApp()
     const { suiPrice } = useGetSuiPrice()
     useEffect(() => {
         const getPools = async () => {
             setLoading(true)
             try {
-                // const threshold = await client.getObject({
-                //     id: OBJECTS.Threshold,
-                //     options: { showContent: true }
-                // })
-                // const thresholdFields = (threshold?.data?.content as any)?.fields
                 const createdEvents = await client.queryEvents({
                     query: {
                         MoveEventType: `${OBJECTS.Package}::move_pump::CreatedEvent`
@@ -404,7 +368,7 @@ export const useGetPools = () => {
                         virtualSuiReserves,
                         virtualTokenReserves,
                         realTokenReserves,
-                        progress: realSuiReserves / 2000000000000 * 100,
+                        progress: realSuiReserves / PumpConfig.Threshod * 100,
                         marketCap: tokenPrice * 10000000000,
                         tokenPrice,
                         liquidity: realSuiReserves / 1000000000 * suiPrice,
@@ -483,8 +447,4 @@ export const useGetPool = (token) => {
         progress,
         tokenSuiPrice
     }
-}
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
 }

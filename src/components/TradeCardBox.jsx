@@ -1,5 +1,4 @@
 import React, { useState, useMemo, } from "react";
-import ClipLoader from 'react-spinners/ClipLoader'
 import { ConnectButton, useCurrentWallet } from "@mysten/dapp-kit";
 import { useApp } from "../context";
 
@@ -9,23 +8,8 @@ import swapIcon from '../icons/swapIcon.svg'
 
 const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }) => {
   const { isConnected } = useCurrentWallet()
-  const [buyAmount, setAmount] = useState()
   const { state } = useApp()
 
-  const [inputTokenType, setInputToken] = useState('SUI')
-  const chanageCurrency = async () => {
-    if (inputTokenType === 'SUI') {
-      setInputToken('Token')
-      setAmount(tokenOutAmount)
-    } else {
-      setInputToken('SUI')
-      setAmount(tokenOutAmount)
-    }
-  }
-
-  const [maxBuyAmount, setMaxBuyAmount] = useState(0)
-
-  const [tokenOutAmount, setTokenOutAmount] = useState(0)
   const { suiBalance: suiBalanceDecimal, tokenBalances } = state
   const suiBalance = useMemo(() => {
     if (!suiBalanceDecimal) return 0
@@ -38,13 +22,28 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
     return 0
   }, [tokenBalances])
 
+  const [inputTokenType, setInputToken] = useState('SUI')
+  const chanageCurrency = async () => {
+    if (inputTokenType === 'SUI') {
+      setInputToken('Token')
+      setInputAmount(tokenOutAmount)
+    } else {
+      setInputToken('SUI')
+      setInputAmount(tokenOutAmount)
+    }
+  }
+  const [maxBuyAmount, setMaxBuyAmount] = useState(0)
 
+  const [inputAmount, setInputAmount] = useState()
+  const tokenOutAmount = useMemo(() => {
+    
+  }, [])
 
   const setMaxAmount = async () => {
     if (inputTokenType === 'SUI') {
-      setAmount(suiBalance > 0.1 ? suiBalance - 0.1 : 0)
+      setInputAmount(suiBalance > 0.1 ? suiBalance - 0.1 : 0)
     } else {
-      setAmount(tokenBalance)
+      setInputAmount(tokenBalance)
     }
   }
 
@@ -109,8 +108,8 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
                   type="number"
                   placeholder="0"
                   className="placeholder:text-[#919191] bg-transparent max-w-[180px] focus:outline-none text-white text-[20px] font-bold text-right h-6"
-                  value={buyAmount}
-                  onChange={e => setAmount(e.target.value)}
+                  value={inputAmount}
+                  onChange={e => setInputAmount(e.target.value)}
                   required
                 />
                 <div className="flex gap-2 items-center">
@@ -196,13 +195,7 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
           <button
             onClick={onTokenSwap}
             className="text-[16px] focus:outline-none h-[48px] flex justify-center items-center select-none font-bold text-center w-full bg-[#cd8e60] hover:opacity-90 disabled:bg-[#646464] disabled:text-[#bbb] rounded-[24px] text-[#222]"
-            disabled={
-              Number(buyAmount) > 0 &&
-                (inputTokenType === 'SUI'
-                  ? suiBalance >= Number(buyAmount)
-                  : tokenBalance >= Number(buyAmount))
-                ? false
-                : true
+            disabled={(Number(inputAmount) > 0 && (inputTokenType === 'SUI' ? suiBalance >= Number(inputAmount) : tokenBalance >= Number(inputAmount)) ? false : true) || creating
             }
           >
             {inputTokenType == 'SUI' ? creating ? 'Buying' : 'Buy' : creating ? 'Selling' : 'Sell'}

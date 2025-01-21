@@ -3,11 +3,8 @@ import { bsc, mainnet, base, polygon, arbitrum, avalanche, bscTestnet } from '@w
 
 const projectId = '4807d388fe495226b7fc14743af2e1d9'
 
-
 export const config = createConfig({
-  // chains: [mainnet, bsc, base, polygon, arbitrum, avalanche, bscTestnet],
   chains: [bsc, polygon],
-  // connectors: [injected()], 
   transports: {
     [bsc.id]: http(),
     [bscTestnet.id]: http(),
@@ -31,4 +28,10 @@ export const ScanUrl = {
   Package: 'https://suivision.xyz/package/',
   TxBlock: 'https://suivision.xyz/txblock/',
   Object: 'https://suivision.xyz/object/'
+}
+
+export const PumpConfig = {
+  InitialVirtualTokenReserves: 10000000000000000n,
+  RemainTokenReserves: 2000000000000000,
+  Threshod: 4000000000
 }

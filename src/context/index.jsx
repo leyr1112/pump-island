@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useReducer } from 'react'
-import { useGetConfiguration, useGetSuiBalance, useGetSuiPrice, useGetTokenBalances } from '../hooks/index.ts'
+import { useGetSuiBalance, useGetSuiPrice, useGetTokenBalances } from '../hooks/index.ts'
 
 const INIT_STATE = {
     suiBalance: 0,
@@ -25,22 +25,6 @@ export default function Provider({ children }) {
             payload: value
         })
     }
-
-    const { config, refetch: refetchConfig } = useGetConfiguration()
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            refetchConfig();
-        }, 60000);
-
-        return () => clearInterval(interval);
-    }, [refetchConfig]);
-
-    useEffect(() => {
-        if (config) {
-            changeVariable('config', config)
-        }
-    }, [config]);
 
     const { suiPrice, refetch: refetchSuiprice } = useGetSuiPrice()
 
