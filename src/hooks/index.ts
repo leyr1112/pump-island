@@ -108,10 +108,10 @@ export const useGetSuiPrice = () => {
 // Action
 export const useCreate = () => {
     const account = useCurrentAccount()
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState<'Creating' | 'Adding' | 'False'>('False')
     const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction()
     const createToken = async (tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmout) => {
-        setLoading(true)
+        setLoading('Creating')
         tokenSymbol = tokenSymbol.toUpperCase()
         try {
             if (account?.publicKey) {
@@ -138,21 +138,23 @@ export const useCreate = () => {
                     { transaction: tx },
                     {
                         onSuccess: async (result) => {
-                            console.log('executed transaction', result)
                             const digest = result.digest
                             if (digest) {
                                 toast.success('Successfully created token!')
                                 creatPool(digest, tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmout)
                             }
+                        },
+                        onError: (e) => {
+                            toast.error('Token creation failed!')
+                            setLoading('False')
                         }
                     }
                 )
             }
         } catch (e) {
             console.error(e)
-            toast.error('There is some problem to create token!')
-        } finally {
-            setLoading(false)
+            toast.error('Token creation failed!')
+            setLoading('False')
         }
     }
 
@@ -182,9 +184,8 @@ export const useCreate = () => {
     };
 
     const creatPool = async (digest, tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmout) => {
-        if (account) {
+        try {
             const transactionResult = await waitForTransaction(digest)
-            console.log(transactionResult)
             const { objectChanges } = transactionResult
             let treasuryCap, packageId
             objectChanges?.forEach((objectChange: any) => {
@@ -240,10 +241,20 @@ export const useCreate = () => {
                 signAndExecuteTransaction({ transaction: tx }, {
                     onSuccess: result => {
                         console.log(result)
-                        toast.success('Successfully pump created!')
+                        setLoading('False')
+                        toast.success('Successfully pool created!')
+                    },
+                    onError: (e) => {
+                        console.error(e)
+                        setLoading('False')
+                        toast.error('Pool creation faild!')
                     }
                 })
             }
+        } catch (e) {
+            console.error(e)
+            setLoading('False')
+            toast.error('Pool creation faild!')
         }
     }
 
@@ -251,60 +262,70 @@ export const useCreate = () => {
 }
 
 export const useTrade = (token) => {
-    const account = useCurrentAccount()
     const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction()
     const [estimateOut, setEstimateOut] = useState(0n)
     const [ouput, setOutput] = useState(0)
     const [loading, setLoading] = useState(false)
-    const buy = async (inputTokenType, inputAmout) => {
+    const buy = (inputTokenType, inputAmout) => {
         setLoading(true)
         try {
-            if (account?.address) {
+            if (inputTokenType == "SUI") {
                 const tx = new Transaction()
-                if (inputTokenType == "SUI") {
-                    const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(inputAmout * 1000000000)])
-                    tx.moveCall({
-                        arguments: [
-                            tx.object(OBJECTS.Configuration),
-                            tx.object(OBJECTS.Threshold),
-                            coin,
-                            tx.pure.u64(estimateOut),
-                            tx.object('0x6')
-                        ],
-                        typeArguments: [token],
-                        target: `${OBJECTS.Package}::move_pump::buy_v2`
-                    })
-                    signAndExecuteTransaction({ transaction: tx }, {
-                        onSuccess: result => {
-                            console.log(result)
-                            toast.success('Successfully bought!')
-                        }
-                    })
-                } else {
-                    const [coin] = tx.splitCoins(token, [tx.pure.u64(inputAmout * 1000000)])
-                    tx.moveCall({
-                        arguments: [
-                            tx.object(OBJECTS.Configuration),
-                            coin,
-                            tx.pure.u64(inputAmout * 1000000),
-                            tx.object('0x6')
-                        ],
-                        typeArguments: [token],
-                        target: `${OBJECTS.Package}::move_pump::sell`
-                    })
-                    signAndExecuteTransaction({ transaction: tx }, {
-                        onSuccess: result => {
-                            console.log(result)
-                            toast.success('Successfully sold!')
-                        }
-                    })
-                }
+                const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(inputAmout * 1000000000)])
+                tx.moveCall({
+                    arguments: [
+                        tx.object(OBJECTS.Configuration),
+                        tx.object(OBJECTS.Threshold),
+                        coin,
+                        tx.pure.u64(estimateOut),
+                        tx.object('0x6')
+                    ],
+                    typeArguments: [token],
+                    target: `${OBJECTS.Package}::move_pump::buy_v2`
+                })
+                signAndExecuteTransaction({ transaction: tx }, {
+                    onSuccess: result => {
+                        console.log(result)
+                        setLoading(false)
+                        toast.success('Successfully bought!')
+                    },
+                    onError: (e) => {
+                        console.error(e)
+                        setLoading(false)
+                        toast.error('There is some problem to trade!')
+                    }
+                })
+            } else {
+                const tx = new Transaction()
+                const [coin] = tx.splitCoins(token, [tx.pure.u64(inputAmout * 1000000)])
+                tx.moveCall({
+                    arguments: [
+                        tx.object(OBJECTS.Configuration),
+                        coin,
+                        tx.pure.u64(inputAmout * 1000000),
+                        tx.object('0x6')
+                    ],
+                    typeArguments: [token],
+                    target: `${OBJECTS.Package}::move_pump::sell`
+                })
+
+                signAndExecuteTransaction({ transaction: tx }, {
+                    onSuccess: result => {
+                        console.log(result)
+                        setLoading(false)
+                        toast.success('Successfully sold!')
+                    },
+                    onError: (e) => {
+                        setLoading(false)
+                        toast.error('There is some problem to trade!')
+                        console.error(e)
+                    }
+                })
             }
         } catch (e) {
             console.error(e)
-            toast.error('There is some problem to trade!')
-        } finally {
             setLoading(false)
+            toast.error('There is some problem to trade!')
         }
     }
 
@@ -368,40 +389,6 @@ export const useTrade = (token) => {
     }
 
     return { buy, getEstimateOut, estimateOut, ouput, loading }
-}
-
-export const useGetEstimateOut = (input, output, token) => {
-    const [estimateInput, setEstimateInput] = useState(0)
-    const [estimateOutput, setEstimateOutput] = useState(0)
-
-    const getEstimateOut = async (input, output) => {
-        try {
-            const tx = new Transaction()
-            tx.moveCall({
-                arguments: [
-                    tx.object(OBJECTS.Configuration),
-                    tx.pure.u64(input),
-                    tx.pure.u64(output)
-                ],
-                typeArguments: [token],
-                target: `${OBJECTS.Package}::move_pump::estimate_amount_out`
-            })
-            const data = await client.devInspectTransactionBlock({
-                sender: '0x0000000000000000000000000000000000000000000000000000000000000006',
-                transactionBlock: tx
-            })
-            const returnValues = data!["results"]![0]!["returnValues"];
-            const r0 = Buffer.from(returnValues![0]![0]).toString()
-            const r1 = Buffer.from(returnValues![1]![0]).toString()
-            console.log(r0, r1)
-        } catch (e) {
-            console.error(e)
-        }
-    }
-    useEffect(() => {
-        getEstimateOut(input, output)
-    }, [input, output])
-    return { estimateInput, estimateOutput }
 }
 
 // Dashboard page hook
