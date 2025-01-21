@@ -202,7 +202,7 @@ const CreateToken = () => {
                         </section>
                       </section>
                     }
-                    <div className="text-[#00f3ef] w-[90%] w-max-[90%] m-0 text-[14px] flex justify-between">
+                    <div className="text-[#cd8f61] w-[90%] w-max-[90%] m-0 text-[14px] flex justify-between">
                       <span>Deployment Fee:</span>
                       <span>0.1 SUI</span>
                     </div>
@@ -219,12 +219,17 @@ const CreateToken = () => {
                           disabled={!tokenName || !tokenSymbol || !tokenDescription || !tokenLogo || loading || Number(inputAmount) + 0.2 > format9Suibalance}
                           onClick={onBlackPumpCreate}
                           className="CreateButton flex justify-center items-center"
-                        >
+                          style={{
+                            backgroundColor: '#cd8e60 ',
+                            color: 'white',
+                            padding: '8px 16px',
+                            borderRadius: '8px',
+                          }} >
                           {loading ? 'Creating...' : isFirstBuy ? 'Create and Buy' : 'Create'}
-                        </button>
+                        </button  >
                       ) : (
                         <div className="justify-center flex">
-                          <ConnectButton />
+                          <ConnectButton  />
                         </div>
                       )}
                     </div>

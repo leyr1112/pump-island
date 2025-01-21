@@ -234,6 +234,7 @@ const Trade = () => {
                         value="Chat"
                         selectedValue={selectedOption}
                         handleSelect={setSelectedOption}
+
                       />
                       <CustomRadioButton
                         value="Trades"
@@ -255,7 +256,7 @@ const Trade = () => {
 
                           <div className="flex flex-col gap-2">
                             {transactionDatas.length === 0 && (
-                              <div className="flex bg-[#1a2d1d] py-3 rounded-full justify-center text-white text-sm px-2">
+                              <div className="flex bg-[#1d1d1d] py-3 rounded-full justify-center text-white text-sm px-2">
                                 No Data
                               </div>
                             )}
@@ -358,14 +359,14 @@ const Trade = () => {
                             >
                               {/* Render the "First Page" button */}
                               <button
-                                className="px-2 py-1 mx-1 bg-primary text-white rounded-lg border border-[#f3cc2f]"
+                                className="px-2 py-1 mx-1 bg-primary text-white rounded-lg border border-[#cd8e60]"
                                 onClick={() => handleTransactionPageChange(1)}
                               >
                                 &lt;&lt;
                               </button>
                               {/* Render the "Previous Page" button */}
                               <button
-                                className="px-2 py-1 mx-1 bg-primary text-white rounded-lg border border-[#f3cc2f]"
+                                className="px-2 py-1 mx-1 bg-primary text-white rounded-lg border border-[#cd8e60]"
                                 onClick={() =>
                                   handleTransactionPageChange(
                                     Math.max(currentTransactionPage - 1, 1)
@@ -407,7 +408,7 @@ const Trade = () => {
                               )}
                               {/* Render the "Next Page" button */}
                               <button
-                                className="px-2 py-1 mx-1 bg-primary text-white rounded-lg border border-[#f3cc2f]"
+                                className="px-2 py-1 mx-1 bg-primary text-white rounded-lg border border-[#cd8e60]"
                                 onClick={() =>
                                   handleTransactionPageChange(
                                     Math.min(
@@ -421,7 +422,7 @@ const Trade = () => {
                               </button>
                               {/* Render the "Last Page" button */}
                               <button
-                                className="px-2 py-1 mx-1 bg-primary text-white rounded-lg border border-[#f3cc2f]"
+                                className="px-2 py-1 mx-1 bg-primary text-white rounded-lg border border-[#cd8e60]"
                                 onClick={() =>
                                   handleTransactionPageChange(
                                     transactionTotalPages
