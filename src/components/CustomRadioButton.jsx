@@ -12,8 +12,8 @@ const CustomRadioButton = ({ value, selectedValue, handleSelect }) => {
       type="button"
       className={
         isSelected
-          ? 'custom-radio-button-selected'
-          : 'custom-radio-button-unselected'
+          ? 'custom-radio-button-selected text-white'
+          : 'custom-radio-button-unselected text-white'
       }
       onClick={handleClick}
     >
