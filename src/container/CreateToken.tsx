@@ -33,8 +33,8 @@ const CreateToken = () => {
   const handleCreate = () => {
     try {
       createToken(tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmount)
-    } catch (err) {
-      console.error(err)
+    } catch (e) {
+      console.error(e)
     } finally {
       setInputAmount('0')
     }

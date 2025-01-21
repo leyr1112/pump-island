@@ -107,7 +107,7 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
                     From
                   </span>
                   <span className="text-white text-[20px] font-bold whitespace-nowrap overflow-hidden text-ellipsis">
-                    {inputTokenType == 'SUI' ? 'SUI' : tokenSymbol.length > 4 ? `${tokenSymbol.slice(0, 4)}...` : tokenSymbol}
+                    {inputTokenType == 'SUI' ? 'SUI' : tokenSymbol.length > 4 ? `${tokenSymbol.slice(0, 3)}...` : tokenSymbol}
                   </span>
                 </div>
               </div>
@@ -160,7 +160,7 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
                     To
                   </span>
                   <span className="text-white text-[20px] font-bold whitespace-nowrap overflow-hidden text-ellipsis">
-                    {inputTokenType == 'Token' ? 'SUI' : tokenSymbol.length > 4 ? `${tokenSymbol.slice(0, 4)}...` : tokenSymbol}
+                    {inputTokenType == 'Token' ? 'SUI' : tokenSymbol.length > 4 ? `${tokenSymbol.slice(0, 3)}...` : tokenSymbol}
                   </span>
                 </div>
               </div>
