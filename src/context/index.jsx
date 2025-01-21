@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useReducer } from 'react'
-import { useGetConfiguration, useGetSuiBalance, useGetSuiPrice, useGetPools, useGetTokenBalances } from '../hooks/index.ts'
+import { useGetConfiguration, useGetSuiBalance, useGetSuiPrice, useGetTokenBalances } from '../hooks/index.ts'
 
 const INIT_STATE = {
     suiBalance: 0,

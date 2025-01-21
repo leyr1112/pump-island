@@ -8,11 +8,12 @@ import TopBar from '../components/TopBar.jsx'
 import Select from 'react-select'
 import { apiUrl } from '../utils/constants.ts'
 import { useGetPools } from '../hooks/index.ts'
+import { useApp } from '../context/index.jsx'
 
 const App = () => {
   const [search, setSearch] = useState('')
   const { pools, loading } = useGetPools()
-  console.log(pools)
+  const { state } = useApp()
 
   const sortOptions = [
     { value: 'Market Cap', label: 'Market Cap' },

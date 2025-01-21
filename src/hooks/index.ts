@@ -352,17 +352,17 @@ export const useGetEstimateOut = (input, output, token) => {
 export const useGetPools = () => {
     const [data, setData] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
-    const { changeVariable } = useApp()
+    const { state, changeVariable } = useApp()
     const { suiPrice } = useGetSuiPrice()
     useEffect(() => {
         const getPools = async () => {
             setLoading(true)
             try {
-                const threshold = await client.getObject({
-                    id: OBJECTS.Threshold,
-                    options: { showContent: true }
-                })
-                const thresholdFields = (threshold?.data?.content as any)?.fields
+                // const threshold = await client.getObject({
+                //     id: OBJECTS.Threshold,
+                //     options: { showContent: true }
+                // })
+                // const thresholdFields = (threshold?.data?.content as any)?.fields
                 const createdEvents = await client.queryEvents({
                     query: {
                         MoveEventType: `${OBJECTS.Package}::move_pump::CreatedEvent`
@@ -387,6 +387,7 @@ export const useGetPools = () => {
                     const virtualSuiReserves = poolDataAdd.virtual_sui_reserves
                     const virtualTokenReserves = poolDataAdd.virtual_token_reserves
                     const realTokenReserves = poolDataAdd.real_token_reserves.fields.balance
+                    const tokenPrice = virtualSuiReserves / virtualTokenReserves * suiPrice / 1000
 
                     const result = {
                         tokenSymbol,
@@ -403,9 +404,10 @@ export const useGetPools = () => {
                         virtualSuiReserves,
                         virtualTokenReserves,
                         realTokenReserves,
-                        progress: realSuiReserves / thresholdFields.threshold * 100,
-                        marketCap: virtualTokenReserves / virtualSuiReserves * suiPrice,
-                        Liquidity: virtualSuiReserves * suiPrice * 2,
+                        progress: realSuiReserves / 2000000000000 * 100,
+                        marketCap: tokenPrice * 10000000000,
+                        tokenPrice,
+                        Liquidity: realSuiReserves / 1000000000 * suiPrice,
                         poolObjectId,
                         raisingPercent: undefined,
                         suiPrice,

@@ -122,7 +122,7 @@ const LaunchpadCard = ({
               <b>${Math.round(marketCap).toLocaleString()}</b>
             </span>
             <span className="right-aligned">
-              <b>${Math.round(Liquidity / 10 ** 18).toLocaleString()}</b>
+              <b>${(Math.round(Liquidity * 1000) / 1000).toLocaleString()}</b>
             </span>
           </div>
         </div>
