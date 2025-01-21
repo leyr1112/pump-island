@@ -60,7 +60,7 @@ const CreateToken = () => {
                 <section className="flex flex-col gap-4 w-full">
                   <div className="LpBalance">
                     <p className="Text1">
-                      Name<span style={{ color: '#cd8f61' }}>*</span>
+                      Name<span style={{ color: '#cd8f61' }}> *</span>
                     </p>
                   </div>
                   <section className="inputPanel">
@@ -78,7 +78,7 @@ const CreateToken = () => {
                 <section className="flex flex-col gap-4 w-full">
                   <div className="LpBalance">
                     <p className="Text1">
-                      Symbol<span style={{ color: '#cd8f61' }}>*</span>
+                      Symbol<span style={{ color: '#cd8f61' }}> *</span>
                     </p>
                   </div>
                   <section className="inputPanel">
@@ -96,7 +96,7 @@ const CreateToken = () => {
                 <section className="flex flex-col gap-4 w-full">
                   <div className="LpBalance">
                     <p className="Text1">
-                      Logo Url<span style={{ color: '#cd8f61' }}>*</span>
+                      Logo Url<span style={{ color: '#cd8f61' }}> *</span>
                     </p>
                   </div>
                   <section className="inputPanel">
@@ -114,7 +114,7 @@ const CreateToken = () => {
                 <section className="flex flex-col gap-4 w-full">
                   <p className="Text1">
                     Description (Max 1000 characters)
-                    <span style={{ color: '#cd8f61' }}>*</span>
+                    <span style={{ color: '#cd8f61' }}> *</span>
                   </p>
                   <section className="inputPanel" >
                     <section className="inputPanelHeader w-full text-white">

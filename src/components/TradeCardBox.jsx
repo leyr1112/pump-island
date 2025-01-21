@@ -209,7 +209,7 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
         ) : (
           <button
             onClick={handleTrade}
-            className="text-[16px] focus:outline-none h-[48px] flex justify-center items-center select-none font-bold text-center w-full bg-[#cd8e60] hover:opacity-90 disabled:bg-[#646464] disabled:text-[#bbb] rounded-[24px] text-white"
+            className="text-[16px] focus:outline-none h-[48px] flex justify-center items-center select-none font-bold text-center w-full bg-[#cd8e60] hover:opacity-90 disabled:bg-[#646464] disabled:text-[#bbb] rounded-[8px] text-white"
             disabled={(Number(inputAmount) > 0 && (inputTokenType === 'SUI' ? suiBalance >= Number(inputAmount) : tokenBalance >= Number(inputAmount)) ? false : true) || loading
             }
           >
