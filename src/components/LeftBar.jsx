@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useAccount } from 'wagmi'
 import iconChadPump from '../icons/fair-launch.svg'
-import iconTokerCreator from '../icons/token-creator.svg'
 import iconCreateChad from '../icons/create-chad.png'
 import iconTelegram from '../icons/telegram.svg'
 import iconCopy from '../icons/copy.svg'
@@ -14,7 +12,6 @@ import { contractAddress } from '../utils/constants.ts'
 const LeftBar = ({ isExpanded, onHamburgerClick }) => {
   const [showLinks] = useState(true)
   const [isHovered, setIsHovered] = useState(false)
-  const { address } = useAccount()
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
 
   function displayTooltip() {

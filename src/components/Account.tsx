@@ -3,7 +3,7 @@ import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi';
 import { config } from '../config';
 
 export function Account() {
-  const { address, connector } = useAccount({config: config});
+  const { address, connector } = useAccount({ config: config });
   const { disconnect } = useDisconnect();
   const { data: ensName } = useEnsName({ address });
   const { data: ensAvatar } = useEnsAvatar({ name: ensName! });
