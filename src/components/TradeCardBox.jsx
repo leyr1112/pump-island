@@ -59,7 +59,7 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
     if (inputTokenType === 'SUI') {
       setInputAmount(suiBalance > 0.1 ? suiBalance - 0.1 : 0)
     } else {
-      setInputAmount(tokenBalance)
+      setInputAmount(Math.floor(tokenBalance * 100) / 100)
     }
   }
 

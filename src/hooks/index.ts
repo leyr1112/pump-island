@@ -272,7 +272,7 @@ export const useTrade = (token) => {
         try {
             if (inputTokenType == "SUI") {
                 const tx = new Transaction()
-                const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(inputAmout * 1000000000)])
+                const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(Math.floor(inputAmout * 1000000000))])
                 tx.moveCall({
                     arguments: [
                         tx.object(OBJECTS.Configuration),
@@ -307,7 +307,7 @@ export const useTrade = (token) => {
                     if (ohterCoinObjects.length > 0) {
                         tx.mergeCoins(coinObject1, ohterCoinObjects)
                     }
-                    const [coin] = tx.splitCoins(coinObject1, [tx.pure.u64(Math.ceil(inputAmout * 1000000))])
+                    const [coin] = tx.splitCoins(coinObject1, [tx.pure.u64(Math.floor(inputAmout * 1000000))])
                     tx.moveCall({
                         arguments: [
                             tx.object(OBJECTS.Configuration),
@@ -358,7 +358,7 @@ export const useTrade = (token) => {
                 tx.moveCall({
                     arguments: [
                         tx.object(OBJECTS.Configuration),
-                        tx.pure.u64(Math.ceil(Number(amount) * 1000000000)),
+                        tx.pure.u64(Math.floor(Number(amount) * 1000000000)),
                         tx.pure.u64(0)
                     ],
                     typeArguments: [token],
@@ -380,7 +380,7 @@ export const useTrade = (token) => {
                     arguments: [
                         tx.object(OBJECTS.Configuration),
                         tx.pure.u64(0),
-                        tx.pure.u64(Math.ceil(Number(amount) * 1000000))
+                        tx.pure.u64(Math.floor(Number(amount) * 1000000))
                     ],
                     typeArguments: [token],
                     target: `${OBJECTS.Package}::move_pump::estimate_amount_out`
