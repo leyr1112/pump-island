@@ -66,7 +66,6 @@ export const useGetTokenBalance = (token) => {
     const [tokenBalance, setTokenBalance] = useState(0)
     const [decimal, setDecimal] = useState(6)
     const { state } = useApp()
-    console.log(state)
     useEffect(() => {
         const tokenData = state.tokenBalances.filter((balance) => balance.coinType == token)
         if (tokenData.length > 0) {
@@ -184,6 +183,7 @@ export const useCreate = () => {
     };
 
     const creatPool = async (digest, tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmout) => {
+        setLoading('Adding')
         try {
             const transactionResult = await waitForTransaction(digest)
             const { objectChanges } = transactionResult
@@ -292,12 +292,12 @@ export const useTrade = (token) => {
                     onError: (e) => {
                         console.error(e)
                         setLoading(false)
-                        toast.error('There is some problem to trade!')
+                        toast.error('There is a problem to trade!')
                     }
                 })
             } else {
                 const tx = new Transaction()
-                const [coin] = tx.splitCoins(token, [tx.pure.u64(inputAmout * 1000000)])
+                const [coin] = tx.splitCoins(tx.object('0x9f6ed1cdd14a8748b9aa9720d4fe2ed59366bc5afa31612604ffef61f0cf6411::symbol::SYMBOL'), [tx.pure.u64(inputAmout * 1000000)])
                 tx.moveCall({
                     arguments: [
                         tx.object(OBJECTS.Configuration),
@@ -317,7 +317,7 @@ export const useTrade = (token) => {
                     },
                     onError: (e) => {
                         setLoading(false)
-                        toast.error('There is some problem to trade!')
+                        toast.error('There is a problem to trade!')
                         console.error(e)
                     }
                 })
@@ -325,7 +325,7 @@ export const useTrade = (token) => {
         } catch (e) {
             console.error(e)
             setLoading(false)
-            toast.error('There is some problem to trade!')
+            toast.error('There is a problem to trade!')
         }
     }
 

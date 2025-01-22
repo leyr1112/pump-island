@@ -12,7 +12,6 @@ import CustomRadioButton from '../components/CustomRadioButton.jsx'
 import UpdateBox from '../components/profileUpdateBox.tsx'
 import { useGetPool } from '../hooks/index.ts'
 import { useCurrentAccount, useCurrentWallet } from '@mysten/dapp-kit'
-import { useApp } from '../context/index.jsx'
 import TradeCardBox from '../components/TradeCardBox.jsx'
 
 const Trade = () => {
