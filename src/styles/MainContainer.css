@@ -1903,7 +1903,8 @@ a {
 .launchpad-progress-bar-filled {
   height: 14px;
   border-radius: 37px;
-  background: linear-gradient(90deg, #FF5733 0%, #C70039 100%);
+  background: linear-gradient(90deg, #84ffeb 0%, #2a715a 33%, #03604d 66%, #003e4e 100%);
+
 
 }
 
