@@ -5,7 +5,7 @@ import { useTrade } from "../hooks/index.ts";
 
 import ClipLoader from 'react-spinners/ClipLoader'
 import SuiIcon from '../icons/sui.png'
-import melegaBannerImg from '../icons/melega-banner.png'
+import cetusBannerImg from '../icons/cetus-banner.png'
 import swapIcon from '../icons/swapIcon.svg'
 
 const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }) => {
@@ -73,7 +73,8 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
       target="_blank"
     >
       <div className="overflow-hidden rounded-[25px] sm:mx-0 mx-[-15px]">
-        <img src={melegaBannerImg} className="" />
+      <img src={cetusBannerImg} className="cetus-banner" alt="Cetus Banner" />
+
       </div>
     </a>
   ) : (

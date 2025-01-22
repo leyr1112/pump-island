@@ -3637,3 +3637,21 @@ color: #FFFF !important;
   .animate-pulse {
     animation: pulse-animation 1.5s infinite;
   }
+  .cetus-banner {
+    width: 100%;
+    height: auto; /* Mantiene il rapporto originale */
+    object-fit: contain; /* Adatta l'immagine al contenitore senza ritagliarla */
+  }
+  
+  @media screen and (max-width: 768px) {
+    .cetus-banner {
+      max-height: 300px; /* Regola l'altezza per schermi più piccoli */
+    }
+  }
+  
+  @media screen and (max-width: 480px) {
+    .cetus-banner {
+      max-height: 200px; /* Altezza ancora più ridotta per dispositivi molto piccoli */
+    }
+  }
+  
