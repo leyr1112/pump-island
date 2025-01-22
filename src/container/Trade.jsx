@@ -10,9 +10,11 @@ import MyChart from '../components/Chart.jsx'
 import { SignMessage } from './SignMessage.jsx'
 import CustomRadioButton from '../components/CustomRadioButton.jsx'
 import UpdateBox from '../components/profileUpdateBox.tsx'
-import { useGetPool, useGetHolders } from '../hooks/index.ts'
+import { useGetPool, useGetHolders, useGetTradingTransactions } from '../hooks/index.ts'
 import { useCurrentAccount, useCurrentWallet } from '@mysten/dapp-kit'
 import TradeCardBox from '../components/TradeCardBox.jsx'
+import { format9 } from '../utils/format.ts'
+import { ScanUrl } from '../config.jsx'
 
 const Trade = () => {
   let [token] = useQueryParam('token', StringParam)
@@ -36,6 +38,7 @@ const Trade = () => {
     poolCompleted
   } = useGetPool(token)
 
+  const { transactions: wholeTransactions } = useGetTradingTransactions(token)
   const lpCreated = poolCompleted
   const { isConnected } = useCurrentWallet()
   const account = useCurrentAccount()
@@ -44,6 +47,21 @@ const Trade = () => {
   const [chatHistory, setChatHistory] = useState([])
   const [tokenHolders, setTokenHolders] = useState([])
   const [holderDatas, setTokenHolderDatas] = useState()
+  useEffect(() => {
+    if (wholeTransactions.length > 0) {
+      const txns = wholeTransactions.filter((item) => `0x${item.parsedJson.token_address}` == token).map((item) => {
+        const date = new Date(Number(item.parsedJson.ts)).toJSON()
+        return {
+          Maker: item.parsedJson.user,
+          Type: item.parsedJson.is_buy ? 'Sell' : 'Buy',
+          Amount: format9(item.parsedJson.sui_amount),
+          date: `${date.slice(5, 10)} ${(date.slice(12, 16))}`,
+          Tx: item.id.txDigest
+        }
+      })
+      setTransactionDatas(txns)
+    }
+  }, [wholeTransactions])
   const [transactions, setTransactions] = useState([])
   const [transactionDatas, setTransactionDatas] = useState([])
   const [tokenPriceDatas, setTokenPriceDatas] = useState([])
@@ -51,7 +69,7 @@ const Trade = () => {
 
   const [chatContent] = useState('')
 
-  const [selectedOption, setSelectedOption] = useState('Chat')
+  const [selectedOption, setSelectedOption] = useState('Trades')
 
   const [currentTransactionPage, setCurrentTransactionPage] = useState(1)
   const [transactionTotalPages, setTransactionTotalPages] = useState(0)
@@ -141,7 +159,7 @@ const Trade = () => {
                         onError={handleImageError}
                         alt={`${tokenName} logo`}
                       />
-                      
+
                     }
                     tokenSymbol={tokenSymbol}
                     website={website}
@@ -155,15 +173,15 @@ const Trade = () => {
                     tokenSuiPrice={tokenSuiPrice}
                     tokenAddress={tokenAddress}
                   />
-                <div className="block lg:hidden">
-                <TradeCardBox
-                  token={token}
-                  lpCreated={lpCreated}
-                  tokenAddress={tokenAddress}
-                  tokenLogo={tokenLogo}
-                  tokenSymbol={tokenSymbol}
-                />
-                 </div>
+                  <div className="block lg:hidden">
+                    <TradeCardBox
+                      token={token}
+                      lpCreated={lpCreated}
+                      tokenAddress={tokenAddress}
+                      tokenLogo={tokenLogo}
+                      tokenSymbol={tokenSymbol}
+                    />
+                  </div>
                   <div className="">
                     {lpCreated ? (
                       <iframe
@@ -221,8 +239,6 @@ const Trade = () => {
                                       <div>
                                         <a
                                           className="holderContent"
-                                          href={'sui' + 'address/' + Maker}
-                                          target="_blank"
                                           rel="noreferrer"
                                         >
                                           <p className="tokenLists text-[#f3cc2f]">
@@ -230,7 +246,7 @@ const Trade = () => {
                                               '...' +
                                               Maker.slice(-3)}
                                           </p>
-                                          <svg
+                                          {/* <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             width="24"
                                             height="24"
@@ -245,8 +261,7 @@ const Trade = () => {
                                             <path d="M15 3h6v6"></path>
                                             <path d="M10 14 21 3"></path>
                                             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                          </svg>
-                                          &nbsp;
+                                          </svg> */}
                                         </a>
                                       </div>
                                       <div>
@@ -269,7 +284,7 @@ const Trade = () => {
                                       <div>
                                         <a
                                           className="holderContent"
-                                          href={'tx/' + Tx}
+                                          href={`${ScanUrl.TxBlock}${Tx}`}
                                           target="_blank"
                                           rel="noreferrer"
                                         >
@@ -475,19 +490,17 @@ const Trade = () => {
               </section>
 
               <section className="ClaimLeftColumn px-[16px]">
-              <div className="hidden lg:block">
-              <TradeCardBox
-                token={token}
-                lpCreated={lpCreated}
-                tokenAddress={tokenAddress}
-                tokenLogo={tokenLogo}
-                tokenSymbol={tokenSymbol}
-              />
-            </div>
-
-
+                <div className="hidden lg:block">
+                  <TradeCardBox
+                    token={token}
+                    lpCreated={lpCreated}
+                    tokenAddress={tokenAddress}
+                    tokenLogo={tokenLogo}
+                    tokenSymbol={tokenSymbol}
+                  />
+                </div>
                 <br />
-                {(address === devAddress) & isConnected && (
+                {/* {(address === devAddress) && isConnected && (
                   <div className="claim-card p-6">
                     <div className="token-info-item">
                       <span className="token-info-label mx-auto">
@@ -502,7 +515,7 @@ const Trade = () => {
                     </div>
                     <UpdateBox data={poolDate} />
                   </div>
-                )}
+                )} */}
                 <br />
                 <div className="claim-card p-6">
                   <div className="token-info-item">

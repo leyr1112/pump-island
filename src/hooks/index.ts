@@ -223,7 +223,7 @@ export const useCreate = () => {
                             tx.object(OBJECTS.Configuration),
                             tx.object(treasuryCap),
                             coin,
-                            tx.pure.u64((inputAmout * 1000000000 - 1) * 200000),
+                            tx.pure.u64(inputAmout * 19860477000000),
                             tx.object('0x6'),
                             tx.pure.string(tokenName),
                             tx.pure.string(tokenSymbol),
@@ -548,8 +548,10 @@ export const useGetHolders = (token) => {
     useEffect(() => {
         const getHolders = async () => {
             try {
+                const holders = await client.multiGetObjects({
+                    ids: []
+                })
                 console.log(token)
-
             } catch (e) {
                 console.error('Error fetching holders', e)
             }
@@ -557,4 +559,35 @@ export const useGetHolders = (token) => {
         getHolders()
     }, [token])
     return { holders }
+}
+
+export const useGetTradingTransactions = (token) => {
+    const [transactions, setTransactions] = useState<any[]>([])
+    const [update, setUpdate] = useState(0)
+    const getTransactions = async () => {
+        const result = await client.queryEvents({
+            query: {
+                MoveEventType: `${OBJECTS.Package}::move_pump::TradedEvent`
+            }
+        })
+        setTransactions(result.data)
+    }
+    useEffect(() => {
+        getTransactions()
+    }, [])
+
+    const refetch = useCallback(() => {
+        setUpdate(prev => prev + 1)
+        getTransactions()
+    }, [])
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            refetch();
+        }, 10000);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    return { update, transactions }
 }
