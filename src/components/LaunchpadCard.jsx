@@ -19,7 +19,8 @@ const LaunchpadCard = ({
   website,
   twitter,
   telegram,
-  raisingPercent
+  raisingPercent,
+  poolCompleted
 }) => {
   const link = `/trade?token=${chadAddress}`
   const defaultLogo = '/logo.png'
@@ -51,19 +52,19 @@ const LaunchpadCard = ({
   return (
     <Link to={link}>
       <div className="launchpad-card overflow-hidden relative h-auto">
-        {raisingPercent !== undefined && (
+        {
+          poolCompleted &&
           <div
             className="launchpad-change-tag"
             style={{
               backgroundColor:
-                raisingPercent >= 0 ? 'rgb(53, 255, 254)' : 'rgb(255, 74, 138)'
+                poolCompleted ? 'rgb(53, 255, 254)' : 'rgb(255, 74, 138)'
             }}
           >
-            {raisingPercent >= 0 ? '+' : ''}
-            {raisingPercent}%
-            <img src={raisingPercent >= 0 ? LaunchpadChangeUp : LaunchpadChangeDown} alt="" />
+            Completed
           </div>
-        )}
+        }
+
         <div className="p-4 sm:p-[20px] relative">
           <div className="flex flex-row justify-between items-center h-10">
             <img

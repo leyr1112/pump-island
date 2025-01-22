@@ -6,14 +6,11 @@ import ClipLoader from 'react-spinners/ClipLoader'
 import Footer from '../components/Footer.jsx'
 import TopBar from '../components/TopBar.jsx'
 import Select from 'react-select'
-import { apiUrl } from '../utils/constants.ts'
 import { useGetPools } from '../hooks/index.ts'
-import { useApp } from '../context/index.jsx'
 
 const App = () => {
   const [search, setSearch] = useState('')
   const { pools, loading } = useGetPools()
-  const { state } = useApp()
 
   const sortOptions = [
     { value: 'Market Cap', label: 'Market Cap' },
@@ -246,7 +243,8 @@ const App = () => {
             twitter,
             telegram,
             blockchainLogoUrl,
-            raisingPercent
+            raisingPercent,
+            poolCompleted
           }) => (
             <LaunchpadCard
               chainId={chainId}
@@ -271,6 +269,7 @@ const App = () => {
                   className="launchpad-blockchain-logo"
                 />
               }
+              poolCompleted={poolCompleted}
               raisingPercent={raisingPercent}
             />
           )

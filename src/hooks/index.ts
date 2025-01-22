@@ -441,6 +441,7 @@ export const useGetPools = () => {
                     const virtualTokenReserves = poolDataAdd.virtual_token_reserves
                     const realTokenReserves = poolDataAdd.real_token_reserves.fields.balance
                     const tokenPrice = virtualSuiReserves / virtualTokenReserves * suiPrice / 1000
+                    const poolCompleted = poolDataAdd.is_completed
 
                     const result = {
                         tokenSymbol,
@@ -457,14 +458,15 @@ export const useGetPools = () => {
                         virtualSuiReserves,
                         virtualTokenReserves,
                         realTokenReserves,
-                        progress: realSuiReserves / PumpConfig.Threshod * 100,
+                        progress: poolCompleted ? 100 : realSuiReserves / PumpConfig.Threshod * 100,
                         marketCap: tokenPrice * 10000000000,
                         tokenPrice,
                         liquidity: realSuiReserves / 1000000000 * suiPrice,
                         poolObjectId,
                         raisingPercent: undefined,
                         suiPrice,
-                        tokenSuiPrice: virtualSuiReserves / virtualTokenReserves / 1000
+                        tokenSuiPrice: virtualSuiReserves / virtualTokenReserves / 1000,
+                        poolCompleted
                     }
 
                     changeVariable(address, result)
@@ -501,6 +503,7 @@ export const useGetPool = (token) => {
     const [tokenPrice, setTokenPrice] = useState('0')
     const [progress, setProgress] = useState(0)
     const [tokenSuiPrice, setTokenSuiPrice] = useState(0)
+    const [poolCompleted, setPoolCompleted] = useState()
     useEffect(() => {
         const pool = pools.find((pool) => pool.address == token)
         if (pool) {
@@ -517,6 +520,7 @@ export const useGetPool = (token) => {
             setTokenPrice(pool.tokenPrice)
             setProgress(pool.progress)
             setTokenSuiPrice(pool.tokenSuiPrice)
+            setPoolCompleted(pool.poolCompleted)
         }
     }, [pools, token])
     return {
@@ -534,6 +538,7 @@ export const useGetPool = (token) => {
         marketCap,
         tokenPrice,
         progress,
-        tokenSuiPrice
+        tokenSuiPrice,
+        poolCompleted
     }
 }

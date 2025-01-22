@@ -33,9 +33,10 @@ const Trade = () => {
     logoUrl,
     progress,
     tokenSuiPrice,
+    poolCompleted
   } = useGetPool(token)
 
-  const lpCreated = false
+  const lpCreated = poolCompleted
   const { isConnected } = useCurrentWallet()
   const account = useCurrentAccount()
   const address = account?.address ?? undefined
