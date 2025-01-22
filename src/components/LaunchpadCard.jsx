@@ -3,8 +3,6 @@ import PropTypes from 'prop-types'
 import WebsiteIcon from '../icons/website.png'
 import TwitterIcon from '../icons/x-icon.svg'
 import TelegramIcon from '../icons/telegram.png'
-import LaunchpadChangeUp from '../icons/launchpad-change-up.svg'
-import LaunchpadChangeDown from '../icons/launchpad-change-down.svg'
 import { Link } from 'react-router-dom'
 
 const LaunchpadCard = ({
@@ -12,17 +10,15 @@ const LaunchpadCard = ({
   liquidity,
   tokenName,
   Logo,
-  chadAddress,
-  depositedAmount,
+  tokenAddress,
   devAddress,
   marketCap,
   website,
   twitter,
   telegram,
-  raisingPercent,
   poolCompleted
 }) => {
-  const link = `/trade?token=${chadAddress}`
+  const link = `/trade?token=${tokenAddress}`
   const defaultLogo = '/logo.png'
   const [imgLogo, setImgLogo] = useState(Logo)
   if (progress > 100) {
@@ -111,15 +107,11 @@ const LaunchpadCard = ({
           </div>
           <br />
           <div className="launchpad-addresses text-[#d3d3d3]">
-            <span className="left-aligned">Volume</span>
-            <span className="center-aligned">MC</span>
+            <span className="left-aligned">MC</span>
             <span className="right-aligned">LP</span>
           </div>
           <div className="launchpad-addresses text-[#fff]">
             <span className="left-aligned">
-              <b>${Math.round(depositedAmount).toLocaleString()}</b>
-            </span>
-            <span className="center-aligned">
               <b>${Math.round(marketCap).toLocaleString()}</b>
             </span>
             <span className="right-aligned">

@@ -226,51 +226,32 @@ const App = () => {
       >
         {items.map(
           ({
-            chainId,
             progress,
             liquidity,
             tokenName,
             logoUrl,
-            bannerUrl,
             address,
-            depositedAmount,
-            contractAddress,
-            dexAddress,
+            tokenAddress,
             devAddress,
-            dexName,
             marketCap,
             website,
             twitter,
             telegram,
-            blockchainLogoUrl,
-            raisingPercent,
-            poolCompleted
+            poolCompleted,
           }) => (
             <LaunchpadCard
-              chainId={chainId}
               progress={progress}
               liquidity={liquidity}
               tokenName={tokenName}
               Logo={logoUrl}
-              Banner={bannerUrl}
               chadAddress={address}
-              depositedAmount={depositedAmount}
-              contractAddress={contractAddress}
-              dexAddress={dexAddress}
+              tokenAddress={tokenAddress}
               devAddress={devAddress}
-              dexName={dexName}
               marketCap={marketCap}
               website={website}
               twitter={twitter}
               telegram={telegram}
-              BlockchainLogo={
-                <img
-                  src={blockchainLogoUrl}
-                  className="launchpad-blockchain-logo"
-                />
-              }
               poolCompleted={poolCompleted}
-              raisingPercent={raisingPercent}
             />
           )
         )}

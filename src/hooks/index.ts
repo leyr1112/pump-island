@@ -503,7 +503,7 @@ export const useGetPool = (token) => {
     const [tokenPrice, setTokenPrice] = useState('0')
     const [progress, setProgress] = useState(0)
     const [tokenSuiPrice, setTokenSuiPrice] = useState(0)
-    const [poolCompleted, setPoolCompleted] = useState()
+    const [poolCompleted, setPoolCompleted] = useState(false)
     useEffect(() => {
         const pool = pools.find((pool) => pool.address == token)
         if (pool) {
@@ -539,6 +539,6 @@ export const useGetPool = (token) => {
         tokenPrice,
         progress,
         tokenSuiPrice,
-        poolCompleted
+        poolCompleted,
     }
 }
