@@ -1610,9 +1610,9 @@ hr {
   justify-content: center;
   align-items: center;
   position: absolute;
-  top:70px;
+  top: 70px;
   right: 0px;
-  color: rgb(17, 17, 17);
+  color: white; /* Colore della scritta */
   font-family: 'PingFang SC', sans-serif;
   font-size: 12px;
   font-weight: 500;
@@ -1620,12 +1620,25 @@ hr {
   box-shadow: rgba(14, 30, 30, 0.5) 0px 2px 10px;
   gap: 4px;
   border-radius: 20px 0px 0px 20px;
-  border-width: initial;
-  border-style: none;
-  border-color: initial;
-  border-image: initial;
   padding: 0px 6px 0px 10px;
+
+  /* Effetto neon */
+  background-color: #cd8e60;
+  text-shadow: 0 0 5px white, 0 0 10px #cd8e60, 0 0 20px #cd8e60, 0 0 30px #cd8e60, 0 0 40px #cd8e60;
+  animation: neon-blink 1.5s infinite alternate;
 }
+
+@keyframes neon-blink {
+  0% {
+    opacity: 1;
+    box-shadow: 0 0 10px #cd8e60, 0 0 20px #cd8e60, 0 0 30px #cd8e60, 0 0 40px #cd8e60;
+  }
+  100% {
+    opacity: 0.6;
+    box-shadow: 0 0 5px #cd8e60, 0 0 15px #cd8e60, 0 0 25px #cd8e60, 0 0 35px #cd8e60;
+  }
+}
+
 
 .launchpad-status-icon {
   width: 5px;
@@ -1890,7 +1903,8 @@ a {
 .launchpad-progress-bar-filled {
   height: 14px;
   border-radius: 37px;
-  background: linear-gradient(90deg, #7e51f9 0%, #0914e5 100%);
+  background: linear-gradient(90deg, #FF5733 0%, #C70039 100%);
+
 }
 
 .launchpad-liquidity-text {

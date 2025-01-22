@@ -54,10 +54,10 @@ const LaunchpadCard = ({
             className="launchpad-change-tag"
             style={{
               backgroundColor:
-                poolCompleted ? 'rgb(53, 255, 254)' : 'rgb(255, 74, 138)'
+                poolCompleted ? '#cd8e60' : 'rgb(255, 74, 138)'
             }}
           >
-            Completed
+            COMPLETED
           </div>
         }
 
