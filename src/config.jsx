@@ -18,9 +18,9 @@ export const config = createConfig({
 })
 
 export const OBJECTS = {
-  Configuration: "0xcc765dd591f5ff48b58814f0579e0e8d4d015f3b0259a46faf041142dc65aa16",
-  Package: "0x297bc71b964e641382ef6d2819773cecceb778c43c930734225e1b99d9fe2fe7",
-  Threshold: "0xd8ab21b030e670104ad7938dbd419d91822f8556779d1aca86f38364ec6bd6e6"
+  Configuration: "0x84552ea48128a8e341890ad4c7d498039d8fc21e3320ff5acf4884265a5881e0",
+  Package: "0x9b4602a313e9be4feaed9b5a8075c5b5f4c6dce9c0c6b37c5787562bf51cc483",
+  Threshold: "0xaac1ced0598914100f5c2b116cd04176b6b8421c519679d9dcf85b47e0f06ac8"
 }
 
 export const ScanUrl = {

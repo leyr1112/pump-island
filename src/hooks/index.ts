@@ -10,7 +10,7 @@ import { Transaction } from '@mysten/sui/transactions'
 import { intoBase64 } from '../utils/pkg.ts'
 import toast from 'react-hot-toast'
 
-const client = new SuiClient({ url: getFullnodeUrl('testnet') })
+const client = new SuiClient({ url: getFullnodeUrl('devnet') })
 
 export const useGetSuiBalance = () => {
     const [suiBalance, setSuiBalance] = useState<any>()
@@ -262,11 +262,12 @@ export const useCreate = () => {
 }
 
 export const useTrade = (token) => {
+    const account = useCurrentAccount()
     const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction()
     const [estimateOut, setEstimateOut] = useState(0n)
     const [ouput, setOutput] = useState(0)
     const [loading, setLoading] = useState(false)
-    const buy = (inputTokenType, inputAmout) => {
+    const buy = async (inputTokenType, inputAmout) => {
         setLoading(true)
         try {
             if (inputTokenType == "SUI") {
@@ -297,30 +298,44 @@ export const useTrade = (token) => {
                 })
             } else {
                 const tx = new Transaction()
-                const [coin] = tx.splitCoins(tx.object('0x9f6ed1cdd14a8748b9aa9720d4fe2ed59366bc5afa31612604ffef61f0cf6411::symbol::SYMBOL'), [tx.pure.u64(inputAmout * 1000000)])
-                tx.moveCall({
-                    arguments: [
-                        tx.object(OBJECTS.Configuration),
-                        coin,
-                        tx.pure.u64(inputAmout * 1000000),
-                        tx.object('0x6')
-                    ],
-                    typeArguments: [token],
-                    target: `${OBJECTS.Package}::move_pump::sell`
-                })
-
-                signAndExecuteTransaction({ transaction: tx }, {
-                    onSuccess: result => {
-                        console.log(result)
-                        setLoading(false)
-                        toast.success('Successfully sold!')
-                    },
-                    onError: (e) => {
-                        setLoading(false)
-                        toast.error('There is a problem to trade!')
-                        console.error(e)
+                const coinObjects = await client.getCoins({ owner: (account as any).address, coinType: token })
+                if (coinObjects.data.length > 0) {
+                    const coinObject1 = tx.object(coinObjects.data[0].coinObjectId)
+                    const ohterCoinObjects = (coinObjects as any).data.slice(1).map((item) => {
+                        return tx.object(item.coinObjectId)
+                    })
+                    if (ohterCoinObjects.length > 0) {
+                        tx.mergeCoins(coinObject1, ohterCoinObjects)
                     }
-                })
+                    const [coin] = tx.splitCoins(coinObject1, [tx.pure.u64(Math.ceil(inputAmout * 1000000))])
+                    tx.moveCall({
+                        arguments: [
+                            tx.object(OBJECTS.Configuration),
+                            coin,
+                            tx.pure.u64(estimateOut),
+                            tx.object('0x6')
+                        ],
+                        typeArguments: [token],
+                        target: `${OBJECTS.Package}::move_pump::sell`
+                    })
+
+                    signAndExecuteTransaction({ transaction: tx }, {
+                        onSuccess: result => {
+                            console.log(result)
+                            setLoading(false)
+                            toast.success('Successfully sold!')
+                        },
+                        onError: (e) => {
+                            setLoading(false)
+                            toast.error('There is a problem to trade!')
+                            console.error(e)
+                        }
+                    })
+                } else {
+                    console.error('There is a problem to trade!')
+                    setLoading(false)
+                    toast.error('There is a problem to trade!')
+                }
             }
         } catch (e) {
             console.error(e)
@@ -343,7 +358,7 @@ export const useTrade = (token) => {
                 tx.moveCall({
                     arguments: [
                         tx.object(OBJECTS.Configuration),
-                        tx.pure.u64(Number(amount) * 1000000000),
+                        tx.pure.u64(Math.ceil(Number(amount) * 1000000000)),
                         tx.pure.u64(0)
                     ],
                     typeArguments: [token],
@@ -365,7 +380,7 @@ export const useTrade = (token) => {
                     arguments: [
                         tx.object(OBJECTS.Configuration),
                         tx.pure.u64(0),
-                        tx.pure.u64(Number(amount) * 1000000)
+                        tx.pure.u64(Math.ceil(Number(amount) * 1000000))
                     ],
                     typeArguments: [token],
                     target: `${OBJECTS.Package}::move_pump::estimate_amount_out`

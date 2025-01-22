@@ -56,7 +56,7 @@ createWeb3Modal({
 
 const queryClient = new QueryClient();
 const networks = {
-  devnet: { url: getFullnodeUrl('testnet') },
+  devnet: { url: getFullnodeUrl('devnet') },
   mainnet: { url: getFullnodeUrl('mainnet') },
 };
 
