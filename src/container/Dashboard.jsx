@@ -231,7 +231,6 @@ const App = () => {
             tokenName,
             logoUrl,
             address,
-            tokenAddress,
             devAddress,
             marketCap,
             website,
@@ -245,7 +244,7 @@ const App = () => {
               tokenName={tokenName}
               Logo={logoUrl}
               chadAddress={address}
-              tokenAddress={tokenAddress}
+              tokenAddress={address}
               devAddress={devAddress}
               marketCap={marketCap}
               website={website}

@@ -10,7 +10,7 @@ import MyChart from '../components/Chart.jsx'
 import { SignMessage } from './SignMessage.jsx'
 import CustomRadioButton from '../components/CustomRadioButton.jsx'
 import UpdateBox from '../components/profileUpdateBox.tsx'
-import { useGetPool } from '../hooks/index.ts'
+import { useGetPool, useGetHolders } from '../hooks/index.ts'
 import { useCurrentAccount, useCurrentWallet } from '@mysten/dapp-kit'
 import TradeCardBox from '../components/TradeCardBox.jsx'
 

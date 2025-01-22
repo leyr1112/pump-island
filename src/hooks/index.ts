@@ -542,3 +542,19 @@ export const useGetPool = (token) => {
         poolCompleted,
     }
 }
+
+export const useGetHolders = (token) => {
+    const [holders, setHolders] = useState<any[]>([])
+    useEffect(() => {
+        const getHolders = async () => {
+            try {
+                console.log(token)
+
+            } catch (e) {
+                console.error('Error fetching holders', e)
+            }
+        }
+        getHolders()
+    }, [token])
+    return { holders }
+}
