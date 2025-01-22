@@ -129,7 +129,7 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
                   required
                 />
                 <div className="flex gap-2 items-center">
-                  <span className="text-[#919191] text-[12px] font-semibold flex gap-1">
+                  <span className="text-[#919191] text-[12px] font-semibold flex gap-1 text-end">
                     Balance: &nbsp;
                     {Number(inputTokenType === 'SUI' ? suiBalance : tokenBalance).toLocaleString()}
                     <div
@@ -175,7 +175,7 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
                   disabled
                 />
                 <div className="flex gap-2 items-center">
-                  <span className="text-[#919191] text-[12px] font-semibold">
+                  <span className="text-[#919191] text-[12px] font-semibold text-end">
                     Balance: &nbsp;
                     {Number(inputTokenType !== 'SUI' ? suiBalance : tokenBalance).toLocaleString()}{' '}
                   </span>

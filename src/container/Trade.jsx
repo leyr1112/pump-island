@@ -37,6 +37,7 @@ const Trade = () => {
     tokenSuiPrice,
     poolCompleted
   } = useGetPool(token)
+  console.log(marketCap)
 
   const { transactions: wholeTransactions } = useGetTradingTransactions(token)
   const lpCreated = poolCompleted
@@ -214,8 +215,8 @@ const Trade = () => {
                           <div className="tradeBox py-2">
                             <p>Maker</p>
                             <p>Type</p>
-                            <p>Amount</p>
-                            <p>date</p>
+                            <p>Amount(SUI)</p>
+                            <p>Date</p>
                             <p>Tx</p>
                           </div>
 
@@ -499,8 +500,8 @@ const Trade = () => {
                     tokenSymbol={tokenSymbol}
                   />
                 </div>
-                <br />
-                {/* {(address === devAddress) && isConnected && (
+                {/* <br />
+                {(address === devAddress) && isConnected && (
                   <div className="claim-card p-6">
                     <div className="token-info-item">
                       <span className="token-info-label mx-auto">
@@ -516,7 +517,7 @@ const Trade = () => {
                     <UpdateBox data={poolDate} />
                   </div>
                 )} */}
-                <br />
+                {/* <br />
                 <div className="claim-card p-6">
                   <div className="token-info-item">
                     <span className="token-info-label mx-auto">
@@ -528,7 +529,7 @@ const Trade = () => {
                       </h3>
                     </span>
                   </div>
-                </div>
+                </div> */}
                 <br />
                 <div className="claim-card p-6">
                   <div className="token-info-item py-2">

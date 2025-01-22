@@ -412,76 +412,87 @@ export const useGetPools = () => {
     const [loading, setLoading] = useState(true)
     const { changeVariable } = useApp()
     const { suiPrice } = useGetSuiPrice()
-    useEffect(() => {
-        const getPools = async () => {
-            setLoading(true)
-            try {
-                const createdEvents = await client.queryEvents({
-                    query: {
-                        MoveEventType: `${OBJECTS.Package}::move_pump::CreatedEvent`
-                    }
-                })
-                if (!createdEvents.data) return
-                const poolsDataAdd = await Promise.all(createdEvents.data.map(async (createdEvent: any) => {
-                    const poolObjectId = createdEvent.parsedJson.pool_id
-                    const devAddress = createdEvent.parsedJson.created_by
-                    const startTime = createdEvent.timestampMs //ms
-                    const website = createdEvent.parsedJson.website
-                    const twitter = createdEvent.parsedJson.twitter
-                    const description = createdEvent.parsedJson.description
-                    const telegram = createdEvent.parsedJson.telegram
-                    const tokenSymbol = createdEvent.parsedJson.symbol
-                    const tokenName = createdEvent.parsedJson.name
-                    const logoUrl = createdEvent.parsedJson.uri
-                    const poolData: any = await client.getObject({ id: poolObjectId, options: { showContent: true } })
-                    const address = poolData.data.content.type.slice(84, -1)
-                    const poolDataAdd = poolData.data.content.fields
-                    const realSuiReserves = poolDataAdd.real_sui_reserves.fields.balance
-                    const virtualSuiReserves = poolDataAdd.virtual_sui_reserves
-                    const virtualTokenReserves = poolDataAdd.virtual_token_reserves
-                    const realTokenReserves = poolDataAdd.real_token_reserves.fields.balance
-                    const tokenPrice = virtualSuiReserves / virtualTokenReserves * suiPrice / 1000
-                    const poolCompleted = poolDataAdd.is_completed
+    const getPools = async (suiPrice) => {
+        setLoading(true)
+        try {
+            const createdEvents = await client.queryEvents({
+                query: {
+                    MoveEventType: `${OBJECTS.Package}::move_pump::CreatedEvent`
+                }
+            })
+            if (!createdEvents.data) return
+            const poolsDataAdd = await Promise.all(createdEvents.data.map(async (createdEvent: any) => {
+                const poolObjectId = createdEvent.parsedJson.pool_id
+                const devAddress = createdEvent.parsedJson.created_by
+                const startTime = createdEvent.timestampMs //ms
+                const website = createdEvent.parsedJson.website
+                const twitter = createdEvent.parsedJson.twitter
+                const description = createdEvent.parsedJson.description
+                const telegram = createdEvent.parsedJson.telegram
+                const tokenSymbol = createdEvent.parsedJson.symbol
+                const tokenName = createdEvent.parsedJson.name
+                const logoUrl = createdEvent.parsedJson.uri
+                const poolData: any = await client.getObject({ id: poolObjectId, options: { showContent: true } })
+                const address = poolData.data.content.type.slice(84, -1)
+                const poolDataAdd = poolData.data.content.fields
+                const realSuiReserves = poolDataAdd.real_sui_reserves.fields.balance
+                const virtualSuiReserves = poolDataAdd.virtual_sui_reserves
+                const virtualTokenReserves = poolDataAdd.virtual_token_reserves
+                const realTokenReserves = poolDataAdd.real_token_reserves.fields.balance
+                const tokenPrice = virtualSuiReserves / virtualTokenReserves * suiPrice / 1000
+                const poolCompleted = poolDataAdd.is_completed
 
-                    const result = {
-                        tokenSymbol,
-                        tokenName,
-                        logoUrl,
-                        address,
-                        startTime,
-                        devAddress,
-                        website,
-                        twitter,
-                        telegram,
-                        description,
-                        realSuiReserves,
-                        virtualSuiReserves,
-                        virtualTokenReserves,
-                        realTokenReserves,
-                        progress: poolCompleted ? 100 : realSuiReserves / PumpConfig.Threshod * 100,
-                        marketCap: tokenPrice * 10000000000,
-                        tokenPrice,
-                        liquidity: realSuiReserves / 1000000000 * suiPrice,
-                        poolObjectId,
-                        raisingPercent: undefined,
-                        suiPrice,
-                        tokenSuiPrice: virtualSuiReserves / virtualTokenReserves / 1000,
-                        poolCompleted
-                    }
+                const result = {
+                    tokenSymbol,
+                    tokenName,
+                    logoUrl,
+                    address,
+                    startTime,
+                    devAddress,
+                    website,
+                    twitter,
+                    telegram,
+                    description,
+                    realSuiReserves,
+                    virtualSuiReserves,
+                    virtualTokenReserves,
+                    realTokenReserves,
+                    progress: poolCompleted ? 100 : realSuiReserves / PumpConfig.Threshod * 100,
+                    marketCap: tokenPrice * 10000000000,
+                    tokenPrice,
+                    liquidity: realSuiReserves / 1000000000 * suiPrice,
+                    poolObjectId,
+                    raisingPercent: undefined,
+                    suiPrice,
+                    tokenSuiPrice: virtualSuiReserves / virtualTokenReserves / 1000,
+                    poolCompleted
+                }
 
-                    changeVariable(address, result)
+                changeVariable(address, result)
 
-                    return result
-                }))
-                setData(poolsDataAdd)
-            } catch (e) {
-                console.error('Error fetching pools', e)
-            } finally {
-                setLoading(false)
-            }
+                return result
+            }))
+            setData(poolsDataAdd)
+        } catch (e) {
+            console.error('Error fetching pools', e)
+        } finally {
+            setLoading(false)
         }
-        getPools()
+    }
+    useEffect(() => {
+        getPools(suiPrice)
     }, [suiPrice])
+    const refetch = useCallback(() => {
+        getPools(suiPrice)
+    }, [])
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            refetch();
+        }, 10000);
+
+        return () => clearInterval(interval);
+    }, []);
     const pools = useMemo(() => data, [data])
     return { pools, loading }
 }
@@ -565,12 +576,16 @@ export const useGetTradingTransactions = (token) => {
     const [transactions, setTransactions] = useState<any[]>([])
     const [update, setUpdate] = useState(0)
     const getTransactions = async () => {
-        const result = await client.queryEvents({
-            query: {
-                MoveEventType: `${OBJECTS.Package}::move_pump::TradedEvent`
-            }
-        })
-        setTransactions(result.data)
+        try {
+            const result = await client.queryEvents({
+                query: {
+                    MoveEventType: `${OBJECTS.Package}::move_pump::TradedEvent`
+                }
+            })
+            setTransactions(result.data)
+        } catch (e) {
+            console.error(e)
+        }        
     }
     useEffect(() => {
         getTransactions()
