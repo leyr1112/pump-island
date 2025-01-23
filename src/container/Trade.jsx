@@ -396,8 +396,7 @@ const Trade = () => {
                                             src={avatar}
                                             className="chat-profile-avatar"
                                             onError={event => {
-                                              event.target.src =
-                                                '/img/moonboy67.png'
+                                              event.target.src = '/logo.png'
                                               event.onerror = null
                                             }}
                                           />

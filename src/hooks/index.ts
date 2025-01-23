@@ -267,6 +267,7 @@ export const useTrade = (token) => {
     const [estimateOut, setEstimateOut] = useState(0n)
     const [ouput, setOutput] = useState(0)
     const [loading, setLoading] = useState(false)
+    const { refetch } = useGetPools()
     const buy = async (inputTokenType, inputAmout) => {
         setLoading(true)
         try {
@@ -289,6 +290,7 @@ export const useTrade = (token) => {
                         console.log(result)
                         setLoading(false)
                         toast.success('Successfully bought!')
+                        refetch()
                     },
                     onError: (e) => {
                         console.error(e)
@@ -324,6 +326,7 @@ export const useTrade = (token) => {
                             console.log(result)
                             setLoading(false)
                             toast.success('Successfully sold!')
+                            refetch()
                         },
                         onError: (e) => {
                             setLoading(false)
@@ -457,7 +460,7 @@ export const useGetPools = () => {
                     virtualSuiReserves,
                     virtualTokenReserves,
                     realTokenReserves,
-                    progress: poolCompleted ? 100 : realSuiReserves / PumpConfig.Threshod * 100,
+                    progress: poolCompleted ? 100 : realSuiReserves / PumpConfig.Threshod * 100 > 100 ? 100 : realSuiReserves / PumpConfig.Threshod * 100,
                     marketCap: tokenPrice * 10000000000,
                     tokenPrice,
                     liquidity: realSuiReserves / 1000000000 * suiPrice,
@@ -493,13 +496,13 @@ export const useGetPools = () => {
 
         return () => clearInterval(interval);
     }, []);
-    return { pools: data, loading }
+    return { pools: data, loading, refetch }
 }
 
 export const useGetPool = (token) => {
     const tokenAddress = token
     const { suiPrice } = useGetSuiPrice()
-    const { pools } = useGetPools()
+    const { state } = useApp()
     const [tokenName, setTokenName] = useState('---')
     const [tokenSymbol, setTokenSymbol] = useState('---')
     const [logoUrl, setLogoUrl] = useState('')
@@ -517,7 +520,7 @@ export const useGetPool = (token) => {
 
     useEffect(() => {
         const getPool = () => {
-            const pool = pools.find((pool) => pool.address == token)
+            const pool = state[token]
             if (pool) {
                 setTokenName(pool.tokenName)
                 setTokenSymbol(pool.tokenSymbol)
@@ -536,11 +539,11 @@ export const useGetPool = (token) => {
             }
         }
         getPool()
-    }, [pools])
+    }, [state])
 
     const refetch = useCallback(() => {
         const getPool = () => {
-            const pool = pools.find((pool) => pool.address == token)
+            const pool = state[token]
             if (pool) {
                 setTokenName(pool.tokenName)
                 setTokenSymbol(pool.tokenSymbol)
@@ -599,10 +602,10 @@ export const useGetHolders = (token) => {
                 const holdersData = data.result.map((item: any) => {
                     return {
                         address: item.account,
-                        value: Math.round(item.balance * 1000)/ 1000
+                        value: Math.round(item.balance * 1000) / 1000
                     }
                 })
-                setHolders(holdersData)                
+                setHolders(holdersData)
             } catch (e) {
                 console.error('Error fetching holders', e)
             }
@@ -773,7 +776,7 @@ export const useGetMessages = (token) => {
                 if (!createdEvents.data) return
                 const matchedEvents = createdEvents.data.filter((item: any) => `0x${item.parsedJson.coin_type}` == token)
                 if (matchedEvents.length > 0) {
-                    const messageData = createdEvents.data.map((item: any) => {
+                    const messageData = matchedEvents.map((item: any) => {
                         const date = new Date(item.parsedJson.start_time * 1000).toJSON()
                         return {
                             sender: item.parsedJson.user,

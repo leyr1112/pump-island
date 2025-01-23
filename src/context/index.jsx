@@ -47,7 +47,7 @@ export default function Provider({ children }) {
     useEffect(() => {
         const interval = setInterval(() => {
             refetchSuiBalance();
-        }, 60000);
+        }, 5000);
 
         return () => clearInterval(interval);
     }, [refetchSuiBalance]);
@@ -62,7 +62,7 @@ export default function Provider({ children }) {
     useEffect(() => {
         const interval = setInterval(() => {
             refetchtokenBalances();
-        }, 60000);
+        }, 5000);
 
         return () => clearInterval(interval);
     }, [refetchtokenBalances]);
