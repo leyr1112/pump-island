@@ -3655,4 +3655,50 @@ color: #FFFF !important;
       max-height: 200px; /* Altezza ancora più ridotta per dispositivi molto piccoli */
     }
   }
-  
+  .boost-text {
+    font-size: 48px;
+    font-weight: bold;
+    color: #FFD700; /* Giallo brillante */
+    text-shadow: 
+        0 0 5px #FFD700, 
+        0 0 10px #FFD700, 
+        0 0 20px #FFA500, 
+        0 0 30px #FFA500, 
+        0 0 40px #FF4500, 
+        0 0 50px #FF4500, 
+        0 0 60px #FF4500;
+    animation: glow 1.5s infinite;
+}
+
+@keyframes glow {
+    0% {
+        text-shadow: 
+            0 0 5px #FFD700, 
+            0 0 10px #FFD700, 
+            0 0 20px #FFA500, 
+            0 0 30px #FFA500, 
+            0 0 40px #FF4500, 
+            0 0 50px #FF4500, 
+            0 0 60px #FF4500;
+    }
+    50% {
+        text-shadow: 
+            0 0 10px #FFD700, 
+            0 0 20px #FFD700, 
+            0 0 30px #FFA500, 
+            0 0 40px #FFA500, 
+            0 0 50px #FF4500, 
+            0 0 60px #FF4500, 
+            0 0 70px #FF4500;
+    }
+    100% {
+        text-shadow: 
+            0 0 5px #FFD700, 
+            0 0 10px #FFD700, 
+            0 0 20px #FFA500, 
+            0 0 30px #FFA500, 
+            0 0 40px #FF4500, 
+            0 0 50px #FF4500, 
+            0 0 60px #FF4500;
+    }
+}

@@ -5,7 +5,7 @@ import TwitterIcon from '../icons/x-icon.svg'
 import TelegramIcon from '../icons/telegram.png'
 import { Link } from 'react-router-dom'
 import { useGetBoost } from '../hooks/index.ts'
-import FireImage from '../icons/fire.png'
+import FireImage from '../icons/boost.gif'
 
 const LaunchpadCard = ({
   progress,
@@ -87,9 +87,9 @@ const LaunchpadCard = ({
           <div className="launchpad-header-container flex items-center gap-2">
             <div><p className="launchpad-token-name left-aligned">{tokenName}</p></div>
             {
-              boostStatus > 0 && <div className="flex items-center bg-[#cd8e60] rounded-full px-4 h-6">
-                <img src={FireImage} alt='' className='w-4' />
-                <p>{boostStatus}</p>
+              boostStatus > 0 && <div className="flex items-center bg-trasparent rounded-full px-4 h-6">
+               <div class="flex gap-0.5 items-center text-[11px] text-[#ffd700] font-semibold p-0.5 px-2 border  border-[#f3cc30] bg-[#facc1554] rounded-full">  <p className='text-[#ffd700]'  >{boostStatus}</p><svg class="w-3 h-3" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M349.4 44.6c5.9-13.7 1.5-29.7-10.6-38.5s-28.6-8-39.9 1.8l-256 224c-10 8.8-13.6 22.9-8.9 35.3S50.7 288 64 288H175.5L98.6 467.4c-5.9 13.7-1.5 29.7 10.6 38.5s28.6 8 39.9-1.8l256-224c10-8.8 13.6-22.9 8.9-35.3s-16.6-20.7-30-20.7H272.5L349.4 44.6z"></path></svg></div>
+              
               </div>
             }
           </div>
