@@ -441,7 +441,6 @@ export const useGetPools = () => {
                 const realTokenReserves = poolDataAdd.real_token_reserves.fields.balance
                 const tokenPrice = virtualSuiReserves / virtualTokenReserves * suiPrice / 1000
                 const poolCompleted = poolDataAdd.is_completed
-                console.log('suiPrice', suiPrice)
 
                 const result = {
                     tokenSymbol,
@@ -595,10 +594,15 @@ export const useGetHolders = (token) => {
     useEffect(() => {
         const getHolders = async () => {
             try {
-                const holders = await client.multiGetObjects({
-                    ids: []
+                const holders = await fetch(`https://internal.suivision.xyz/mainnet/api/coin/holders?coinType=0x62f293070ec1c34f022680a14c181fe1237524cef7c53c334347eaf358dfb6bd::suiru::SUIRU&pageSize=20&pageIndex=1`)
+                const data = await holders.json()
+                const holdersData = data.result.map((item: any) => {
+                    return {
+                        address: item.account,
+                        value: Math.round(item.balance * 1000)/ 1000
+                    }
                 })
-                console.log(token)
+                setHolders(holdersData)                
             } catch (e) {
                 console.error('Error fetching holders', e)
             }
@@ -647,7 +651,6 @@ export const useGetBoost = (token) => {
     const [boostStatus, setBoostState] = useState(0)
     const [boosting, setBoosting] = useState(false)
     const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction()
-    const [update, setUpdate] = useState(0)
     const boost = async (suiAmount, option) => {
         setBoosting(true)
         try {
@@ -667,8 +670,7 @@ export const useGetBoost = (token) => {
                 onSuccess: result => {
                     console.log(result)
                     setBoosting(false)
-                    setUpdate(prev => prev + 1)
-                    toast.success('Successfully boosted!')
+                    toast.success('Successfully boosted! You have to wait more time to see changed value!')
                 },
                 onError: (e) => {
                     setBoosting(false)
@@ -683,25 +685,39 @@ export const useGetBoost = (token) => {
         }
     }
 
-    useEffect(() => {
-        const queryEvent = async () => {
-            try {
-                const createdEvents = await client.queryEvents({
-                    query: {
-                        MoveEventType: `${OBJECTS.Package_Boost}::boost_payement::PaymentEvent`
-                    }
-                })
-                if (!createdEvents.data) return
-                const currentTime = Date.now()
-                const matchedEvents = createdEvents.data.filter((item: any) => `0x${item.parsedJson.coin_type}` == token).filter((item: any) => (item.parsedJson.end_time * 1000 >= currentTime && item.parsedJson.start_time * 1000 <= currentTime))
-                const boostSum = matchedEvents.reduce((sum, item: any) => { return sum + Number(item.parsedJson.boost) }, 0)
-                setBoostState(boostSum)
-            } catch (e) {
-                console.error(e)
-            }
+    const queryEvent = async (token) => {
+        try {
+            const createdEvents = await client.queryEvents({
+                query: {
+                    MoveEventType: `${OBJECTS.Package_Boost}::boost_payement::PaymentEvent`
+                }
+            })
+            if (!createdEvents.data) return
+            const currentTime = Date.now()
+            const matchedEvents = createdEvents.data.filter((item: any) => `0x${item.parsedJson.coin_type}` == token).filter((item: any) => (item.parsedJson.end_time * 1000 >= currentTime && item.parsedJson.start_time * 1000 <= currentTime))
+            const boostSum = matchedEvents.reduce((sum, item: any) => { return sum + Number(item.parsedJson.boost) }, 0)
+            setBoostState(boostSum)
+        } catch (e) {
+            console.error(e)
         }
-        queryEvent()
-    }, [token, update])
+    }
+
+    useEffect(() => {
+        queryEvent(token)
+    }, [token])
+
+    const refetch = useCallback(() => {
+        queryEvent(token)
+    }, [token])
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            refetch();
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, []);
+
     return { boosting, boost, boostStatus }
 }
 

@@ -8,7 +8,7 @@ import TopBar from '../components/TopBar.jsx'
 import { useQueryParam, StringParam } from 'use-query-params'
 import MyChart from '../components/Chart.jsx'
 import CustomRadioButton from '../components/CustomRadioButton.jsx'
-import { useGetMessages, useGetPool, useGetTradingTransactions } from '../hooks/index.ts'
+import { useGetHolders, useGetMessages, useGetPool, useGetTradingTransactions } from '../hooks/index.ts'
 import { useCurrentAccount, useCurrentWallet } from '@mysten/dapp-kit'
 import TradeCardBox from '../components/TradeCardBox.jsx'
 import { format9 } from '../utils/format.ts'
@@ -39,12 +39,9 @@ const Trade = () => {
 
   const { transactions: wholeTransactions } = useGetTradingTransactions(token)
   const { isConnected } = useCurrentWallet()
-  const account = useCurrentAccount()
-  const address = account?.address ?? undefined
 
   const { messages: chatHistory, signMessage, signing } = useGetMessages(token)
-  const [tokenHolders, setTokenHolders] = useState([])
-  const [holderDatas, setTokenHolderDatas] = useState()
+  const { holders: tokenHolders } = useGetHolders(token)
   useEffect(() => {
     if (wholeTransactions.length > 0) {
       const txns = wholeTransactions.filter((item) => `0x${item.parsedJson.token_address}` == token).map((item) => {
@@ -63,8 +60,6 @@ const Trade = () => {
   const [transactionDatas, setTransactionDatas] = useState([])
   const [tokenPriceDatas, setTokenPriceDatas] = useState([])
   const [volume, setVolume] = useState(0)
-
-  const [chatContent] = useState('')
 
   const [selectedOption, setSelectedOption] = useState('Trades')
 
@@ -469,7 +464,7 @@ const Trade = () => {
                               event.preventDefault()
                               const formData = new FormData(event.target)
                               const message = formData.get('message')
-                              signMessage (message)
+                              signMessage(message)
                             }}
                           >
                             <div className="TextAreaContainer">

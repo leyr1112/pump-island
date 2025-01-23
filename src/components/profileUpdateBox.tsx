@@ -16,7 +16,6 @@ const UpdateBox = ({ data }) => {
   const onBlackPumpUpdate = async () => {
     try {
       setCreating(true)
-      console.log('create')
     } catch (err) {
       console.error(err)
       toast.error('There is a problem with your Black Pump create. Please try again later')

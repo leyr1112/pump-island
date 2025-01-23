@@ -80,8 +80,8 @@ const addTokenToWallet = (tokenSymbol, tokenAddress) => async () => {
                 }
             }
         })
-    } catch (error) {
-        console.log(error)
+    } catch (e) {
+        console.error(e)
     }
 }
 
@@ -223,7 +223,7 @@ const TokenCard = ({
     return (
         <div
             className="claim-card" style={{ backgroundImage: bannerUrl, backgroundSize: '100% 210px' }}>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '70px', position: 'relative'}}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '70px', position: 'relative' }}>
                 <div
                     className={`launchpad-status-text ${statusClasses[status]}`}
                     style={{ position: 'absolute', top: '100px' }}
