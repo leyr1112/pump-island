@@ -4,6 +4,8 @@ import WebsiteIcon from '../icons/website.png'
 import TwitterIcon from '../icons/x-icon.svg'
 import TelegramIcon from '../icons/telegram.png'
 import { Link } from 'react-router-dom'
+import { useGetBoost } from '../hooks/index.ts'
+import FireImage from '../icons/fire.png'
 
 const LaunchpadCard = ({
   progress,
@@ -18,6 +20,7 @@ const LaunchpadCard = ({
   telegram,
   poolCompleted
 }) => {
+  const { boostStatus } = useGetBoost(tokenAddress)
   const link = `/trade?token=${tokenAddress}`
   const defaultLogo = '/logo.png'
   const [imgLogo, setImgLogo] = useState(Logo)
@@ -81,8 +84,14 @@ const LaunchpadCard = ({
               <></>
             )}
           </div>
-          <div className="launchpad-header-container">
-            <p className="launchpad-token-name left-aligned">{tokenName}</p>
+          <div className="launchpad-header-container flex items-center gap-2">
+            <div><p className="launchpad-token-name left-aligned">{tokenName}</p></div>
+            {
+              boostStatus > 0 && <div className="flex items-center bg-[#cd8e60] rounded-full px-4 h-6">
+                <img src={FireImage} alt='' className='w-4' />
+                <p>{boostStatus}</p>
+              </div>
+            }
           </div>
           <div className="flex flex-row items-center gap-2 text-[16px]">
             <div className="text-[#cd8e60]">Created by:</div>

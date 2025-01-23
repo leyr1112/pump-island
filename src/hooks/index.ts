@@ -411,7 +411,7 @@ export const useGetPools = () => {
     const [data, setData] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
     const { changeVariable } = useApp()
-    const { suiPrice } = useGetSuiPrice()
+    const { state } = useApp()
     const getPools = async (suiPrice) => {
         setLoading(true)
         try {
@@ -441,6 +441,7 @@ export const useGetPools = () => {
                 const realTokenReserves = poolDataAdd.real_token_reserves.fields.balance
                 const tokenPrice = virtualSuiReserves / virtualTokenReserves * suiPrice / 1000
                 const poolCompleted = poolDataAdd.is_completed
+                console.log('suiPrice', suiPrice)
 
                 const result = {
                     tokenSymbol,
@@ -480,21 +481,20 @@ export const useGetPools = () => {
         }
     }
     useEffect(() => {
-        getPools(suiPrice)
-    }, [suiPrice])
+        getPools(state.suiPrice)
+    }, [state.suiPrice])
     const refetch = useCallback(() => {
-        getPools(suiPrice)
-    }, [])
+        getPools(state.suiPrice)
+    }, [state.suiPrice])
 
     useEffect(() => {
         const interval = setInterval(() => {
             refetch();
-        }, 10000);
+        }, 60000);
 
         return () => clearInterval(interval);
     }, []);
-    const pools = useMemo(() => data, [data])
-    return { pools, loading }
+    return { pools: data, loading }
 }
 
 export const useGetPool = (token) => {
@@ -515,25 +515,61 @@ export const useGetPool = (token) => {
     const [progress, setProgress] = useState(0)
     const [tokenSuiPrice, setTokenSuiPrice] = useState(0)
     const [poolCompleted, setPoolCompleted] = useState(false)
+
     useEffect(() => {
-        const pool = pools.find((pool) => pool.address == token)
-        if (pool) {
-            setTokenName(pool.tokenName)
-            setTokenSymbol(pool.tokenSymbol)
-            setLogoUrl(pool.logoUrl)
-            setWebsite(pool.website)
-            setTwitter(pool.twitter)
-            setTelegram(pool.telegram)
-            setDevAddress(pool.devAddress)
-            setDescription(pool.description)
-            setLiquidity(pool.liquidity)
-            setMarketCap(pool.marketCap)
-            setTokenPrice(pool.tokenPrice)
-            setProgress(pool.progress)
-            setTokenSuiPrice(pool.tokenSuiPrice)
-            setPoolCompleted(pool.poolCompleted)
+        const getPool = () => {
+            const pool = pools.find((pool) => pool.address == token)
+            if (pool) {
+                setTokenName(pool.tokenName)
+                setTokenSymbol(pool.tokenSymbol)
+                setLogoUrl(pool.logoUrl)
+                setWebsite(pool.website)
+                setTwitter(pool.twitter)
+                setTelegram(pool.telegram)
+                setDevAddress(pool.devAddress)
+                setDescription(pool.description)
+                setLiquidity(pool.liquidity)
+                setMarketCap(pool.marketCap)
+                setTokenPrice(pool.tokenPrice)
+                setProgress(pool.progress)
+                setTokenSuiPrice(pool.tokenSuiPrice)
+                setPoolCompleted(pool.poolCompleted)
+            }
         }
-    }, [pools, token])
+        getPool()
+    }, [pools])
+
+    const refetch = useCallback(() => {
+        const getPool = () => {
+            const pool = pools.find((pool) => pool.address == token)
+            if (pool) {
+                setTokenName(pool.tokenName)
+                setTokenSymbol(pool.tokenSymbol)
+                setLogoUrl(pool.logoUrl)
+                setWebsite(pool.website)
+                setTwitter(pool.twitter)
+                setTelegram(pool.telegram)
+                setDevAddress(pool.devAddress)
+                setDescription(pool.description)
+                setLiquidity(pool.liquidity)
+                setMarketCap(pool.marketCap)
+                setTokenPrice(pool.tokenPrice)
+                setProgress(pool.progress)
+                setTokenSuiPrice(pool.tokenSuiPrice)
+                setPoolCompleted(pool.poolCompleted)
+            }
+        }
+        getPool()
+    }, [])
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            refetch();
+        }, 10000);
+
+        return () => clearInterval(interval);
+    }, []);
+
     return {
         tokenName,
         tokenSymbol,
@@ -585,7 +621,7 @@ export const useGetTradingTransactions = (token) => {
             setTransactions(result.data)
         } catch (e) {
             console.error(e)
-        }        
+        }
     }
     useEffect(() => {
         getTransactions()
@@ -605,4 +641,139 @@ export const useGetTradingTransactions = (token) => {
     }, []);
 
     return { update, transactions }
+}
+
+export const useGetBoost = (token) => {
+    const [boostStatus, setBoostState] = useState(0)
+    const [boosting, setBoosting] = useState(false)
+    const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction()
+    const [update, setUpdate] = useState(0)
+    const boost = async (suiAmount, option) => {
+        setBoosting(true)
+        try {
+            const tx = new Transaction()
+            const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(suiAmount)])
+            tx.moveCall({
+                arguments: [
+                    tx.object(OBJECTS.Boost_Config),
+                    coin,
+                    tx.pure.u64(option),
+                    tx.object('0x6')
+                ],
+                typeArguments: [token],
+                target: `${OBJECTS.Package_Boost}::boost_payement::pay`
+            })
+            signAndExecuteTransaction({ transaction: tx }, {
+                onSuccess: result => {
+                    console.log(result)
+                    setBoosting(false)
+                    setUpdate(prev => prev + 1)
+                    toast.success('Successfully boosted!')
+                },
+                onError: (e) => {
+                    setBoosting(false)
+                    toast.error('There is a problem to boost!')
+                    console.error(e)
+                }
+            })
+        } catch (e) {
+            console.error(e)
+            toast.error('There is a problem to boost!')
+            setBoosting(false)
+        }
+    }
+
+    useEffect(() => {
+        const queryEvent = async () => {
+            try {
+                const createdEvents = await client.queryEvents({
+                    query: {
+                        MoveEventType: `${OBJECTS.Package_Boost}::boost_payement::PaymentEvent`
+                    }
+                })
+                if (!createdEvents.data) return
+                const currentTime = Date.now()
+                const matchedEvents = createdEvents.data.filter((item: any) => `0x${item.parsedJson.coin_type}` == token).filter((item: any) => (item.parsedJson.end_time * 1000 >= currentTime && item.parsedJson.start_time * 1000 <= currentTime))
+                const boostSum = matchedEvents.reduce((sum, item: any) => { return sum + Number(item.parsedJson.boost) }, 0)
+                setBoostState(boostSum)
+            } catch (e) {
+                console.error(e)
+            }
+        }
+        queryEvent()
+    }, [token, update])
+    return { boosting, boost, boostStatus }
+}
+
+export const useGetMessages = (token) => {
+    const [messages, setMessages] = useState<any[]>([])
+    const [signing, setSigning] = useState(false)
+    const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction()
+    const [update, setUpdate] = useState(0)
+    const sign = async (message) => {
+        setSigning(true)
+        try {
+            const tx = new Transaction()
+            const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(10000000)])
+            tx.moveCall({
+                arguments: [
+                    tx.object(OBJECTS.Boost_Config),
+                    coin,
+                    tx.pure.string(message),
+                    tx.pure.string(''),
+                    tx.object('0x6')
+                ],
+                typeArguments: [token],
+                target: `${OBJECTS.Package_Boost}::boost_payement::send_message_v3`
+            })
+            signAndExecuteTransaction({ transaction: tx }, {
+                onSuccess: result => {
+                    console.log(result)
+                    setSigning(false)
+                    setUpdate(prev => prev + 1)
+                    toast.success('Successfully sent message!')
+                },
+                onError: (e) => {
+                    setSigning(false)
+                    toast.error('There is a problem to sign!')
+                    console.error(e)
+                }
+            })
+        } catch (e) {
+            console.error(e)
+            toast.error('There is a problem to sign!')
+            setSigning(false)
+        }
+    }
+
+    useEffect(() => {
+        const queryEvent = async () => {
+            try {
+                const createdEvents = await client.queryEvents({
+                    query: {
+                        MoveEventType: `${OBJECTS.Package_Boost}::boost_payement::MessageEventV3`
+                    }
+                })
+                if (!createdEvents.data) return
+                const matchedEvents = createdEvents.data.filter((item: any) => `0x${item.parsedJson.coin_type}` == token)
+                if (matchedEvents.length > 0) {
+                    const messageData = createdEvents.data.map((item: any) => {
+                        const date = new Date(item.parsedJson.start_time * 1000).toJSON()
+                        return {
+                            sender: item.parsedJson.user,
+                            content: item.parsedJson.message,
+                            date: `${date.slice(5, 10)} ${(date.slice(12, 16))}`,
+                            avatar: item.parsedJson.image_url
+                        }
+                    })
+                    setMessages(messageData)
+                }
+            } catch (e) {
+                console.error(e)
+            }
+        }
+        queryEvent()
+    }, [token, update])
+
+    return { signing, signMessage: sign, messages }
 }

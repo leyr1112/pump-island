@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import '../App.css'
 import '../styles/MainContainer.css'
@@ -7,14 +7,13 @@ import ClaimCard from '../components/ClaimCard.jsx'
 import TopBar from '../components/TopBar.jsx'
 import { useQueryParam, StringParam } from 'use-query-params'
 import MyChart from '../components/Chart.jsx'
-import { SignMessage } from './SignMessage.jsx'
 import CustomRadioButton from '../components/CustomRadioButton.jsx'
-import UpdateBox from '../components/profileUpdateBox.tsx'
-import { useGetPool, useGetHolders, useGetTradingTransactions } from '../hooks/index.ts'
+import { useGetMessages, useGetPool, useGetTradingTransactions } from '../hooks/index.ts'
 import { useCurrentAccount, useCurrentWallet } from '@mysten/dapp-kit'
 import TradeCardBox from '../components/TradeCardBox.jsx'
 import { format9 } from '../utils/format.ts'
 import { ScanUrl } from '../config.jsx'
+import { ConnectButton } from '@mysten/dapp-kit'
 
 const Trade = () => {
   let [token] = useQueryParam('token', StringParam)
@@ -35,17 +34,15 @@ const Trade = () => {
     logoUrl,
     progress,
     tokenSuiPrice,
-    poolCompleted
+    poolCompleted: lpCreated
   } = useGetPool(token)
-  console.log(marketCap)
 
   const { transactions: wholeTransactions } = useGetTradingTransactions(token)
-  const lpCreated = poolCompleted
   const { isConnected } = useCurrentWallet()
   const account = useCurrentAccount()
   const address = account?.address ?? undefined
 
-  const [chatHistory, setChatHistory] = useState([])
+  const { messages: chatHistory, signMessage, signing } = useGetMessages(token)
   const [tokenHolders, setTokenHolders] = useState([])
   const [holderDatas, setTokenHolderDatas] = useState()
   useEffect(() => {
@@ -54,7 +51,7 @@ const Trade = () => {
         const date = new Date(Number(item.parsedJson.ts)).toJSON()
         return {
           Maker: item.parsedJson.user,
-          Type: item.parsedJson.is_buy ? 'Sell' : 'Buy',
+          Type: item.parsedJson.is_buy ? 'Buy' : 'Sell',
           Amount: format9(item.parsedJson.sui_amount),
           date: `${date.slice(5, 10)} ${(date.slice(12, 16))}`,
           Tx: item.id.txDigest
@@ -63,7 +60,6 @@ const Trade = () => {
       setTransactionDatas(txns)
     }
   }, [wholeTransactions])
-  const [transactions, setTransactions] = useState([])
   const [transactionDatas, setTransactionDatas] = useState([])
   const [tokenPriceDatas, setTokenPriceDatas] = useState([])
   const [volume, setVolume] = useState(0)
@@ -74,7 +70,7 @@ const Trade = () => {
 
   const [currentTransactionPage, setCurrentTransactionPage] = useState(1)
   const [transactionTotalPages, setTransactionTotalPages] = useState(0)
-  const transactionItemsPerPage = 5
+  const transactionItemsPerPage = 10
   const [transactionPageNumbers, setTransactionPageNumbers] = useState([])
 
   const calculateTransactionPageNumbers = (totalPages, currentPage) => {
@@ -127,15 +123,6 @@ const Trade = () => {
       calculateTransactionPageNumbers(totalPages, currentTransactionPage)
     )
   }, [transactionDatas])
-
-  const poolDate = {
-    poolAddress: token,
-    description: description,
-    website: website,
-    twitter: twitter,
-    telegram: telegram,
-    logoUrl: logoUrl
-  }
 
   const handleImageError = event => {
     event.target.src = '/logo.png'
@@ -477,12 +464,42 @@ const Trade = () => {
                           <></>
                         )}
                         <div className="ButtonBox mt-4">
-                          <SignMessage
-                            token={token}
-                            sender={address}
-                            content={chatContent}
-                            timestamp={(Date.now() / 1000).toFixed(0)}
-                          />
+                          <form
+                            onSubmit={event => {
+                              event.preventDefault()
+                              const formData = new FormData(event.target)
+                              const message = formData.get('message')
+                              signMessage (message)
+                            }}
+                          >
+                            <div className="TextAreaContainer">
+                              <textarea
+                                style={{ width: '-webkit-fill-available' }}
+                                rows={6}
+                                id="message"
+                                name="message"
+                                placeholder="Type your message here"
+                                className="rounded-[25px] p-6 text-white"
+                              />
+                            </div>
+                            <div className='flex justify-center'>
+                              {isConnected ? (
+                                <button
+                                  disabled={signing || !isConnected}
+                                  className="SendButton rounded-full text-[#FFFF] py-2"
+                                >
+                                  {signing ? 'Check Wallet' : 'Send Message'}
+                                </button>
+                              ) : (
+                                <ConnectButton connectText="Connect Wallet First" className='w-full h-12' style={{
+                                  backgroundColor: '#cd8e60',
+                                  color: 'white',
+                                  padding: '8px 16px',
+                                  borderRadius: '8px',
+                                }} />
+                              )}
+                            </div>
+                          </form>
                         </div>
                       </section>
                     )}
