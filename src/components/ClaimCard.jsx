@@ -82,7 +82,7 @@ const ClaimCard = ({
                 className="text-[16px] focus:outline-none h-[36px] flex justify-center items-center select-none font-bold text-center px-6 bg-[#cd8e60] hover:opacity-90 disabled:bg-[#646464] disabled:text-[#bbb] rounded-[8px] text-white"
                 onClick={handleClick}
               >
-                <img src={FireImage} alt="boost image" className="w-6 h-6" />
+                <img src={FireImage} alt="boost icon" className="w-6 h-6" />
                 Boost
               </button>
             </div>
@@ -139,31 +139,31 @@ const ClaimCard = ({
                 !isConnected ? <ConnectButton /> : (
                   <>
                     <button className="bg-[#cd8e60] text-white rounded-[8px] px-4 py-2 mt-4 w-full hover:bg-[#b87450] transition justify-items-center" onClick={() => { boost(1990000000, 0) }}>
-                      <img src={FireImage} alt='fireimage' className='w-24' />
+                      <img src={FireImage} alt='boost icon' className='w-24' />
                       <span className='text-[20px]'>10x</span><br />
                       <span>24 hours</span><br />
                       <span>1.99 SUI</span>
                     </button>
                     <button className="bg-[#cd8e60] text-white rounded-[8px] px-4 py-2 mt-4 w-full hover:bg-[#b87450] transition justify-items-center"  onClick={() => { boost(4990000000, 0) }}>
-                      <img src={FireImage} alt='fireimage' className='w-24' />
+                      <img src={FireImage} alt='boost icon' className='w-24' />
                       <span className='text-[20px]'>30x</span><br />
                       <span>24 hours</span><br />
                       <span>4.99 SUI</span>
                     </button>
                     <button className="bg-[#cd8e60] text-white rounded-[8px] px-4 py-2 mt-4 w-full hover:bg-[#b87450] transition justify-items-center"  onClick={() => { boost(7990000000, 0) }}>
-                      <img src={FireImage} alt='fireimage' className='w-24' />
+                      <img src={FireImage} alt='boost icon' className='w-24' />
                       <span className='text-[20px]'>50x</span><br />
                       <span>24 hours</span><br />
                       <span>7.99 SUI</span>
                     </button>
                     <button className="bg-[#cd8e60] text-white rounded-[8px] px-4 py-2 mt-4 w-full hover:bg-[#b87450] transition justify-items-center"  onClick={() => { boost(14990000000, 0) }}>
-                      <img src={FireImage} alt='fireimage' className='w-24' />
+                      <img src={FireImage} alt='boost icon' className='w-24' />
                       <span className='text-[20px]'>100x</span><br />
                       <span>24 hours</span><br />
                       <span>14.99 SUI</span>
                     </button>
                     <button className="bg-[#cd8e60] text-white rounded-[8px] px-4 py-2 mt-4 w-full hover:bg-[#b87450] transition justify-items-center"  onClick={() => { boost(71990000000, 0) }}>
-                      <img src={FireImage} alt='fireimage' className='w-24' />
+                      <img src={FireImage} alt='boost icon' className='w-24' />
                       <span className='text-[20px]'>500x</span><br />
                       <span>24 hours</span><br />
                       <span>71.99 SUI</span>
