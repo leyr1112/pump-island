@@ -223,13 +223,13 @@ const Trade = () => {
                                 )
                                 .map(({ Maker, Type, Amount, date, Tx }) => (
                                   <>
-                                    <div className="flex bg-[#1a2d1d] py-3 rounded-full justify-between px-2 sm:px-4 items-center">
+                                    <div className="flex bg-[#1d1d1d] py-3 rounded-full justify-between px-2 sm:px-4 items-center">
                                       <div>
                                         <a
                                           className="holderContent"
                                           rel="noreferrer"
                                         >
-                                          <p className="tokenLists text-[#f3cc2f]">
+                                          <p className="tokenLists text-[#cd8e60]">
                                             {Maker.slice(0, 5) +
                                               '...' +
                                               Maker.slice(-3)}
@@ -276,7 +276,7 @@ const Trade = () => {
                                           target="_blank"
                                           rel="noreferrer"
                                         >
-                                          <p className="tokenLists text-[#f3cc2f]">
+                                          <p className="tokenLists text-[#cd8e60]">
                                             {Tx.slice(0, 5) +
                                               '...' +
                                               Tx.slice(-3)}
@@ -287,7 +287,7 @@ const Trade = () => {
                                             height="24"
                                             viewBox="0 0 24 24"
                                             fill="none"
-                                            stroke="#f3cc2f"
+                                            stroke="#cd8e60"
                                             strokeWidth="2"
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
@@ -332,9 +332,9 @@ const Trade = () => {
                                       <button
                                         key={pageNumber}
                                         className={`px-2 py-1 mx-1 ${currentTransactionPage === pageNumber
-                                          ? 'bg-[#297836] text-white'
+                                          ? 'bg-[#cd8e60] text-white'
                                           : 'bg-[#1a2d1d] text-[#aaa]'
-                                          } rounded-lg border border-[#f3cc2f]`}
+                                          } rounded-lg border border-[#cd8e60]`}
                                         onClick={() =>
                                           handleTransactionPageChange(
                                             pageNumber
