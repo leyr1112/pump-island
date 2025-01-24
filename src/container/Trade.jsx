@@ -38,6 +38,8 @@ const Trade = () => {
   } = useGetPool(token)
 
   const { transactions: transactionDatas, volume, ohlcData: tokenPriceDatas } = useGetTradingTransactions(token)
+  console.log(transactionDatas)
+
   const { isConnected } = useCurrentWallet()
 
   const { messages: chatHistory, signMessage, signing } = useGetMessages(token)
@@ -155,7 +157,7 @@ const Trade = () => {
                         title="chart"
                       />
                     ) : (
-                      <MyChart data={tokenPriceDatas} ethPrice={ethPrice} />
+                      <MyChart data={[]} ethPrice={ethPrice} />
                     )}
                   </div>
 

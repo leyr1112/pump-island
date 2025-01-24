@@ -269,6 +269,7 @@ export const useTrade = (token) => {
     const [ouput, setOutput] = useState(0)
     const [loading, setLoading] = useState(false)
     const { refetch } = useGetPools()
+    const { refetch: refetchTransactions } = useGetTradingTransactions(token)
     const buy = async (inputTokenType, inputAmout) => {
         setLoading(true)
         try {
@@ -292,6 +293,7 @@ export const useTrade = (token) => {
                         setLoading(false)
                         toast.success('Successfully bought!')
                         refetch()
+                        refetchTransactions()
                     },
                     onError: (e) => {
                         console.error(e)
@@ -328,6 +330,7 @@ export const useTrade = (token) => {
                             setLoading(false)
                             toast.success('Successfully sold!')
                             refetch()
+                            refetchTransactions()
                         },
                         onError: (e) => {
                             setLoading(false)
@@ -568,7 +571,7 @@ export const useGetPool = (token) => {
     useEffect(() => {
         const interval = setInterval(() => {
             refetch();
-        }, 10000);
+        }, 60000);
 
         return () => clearInterval(interval);
     }, []);
@@ -619,7 +622,6 @@ export const useGetHolders = (token) => {
 export const useGetTradingTransactions = (token) => {
     const [transactions, setTransactions] = useState<any[]>([])
     const [ohlcData, setOhlcData] = useState<any[]>([])
-    const [update, setUpdate] = useState(0)
     const [volume, setVolume] = useState(0)
     const intervalMs = 300000
     const getTransactions = async () => {
@@ -637,7 +639,7 @@ export const useGetTradingTransactions = (token) => {
                     const date = new Date(Number(item.parsedJson.ts)).toJSON()
                     volume = volume + Number(item.parsedJson.sui_amount)
                     const bucketStart = Math.floor(Number(item.parsedJson.ts) / intervalMs) * intervalMs;
-                    const price = item.parsedJson.sui_amount / item.parsedJson.token_amount * 1000
+                    const price = item.parsedJson.sui_amount / item.parsedJson.token_amount / 1000
                     if (!currentBucket || currentBucket.start !== bucketStart) {
                         if (currentBucket) ohlcData.push(currentBucket);
                         currentBucket = {
@@ -674,7 +676,6 @@ export const useGetTradingTransactions = (token) => {
     }, [])
 
     const refetch = useCallback(() => {
-        setUpdate(prev => prev + 1)
         getTransactions()
     }, [])
 
@@ -686,7 +687,7 @@ export const useGetTradingTransactions = (token) => {
         return () => clearInterval(interval);
     }, []);
 
-    return { update, transactions, volume, ohlcData }
+    return { refetch, transactions, volume, ohlcData }
 }
 
 export const useGetBoost = (token) => {
