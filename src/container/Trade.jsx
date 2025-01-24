@@ -328,7 +328,7 @@ const Trade = () => {
                                         key={pageNumber}
                                         className={`px-2 py-1 mx-1 ${currentTransactionPage === pageNumber
                                           ? 'bg-[#cd8e60] text-white'
-                                          : 'bg-[#1a2d1d] text-[#aaa]'
+                                          : 'bg-trasparent text-[#aaa]'
                                           } rounded-lg border border-[#cd8e60]`}
                                         onClick={() =>
                                           handleTransactionPageChange(
