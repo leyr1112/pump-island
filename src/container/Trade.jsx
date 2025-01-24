@@ -37,29 +37,11 @@ const Trade = () => {
     poolCompleted: lpCreated
   } = useGetPool(token)
 
-  const { transactions: wholeTransactions } = useGetTradingTransactions(token)
+  const { transactions: transactionDatas, volume, ohlcData: tokenPriceDatas } = useGetTradingTransactions(token)
   const { isConnected } = useCurrentWallet()
 
   const { messages: chatHistory, signMessage, signing } = useGetMessages(token)
   const { holders: tokenHolders } = useGetHolders(token)
-  useEffect(() => {
-    if (wholeTransactions.length > 0) {
-      const txns = wholeTransactions.filter((item) => `0x${item.parsedJson.token_address}` == token).map((item) => {
-        const date = new Date(Number(item.parsedJson.ts)).toJSON()
-        return {
-          Maker: item.parsedJson.user,
-          Type: item.parsedJson.is_buy ? 'Buy' : 'Sell',
-          Amount: format9(item.parsedJson.sui_amount),
-          date: `${date.slice(5, 10)} ${(date.slice(12, 16))}`,
-          Tx: item.id.txDigest
-        }
-      })
-      setTransactionDatas(txns)
-    }
-  }, [wholeTransactions])
-  const [transactionDatas, setTransactionDatas] = useState([])
-  const [tokenPriceDatas, setTokenPriceDatas] = useState([])
-  const [volume, setVolume] = useState(0)
 
   const [selectedOption, setSelectedOption] = useState('Trades')
 

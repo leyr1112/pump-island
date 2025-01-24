@@ -9,6 +9,7 @@ import {
 import { Transaction } from '@mysten/sui/transactions'
 import { intoBase64 } from '../utils/pkg.ts'
 import toast from 'react-hot-toast'
+import { format9 } from '../utils/format.ts'
 
 const client = new SuiClient({ url: getFullnodeUrl('devnet') })
 
@@ -617,7 +618,10 @@ export const useGetHolders = (token) => {
 
 export const useGetTradingTransactions = (token) => {
     const [transactions, setTransactions] = useState<any[]>([])
+    const [ohlcData, setOhlcData] = useState<any[]>([])
     const [update, setUpdate] = useState(0)
+    const [volume, setVolume] = useState(0)
+    const intervalMs = 300000
     const getTransactions = async () => {
         try {
             const result = await client.queryEvents({
@@ -625,7 +629,42 @@ export const useGetTradingTransactions = (token) => {
                     MoveEventType: `${OBJECTS.Package}::move_pump::TradedEvent`
                 }
             })
-            setTransactions(result.data)
+            if (result.data.length > 0) {
+                let volume = 0
+                const ohlcData: any[] = []
+                let currentBucket: any;
+                const txns = result.data.filter((item: any) => `0x${item.parsedJson.token_address}` == token).map((item: any) => {
+                    const date = new Date(Number(item.parsedJson.ts)).toJSON()
+                    volume = volume + Number(item.parsedJson.sui_amount)
+                    const bucketStart = Math.floor(Number(item.parsedJson.ts) / intervalMs) * intervalMs;
+                    const price = item.parsedJson.sui_amount / item.parsedJson.token_amount * 1000
+                    if (!currentBucket || currentBucket.start !== bucketStart) {
+                        if (currentBucket) ohlcData.push(currentBucket);
+                        currentBucket = {
+                            start: bucketStart,
+                            open: price,
+                            high: price,
+                            low: price,
+                            close: price,
+                        };
+                    } else {
+                        currentBucket.high = Math.max(currentBucket.high, price);
+                        currentBucket.low = Math.min(currentBucket.low, price);
+                        currentBucket.close = price;
+                    }
+
+                    return {
+                        Maker: item.parsedJson.user,
+                        Type: item.parsedJson.is_buy ? 'Buy' : 'Sell',
+                        Amount: format9(item.parsedJson.sui_amount),
+                        date: `${date.slice(5, 10)} ${(date.slice(11, 16))}`,
+                        Tx: item.id.txDigest
+                    }
+                })
+                setTransactions(txns)
+                setVolume(volume)
+                setOhlcData(ohlcData)
+            }
         } catch (e) {
             console.error(e)
         }
@@ -642,12 +681,12 @@ export const useGetTradingTransactions = (token) => {
     useEffect(() => {
         const interval = setInterval(() => {
             refetch();
-        }, 10000);
+        }, 60000);
 
         return () => clearInterval(interval);
     }, []);
 
-    return { update, transactions }
+    return { update, transactions, volume, ohlcData }
 }
 
 export const useGetBoost = (token) => {

@@ -61,17 +61,21 @@ const MyChart = ({
     if (data) {
       let priceList;
       let tokenPriceDatas = [];
+      console.log(data)
       for (let i = 0; i < data.length; i++) {
-        let openPrice = Number(data[i].open) * ethPrice / (10 ** 12)
-        let closePrice = Number(data[i].close) * ethPrice / (10 ** 12)
+        let openPrice = Number(data[i].open) * ethPrice
+        let closePrice = Number(data[i].close) * ethPrice
         let high = Math.max(openPrice, closePrice);
         let low = Math.min(openPrice, closePrice);
-        priceList = { time: Number(data[i].time), open: openPrice, high: high, low, close: closePrice };
+        priceList = { time: Number(data[i].start), open: openPrice, high: high, low, close: closePrice };
+        console.log(priceList)
         tokenPriceDatas.push(priceList);
       }
-      newSeries.current.setData(
-        tokenPriceDatas
-      );
+      if(tokenPriceDatas.length > 0) {
+        newSeries.current.setData(
+          tokenPriceDatas
+        );
+      }      
     }
   }, [data]);
 
