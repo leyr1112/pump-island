@@ -12,6 +12,7 @@ import {
 } from '@mysten/dapp-kit'
 import { useApp } from '../context/index.jsx'
 import toast from 'react-hot-toast'
+import boostr from '../icons/boost.gif'
 
 const ClaimCard = ({
   tokenName,
@@ -86,25 +87,28 @@ const ClaimCard = ({
               </div>
             </div>
             <div className="flex justify-center items-center">
-              <button
-                className="text-[16px] focus:outline-none h-[36px] flex justify-center items-center select-none font-bold text-center px-6 bg-trasparent border border-[#ffd700]  hover:opacity-90 disabled:bg-[#646464] disabled:text-[#bbb] rounded-[8px] text-white"
-                onClick={handleClick}
-              >
-                <div class="flex gap-0.5 items-center text-[11px] text-[#ffd700] font-semibold p-0.5 px-2 ">
-                  {' '}
-                  <svg
-                    class="w-5 h-5"
-                    stroke="currentColor"
-                    fill="currentColor"
-                    stroke-width="0"
-                    viewBox="0 0 448 512"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M349.4 44.6c5.9-13.7 1.5-29.7-10.6-38.5s-28.6-8-39.9 1.8l-256 224c-10 8.8-13.6 22.9-8.9 35.3S50.7 288 64 288H175.5L98.6 467.4c-5.9 13.7-1.5 29.7 10.6 38.5s28.6 8 39.9-1.8l256-224c10-8.8 13.6-22.9 8.9-35.3s-16.6-20.7-30-20.7H272.5L349.4 44.6z"></path>
-                  </svg>
-                </div>
-                <p className="text-[#ffd700]"> Boost </p>
-              </button>
+            <button
+  className="text-[16px] focus:outline-none h-[36px] flex justify-center items-center select-none font-bold text-center px-6 bg-transparent border rounded-[8px] transition"
+  style={{
+    color: '#ffd700', // Testo oro
+    border: '2px solid transparent', // Bordi trasparenti inizialmente
+    borderImage: 'linear-gradient(90deg, #1e3a8a, #ffd700) 1', // Gradiente blu e oro
+    background: 'linear-gradient(#1d1d1d, #1d1d1d) padding-box, linear-gradient(90deg, #1e3a8a, #ffd700) border-box', // Effetto sfondo blu e oro
+  }}
+  onClick={handleClick}
+>
+  
+  <p
+    className="hover:text-[#1e3a8a]"
+    style={{
+      color: '#ffd700', // Testo oro
+      transition: 'color 0.3s ease', // Transizione colore al hover
+    }}
+  >
+    BOOST
+  </p>
+</button>
+
             </div>
             <div className="fields flex justify-between flex-col md:flex-row">
               <div className="flex gap-1 flex-row md:flex-col place-content-between items-center">
@@ -144,248 +148,106 @@ const ClaimCard = ({
         </div>
       </div>
       {isOpen && (
-        <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-[#1d1d1d] border-2 border-[#ffd700] rounded-lg shadow-lg p-6 w-100 mx-1">
-            <h2 className="text-xl font-bold mb-4 text-white">
-              Give MICKEY a Boost
-            </h2>
-            <p className="mb-2 text-white">
-              Showcase your support, boost Trending Score and unlock the Golden
-              Ticker!
-            </p>
-            <p className="mb-2 text-[#cd8e60]">Choose a boost pack</p>
-            <div className="flex flex-row gap-1">
-              {!isConnected ? (
-                <ConnectButton />
-              ) : (
-                <>
-                  <button
-                    className="bg-trasparent text-[#f3cc30] border border-[#f3cc30] rounded-[8px] px-4 py-2 mt-4 w-full hover:bg-[#facc1547] transition justify-items-center"
-                    onClick={() => {
-                      if (maxSuiBalance < 1990000000) {
-                        toast.error('Insufficient sui balance!')
-                        return
-                      }
-                      boost(1990000000, 0)
-                    }}
-                  >
-                    <div class="flex gap-0.5 items-center text-[11px] text-[#ffd700] font-semibold p-0.5 px-2  bg-[#facc1554] rounded-full">
-                      {' '}
-                      <svg
-                        class="w-8 h-8"
-                        stroke="currentColor"
-                        fill="currentColor"
-                        stroke-width="0"
-                        viewBox="0 0 448 512"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M349.4 44.6c5.9-13.7 1.5-29.7-10.6-38.5s-28.6-8-39.9 1.8l-256 224c-10 8.8-13.6 22.9-8.9 35.3S50.7 288 64 288H175.5L98.6 467.4c-5.9 13.7-1.5 29.7 10.6 38.5s28.6 8 39.9-1.8l256-224c10-8.8 13.6-22.9 8.9-35.3s-16.6-20.7-30-20.7H272.5L349.4 44.6z"></path>
-                      </svg>
-                    </div>
-
-                    <span className="text-[20px]">10x</span>
-                    <br />
-                    <span>24 hours</span>
-                    <br />
-                    <span
-                      style={{ display: 'inline-flex', alignItems: 'center' }}
-                    >
-                      1.99{' '}
-                      <img
-                        src={sui}
-                        className="w-[15px] h-[15px] ml-1"
-                        alt="X"
-                      />{' '}
-                    </span>
-                  </button>
-                  <button
-                    className="bg-trasparent text-[#f3cc30] border border-[#f3cc30] rounded-[8px] px-4 py-2 mt-4 w-full hover:bg-[#facc1547] transition justify-items-center"
-                    onClick={() => {
-                      if (maxSuiBalance < 4990000000) {
-                        toast.error('Insufficient sui balance!')
-                        return
-                      }
-                      boost(4990000000, 1)
-                    }}
-                  >
-                    <div class="flex gap-0.5 items-center text-[11px] text-[#ffd700] font-semibold p-0.5 px-2  bg-[#facc1554] rounded-full">
-                      {' '}
-                      <svg
-                        class="w-8 h-8"
-                        stroke="currentColor"
-                        fill="currentColor"
-                        stroke-width="0"
-                        viewBox="0 0 448 512"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M349.4 44.6c5.9-13.7 1.5-29.7-10.6-38.5s-28.6-8-39.9 1.8l-256 224c-10 8.8-13.6 22.9-8.9 35.3S50.7 288 64 288H175.5L98.6 467.4c-5.9 13.7-1.5 29.7 10.6 38.5s28.6 8 39.9-1.8l256-224c10-8.8 13.6-22.9 8.9-35.3s-16.6-20.7-30-20.7H272.5L349.4 44.6z"></path>
-                      </svg>
-                    </div>
-
-                    <span className="text-[20px]">30x</span>
-                    <br />
-                    <span>24 hours</span>
-                    <br />
-                    <span
-                      style={{ display: 'inline-flex', alignItems: 'center' }}
-                    >
-                      4.99{' '}
-                      <img
-                        src={sui}
-                        className="w-[15px] h-[15px] ml-1"
-                        alt="X"
-                      />{' '}
-                    </span>
-                  </button>
-                  <button
-                    className="bg-trasparent text-[#f3cc30] border border-[#f3cc30] rounded-[8px] px-4 py-2 mt-4 w-full hover:bg-[#facc1547] transition justify-items-center"
-                    onClick={() => {
-                      if (maxSuiBalance < 7990000000) {
-                        toast.error('Insufficient sui balance!')
-                        return
-                      }
-                      boost(7990000000, 2)
-                    }}
-                  >
-                    <div class="flex gap-0.5 items-center text-[11px] text-[#ffd700] font-semibold p-0.5 px-2  bg-[#facc1554] rounded-full">
-                      {' '}
-                      <svg
-                        class="w-8 h-8"
-                        stroke="currentColor"
-                        fill="currentColor"
-                        stroke-width="0"
-                        viewBox="0 0 448 512"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M349.4 44.6c5.9-13.7 1.5-29.7-10.6-38.5s-28.6-8-39.9 1.8l-256 224c-10 8.8-13.6 22.9-8.9 35.3S50.7 288 64 288H175.5L98.6 467.4c-5.9 13.7-1.5 29.7 10.6 38.5s28.6 8 39.9-1.8l256-224c10-8.8 13.6-22.9 8.9-35.3s-16.6-20.7-30-20.7H272.5L349.4 44.6z"></path>
-                      </svg>
-                    </div>
-
-                    <span className="text-[20px]">50x</span>
-                    <br />
-                    <span>24 hours</span>
-                    <br />
-                    <span
-                      style={{ display: 'inline-flex', alignItems: 'center' }}
-                    >
-                      7.99{' '}
-                      <img
-                        src={sui}
-                        className="w-[15px] h-[15px] ml-1"
-                        alt="X"
-                      />{' '}
-                    </span>
-                  </button>
-                  <button
-                    className="bg-trasparent text-[#f3cc30] border border-[#f3cc30] rounded-[8px] px-4 py-2 mt-4 w-full hover:bg-[#facc1547] transition justify-items-center"
-                    onClick={() => {
-                      if (maxSuiBalance < 14990000000) {
-                        toast.error('Insufficient sui balance!')
-                        return
-                      }
-                      boost(14990000000, 3)
-                    }}
-                  >
-                    <div class="flex gap-0.5 items-center text-[11px] text-[#ffd700] font-semibold p-0.5 px-2  bg-[#facc1554] rounded-full">
-                      {' '}
-                      <svg
-                        class="w-8 h-8"
-                        stroke="currentColor"
-                        fill="currentColor"
-                        stroke-width="0"
-                        viewBox="0 0 448 512"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M349.4 44.6c5.9-13.7 1.5-29.7-10.6-38.5s-28.6-8-39.9 1.8l-256 224c-10 8.8-13.6 22.9-8.9 35.3S50.7 288 64 288H175.5L98.6 467.4c-5.9 13.7-1.5 29.7 10.6 38.5s28.6 8 39.9-1.8l256-224c10-8.8 13.6-22.9 8.9-35.3s-16.6-20.7-30-20.7H272.5L349.4 44.6z"></path>
-                      </svg>
-                    </div>
-
-                    <span className="text-[20px]">100x</span>
-                    <br />
-                    <span>24 hours</span>
-                    <br />
-                    <span
-                      style={{ display: 'inline-flex', alignItems: 'center' }}
-                    >
-                      14.99{' '}
-                      <img
-                        src={sui}
-                        className="w-[15px] h-[15px] ml-1"
-                        alt="X"
-                      />{' '}
-                    </span>
-                  </button>
-                  <button
-                    className="bg-trasparent text-[#f3cc30] border border-[#f3cc30] rounded-[8px] px-4 py-2 mt-4 w-full hover:bg-[#facc1547] transition justify-items-center"
-                    onClick={() => {
-                      if (maxSuiBalance < 71990000000) {
-                        toast.error('Insufficient sui balance!')
-                        return
-                      }
-                      boost(71990000000, 4)
-                    }}
-                  >
-                    <div class="flex gap-0.5 items-center text-[11px] text-[#ffd700] font-semibold p-0.5 px-2  bg-[#facc1554] rounded-full">
-                      {' '}
-                      <svg
-                        class="w-8 h-8"
-                        stroke="currentColor"
-                        fill="currentColor"
-                        stroke-width="0"
-                        viewBox="0 0 448 512"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M349.4 44.6c5.9-13.7 1.5-29.7-10.6-38.5s-28.6-8-39.9 1.8l-256 224c-10 8.8-13.6 22.9-8.9 35.3S50.7 288 64 288H175.5L98.6 467.4c-5.9 13.7-1.5 29.7 10.6 38.5s28.6 8 39.9-1.8l256-224c10-8.8 13.6-22.9 8.9-35.3s-16.6-20.7-30-20.7H272.5L349.4 44.6z"></path>
-                      </svg>
-                    </div>
-
-                    <span className="text-[20px]">500x</span>
-                    <br />
-                    <span>24 hours</span>
-                    <br />
-                    <span
-                      style={{ display: 'inline-flex', alignItems: 'center' }}
-                    >
-                      71.99{' '}
-                      <img
-                        src={sui}
-                        className="w-[15px] h-[15px] ml-1"
-                        alt="X"
-                      />{' '}
-                    </span>
-                  </button>
-                </>
-              )}
-            </div>
-            <div className="flex flex-col text-center w-full mt-4">
-              <div>
-                <p className="mb-2 text-[#cd8e60]">
-                  Golden Ticker unlocks at 500 boosts
-                </p>
-              </div>
-              <div className="flex gap-1">
-                <div className="bg-trasparent text-[#f3cc30] border border-[#f3cc30] rounded-[8px] px-4 py-2 mt-4 w-full transition justify-items-center">
-                  <span className="text-[20px]">Boosts active</span>
-                  <br />
-                  <span>{boostStatus}</span>
-                </div>
-                <div className="bg-trasparent text-[#f3cc30] border border-[#f3cc30] rounded-[8px] px-4 py-2 mt-4 w-full transition justify-items-center">
-                  <span className="text-[20px]">Boosts needed</span>
-                  <br />
-                  <span>{500 - boostStatus}</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-center">
-              <button
-                onClick={handleClick}
-                className="bg-[#cd8e60] text-white rounded-[8px] px-4 py-2 mt-4 hover:bg-[#b87450] transition"
-              >
-                Close
-              </button>
-            </div>
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div
+      className="rounded-lg shadow-lg p-4 sm:p-6 w-[95%] max-w-2xl mx-4 max-h-screen overflow-y-auto"
+      style={{
+        border: '4px solid transparent',
+        borderImage: 'linear-gradient(90deg, #1e3a8a, #ffd700) 1',
+        background: 'linear-gradient(#1d1d1d, #1d1d1d) padding-box, linear-gradient(90deg, #1e3a8a, #ffd700) border-box',
+      }}
+    >
+      <h2 className="text-lg sm:text-xl font-bold mb-4 text-[#ffd700] text-center">
+        Give MICKEY a Boost
+      </h2>
+      <p className="mb-2 text-white text-center text-sm sm:text-base">
+        Showcase your support, boost Trending Score and unlock the Golden Ticker!
+      </p>
+      <p className="mb-4 text-[#ffd700] text-center font-semibold text-sm sm:text-base">
+        Choose a boost pack
+      </p>
+   
+      <div className="grid grid-cols-2 sm:grid-cols-3  gap-4 ">
+        {!isConnected ? (
+          <div className="flex items-center justify-center h-full">
+          <ConnectButton />
           </div>
+        ) : (
+          <>
+            {[ // Boost Pack Configuration
+              { multiplier: '10x', price: 1.99, boostValue: 1990000000 },
+              { multiplier: '30x', price: 4.99, boostValue: 4990000000 },
+              { multiplier: '50x', price: 7.99, boostValue: 7990000000 },
+              { multiplier: '100x', price: 14.99, boostValue: 14990000000 },
+              { multiplier: '500x', price: 71.99, boostValue: 71990000000 },
+            ].map((pack, index) => (
+              <button
+                key={index}
+                className="bg-transparent text-[#ffd700] border border-[#1e3a8a] rounded-lg px-3 py-4 hover:bg-[#1e3a8a33] transition w-full"
+                onClick={() => {
+                  if (maxSuiBalance < pack.boostValue) {
+                    toast.error('Insufficient sui balance!');
+                    return;
+                  }
+                  boost(pack.boostValue, index);
+                }}
+              >
+                <div className="flex items-center gap-2 justify-center">
+                  <img
+                    src={boostr}
+                    alt="Boost Icon"
+                    className="w-[50px] sm:w-[70px] h-[50px] sm:h-[70px]"
+                  />
+                  <span className="text-[#ffd700] text-base sm:text-lg font-bold">
+                    {pack.multiplier}
+                  </span>
+                </div>
+                <span className="text-white text-xs sm:text-sm">24 hours</span>
+                <br />
+                <span className="text-white flex items-center justify-center text-sm sm:text-base font-bold">
+                  {pack.price}{' '}
+                  <img
+                    src={sui}
+                    className="w-[12px] sm:w-[15px] h-[12px] sm:h-[15px] ml-1"
+                    alt="SUI Icon"
+                  />
+                </span>
+              </button>
+            ))}
+          </>
+        )}
+      </div>
+      
+    <div className="flex flex-col text-center w-full mt-6">
+      <p className="text-[#ffd700] font-bold mb-2 text-sm sm:text-base">
+        Golden Ticker unlocks at 500 boosts
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="bg-transparent text-[#ffd700] border border-[#1e3a8a] rounded-lg px-4 py-2">
+          <span className="text-sm sm:text-lg font-bold">Boosts active</span>
+          <br />
+          <span className="text-sm sm:text-lg text-white">{boostStatus}</span>
         </div>
+        <div className="bg-transparent text-[#ffd700] border border-[#1e3a8a] rounded-lg px-4 py-2">
+          <span className="text-sm sm:text-lg font-bold">Boosts needed</span>
+          <br />
+          <span className="text-sm sm:text-lg text-white">{500 - boostStatus}</span>
+        </div>
+      </div>
+    </div>
+    <div className="flex justify-center mt-6">
+      <button
+        onClick={handleClick}
+        className="bg-[#ffd700] text-[#1e3a8a] font-bold rounded-lg px-6 py-2 hover:bg-[#ffd700] transition"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+    
+     
+      
       )}
     </>
   )
