@@ -179,11 +179,11 @@ const ClaimCard = ({
               ) : (
                 <>
                   {[ // Boost Pack Configuration
-                    { multiplier: '10x', price: 1.99, boostValue: 1990000000 },
-                    { multiplier: '30x', price: 4.99, boostValue: 4990000000 },
-                    { multiplier: '50x', price: 7.99, boostValue: 7990000000 },
-                    { multiplier: '100x', price: 14.99, boostValue: 14990000000 },
-                    { multiplier: '500x', price: 71.99, boostValue: 71990000000 },
+                    { multiplier: '10x', price: 1.79, boostValue: 1799000000 },
+                    { multiplier: '30x', price: 4.49, boostValue: 4490000000 },
+                    { multiplier: '50x', price: 7.19, boostValue: 7190000000 },
+                    { multiplier: '100x', price: 13.49, boostValue: 13490000000 },
+                    { multiplier: '500x', price: 64.79, boostValue: 64790000000 },
                   ].map((pack, index) => (
                     <button
                       key={index}
