@@ -716,12 +716,12 @@ export const useGetBoost = (token) => {
     useEffect(() => {
         const interval = setInterval(() => {
             refetch();
-        }, 3000);
+        }, 60000);
 
         return () => clearInterval(interval);
     }, []);
 
-    return { boosting, boost, boostStatus }
+    return { boosting, boost, boostStatus, refetch }
 }
 
 export const useGetMessages = (token) => {
