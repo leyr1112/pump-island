@@ -113,11 +113,11 @@ const ClaimCard = ({
             <div className="h-6">
               <div className="relative w-full h-full bg-[#00f3ef17] rounded-[16px]">
                 <div
-                  className=" items-center overflow-hidden rounded-[16px] launchpad-progress-bar-filled h-full"
+                  className=" items-center overflow-hidden rounded-[16px] launchpad-progress-bar-wave-filled h-full"
                   style={{ width: `${Math.floor((progress * 2 > 100 ? 100 : progress * 2) * 1000) / 1000}%` }}
                 ></div>
-                <span className="select-none absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[#cd8e60] text-[16px]">
-                  King of the sea progress: {Math.floor((progress * 2 > 100 ? 100 : progress * 2) * 1000) / 1000}%
+                <span className="select-none absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-[16px]">
+                  Tsuinami Wave progress: {Math.floor((progress * 2 > 100 ? 100 : progress * 2) * 1000) / 1000}%
                 </span>
               </div>
             </div>
@@ -169,7 +169,7 @@ const ClaimCard = ({
             }}
           >
             <h2 className="text-lg sm:text-xl font-bold mb-4 text-[#ffd700] text-center">
-              Give MICKEY a Boost
+              Give {tokenName} a Boost
             </h2>
             <p className="mb-2 text-white text-center text-sm sm:text-base">
               Showcase your support, boost Trending Score and unlock the Golden Ticker!

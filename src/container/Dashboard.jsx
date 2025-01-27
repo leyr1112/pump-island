@@ -246,7 +246,7 @@ const App = () => {
                   <>
                     <div className="mb-8 flex justify-center">
                     <p className="text-[#f3cc2f] text-[28px] font-bold shimmer-text">
-                        TSUNAMI WAVE
+                        TSUINAMI WAVE
                       </p>
                       <div className="sparkles">
                         <div className="sparkle"></div>

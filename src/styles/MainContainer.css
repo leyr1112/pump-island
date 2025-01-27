@@ -1906,6 +1906,15 @@ a {
 
 }
 
+.launchpad-progress-bar-wave-filled {
+  height: 14px;
+  border-radius: 37px;
+  background: linear-gradient(90deg, #ffd700 0%, #1e3a8a 33%, #ffd700 66%, #004080 100%);
+
+
+
+}
+
 .launchpad-liquidity-text {
   font-style: normal;
   font-weight: 400;
