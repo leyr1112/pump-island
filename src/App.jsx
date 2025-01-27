@@ -67,7 +67,7 @@ const App = () => {
       <QueryParamProvider>
         <div>
           <QueryClientProvider client={queryClient}>
-            <SuiClientProvider networks={networks} defaultNetwork="devnet">
+            <SuiClientProvider networks={networks} defaultNetwork="mainnet">
               <WalletProvider>
                 <AppProvider>
                   <WagmiProvider config={config}>

@@ -13,7 +13,7 @@ module pump_island::boost_payement {
         is_live: bool,
     }
     
-public struct BoostOption has copy, drop, store {
+    public struct BoostOption has copy, drop, store {
         index: u64,
         duration: u64,
         boost: u64,

@@ -12,7 +12,7 @@ import toast from 'react-hot-toast'
 import { format9 } from '../utils/format.ts'
 import ToastSuccessLink from '../components/ToastSuccessLink.tsx'
 
-const client = new SuiClient({ url: getFullnodeUrl('devnet') })
+const client = new SuiClient({ url: getFullnodeUrl('mainnet') })
 
 export const useGetSuiBalance = () => {
     const [suiBalance, setSuiBalance] = useState<any>()
