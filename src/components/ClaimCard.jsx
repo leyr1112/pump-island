@@ -110,6 +110,17 @@ const ClaimCard = ({
               </button>
 
             </div>
+            <div className="h-6">
+              <div className="relative w-full h-full bg-[#00f3ef17] rounded-[16px]">
+                <div
+                  className=" items-center overflow-hidden rounded-[16px] launchpad-progress-bar-filled h-full"
+                  style={{ width: `${Math.floor((progress * 2 > 100 ? 100 : progress * 2) * 1000) / 1000}%` }}
+                ></div>
+                <span className="select-none absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[#cd8e60] text-[16px]">
+                  King of the sea progress: {Math.floor((progress * 2 > 100 ? 100 : progress * 2) * 1000) / 1000}%
+                </span>
+              </div>
+            </div>
             <div className="fields flex justify-between flex-col md:flex-row">
               <div className="flex gap-1 flex-row md:flex-col place-content-between items-center">
                 <span className="font-semibold text-[#999999] text-[12px]">

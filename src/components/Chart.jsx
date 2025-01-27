@@ -69,11 +69,11 @@ const MyChart = ({
         priceList = { time: Number(data[i].start), open: openPrice, high: high, low, close: closePrice };
         tokenPriceDatas.push(priceList);
       }
-      if(tokenPriceDatas.length > 0) {
+      if (tokenPriceDatas.length > 0) {
         newSeries.current.setData(
           tokenPriceDatas
         );
-      }      
+      }
     }
   }, [data]);
 

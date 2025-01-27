@@ -659,7 +659,7 @@ export const useGetTradingTransactions = (token) => {
                     if (!currentBucket || currentBucket.start !== bucketStart) {
                         if (currentBucket) ohlcData.push(currentBucket);
                         currentBucket = {
-                            start: bucketStart,
+                            time: bucketStart,
                             open: price,
                             high: price,
                             low: price,

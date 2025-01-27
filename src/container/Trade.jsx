@@ -158,7 +158,7 @@ const Trade = () => {
                         title="chart"
                       />
                     ) : (
-                      <MyChart data={[]} ethPrice={ethPrice} />
+                      <MyChart data={tokenPriceDatas} ethPrice={ethPrice} />
                     )}
                   </div>
 

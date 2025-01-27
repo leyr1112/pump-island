@@ -124,7 +124,7 @@ const TopBar = () => {
                         </p>
                         <Link
                           className="top-bar-address flex items-center"
-                          to={`/trade?token=${item.parsedJson.token_address}`}
+                          to={`/trade?token=0x${item.parsedJson.token_address}`}
                           rel="noreferrer"
                         >
                           <span className="">
