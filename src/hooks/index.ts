@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { AdminWallet, OBJECTS, PumpConfig } from '../config'
+import { AdminWallet, FeeWallet, OBJECTS, PumpConfig } from '../config'
 import { useApp } from '../context'
 import { getFullnodeUrl, SuiClient } from '@mysten/sui/client'
 import {
@@ -111,7 +111,7 @@ export const useCreate = () => {
     const account = useCurrentAccount()
     const [loading, setLoading] = useState<'Creating' | 'Adding' | 'False'>('False')
     const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction()
-    const createToken = async (tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmout) => {
+    const createToken = async (tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmout, outputTokenAmount) => {
         setLoading('Creating')
         tokenSymbol = tokenSymbol.toUpperCase()
         try {
@@ -135,8 +135,8 @@ export const useCreate = () => {
                     [upgradeCap],
                     tx.pure(new Uint8Array(account?.publicKey))
                 )
-                const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(1000000000)])
-                tx.transferObjects([coin], tx.pure.address(AdminWallet))
+                const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(990000000)])
+                tx.transferObjects([coin], tx.pure.address(FeeWallet))
                 signAndExecuteTransaction(
                     { transaction: tx },
                     {
@@ -144,7 +144,7 @@ export const useCreate = () => {
                             const digest = result.digest
                             if (digest) {
                                 toast.success(ToastSuccessLink({ message: 'Successfully created token!', link: digest }))
-                                creatPool(digest, tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmout)
+                                creatPool(digest, tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmout, outputTokenAmount)
                             }
                         },
                         onError: (e) => {
@@ -186,7 +186,7 @@ export const useCreate = () => {
         throw new Error(`Transaction not found after ${retries} attempts.`);
     };
 
-    const creatPool = async (digest, tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmout) => {
+    const creatPool = async (digest, tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmout, outputTokenAmount) => {
         setLoading('Adding')
         try {
             const transactionResult = await waitForTransaction(digest)
@@ -227,7 +227,7 @@ export const useCreate = () => {
                             tx.object(OBJECTS.Configuration),
                             tx.object(treasuryCap),
                             coin,
-                            tx.pure.u64(inputAmout * 19860477000000),
+                            tx.pure.u64(outputTokenAmount),
                             tx.object('0x6'),
                             tx.pure.string(tokenName),
                             tx.pure.string(tokenSymbol),
@@ -650,26 +650,10 @@ export const useGetTradingTransactions = (token) => {
             if (result.data.length > 0) {
                 let volume = 0
                 const ohlcData: any[] = []
-                let currentBucket: any;
                 const txns = result.data.filter((item: any) => `0x${item.parsedJson.token_address}` == token).map((item: any) => {
                     const date = new Date(Number(item.parsedJson.ts)).toJSON()
                     volume = volume + Number(item.parsedJson.sui_amount)
-                    const bucketStart = Math.floor(Number(item.parsedJson.ts) / intervalMs) * intervalMs;
-                    const price = item.parsedJson.sui_amount / item.parsedJson.token_amount / 1000
-                    if (!currentBucket || currentBucket.start !== bucketStart) {
-                        if (currentBucket) ohlcData.push(currentBucket);
-                        currentBucket = {
-                            time: bucketStart,
-                            open: price,
-                            high: price,
-                            low: price,
-                            close: price,
-                        };
-                    } else {
-                        currentBucket.high = Math.max(currentBucket.high, price);
-                        currentBucket.low = Math.min(currentBucket.low, price);
-                        currentBucket.close = price;
-                    }
+                    ohlcData.push(item)
 
                     return {
                         Maker: item.parsedJson.user,

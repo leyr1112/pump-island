@@ -58,17 +58,28 @@ const MyChart = ({
   }, [created]);
 
   useEffect(() => {
-    if (data) {
-      let priceList;
+    if (data.length > 0) {
+      let currentBucket;
       let tokenPriceDatas = [];
-      for (let i = 0; i < data.length; i++) {
-        let openPrice = Number(data[i].open) * ethPrice
-        let closePrice = Number(data[i].close) * ethPrice
-        let high = Math.max(openPrice, closePrice);
-        let low = Math.min(openPrice, closePrice);
-        priceList = { time: Number(data[i].start), open: openPrice, high: high, low, close: closePrice };
-        tokenPriceDatas.push(priceList);
-      }
+      data.reverse().forEach(item => {
+        const bucketStart = Math.floor(Number(item.parsedJson.ts) / 300000) * 300000;
+        const price = item.parsedJson.sui_amount / item.parsedJson.token_amount / 1000 * ethPrice
+        if (!currentBucket || currentBucket.start !== bucketStart) {
+          if (currentBucket) tokenPriceDatas.push(currentBucket);
+          currentBucket = {
+            time: bucketStart / 1000,
+            open: price,
+            high: price,
+            low: price,
+            close: price,
+          };
+        } else {
+          currentBucket.high = Math.max(currentBucket.high, price);
+          currentBucket.low = Math.min(currentBucket.low, price);
+          currentBucket.close = price;
+        }
+      });
+
       if (tokenPriceDatas.length > 0) {
         newSeries.current.setData(
           tokenPriceDatas

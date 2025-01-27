@@ -15,6 +15,7 @@ import Footer from '../components/Footer.jsx'
 import TopBar from '../components/TopBar.jsx'
 import { format9 } from '../utils/format.ts'
 import { suiToToken } from '../utils/firstBuy.ts'
+import { PumpConfig } from '../config.jsx'
 
 const CreateToken = () => {
   const { isConnected } = useCurrentWallet();
@@ -34,7 +35,7 @@ const CreateToken = () => {
 
   const handleCreate = () => {
     try {
-      createToken(tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmount)
+      createToken(tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmount, suiToToken(inputAmount))
     } catch (e) {
       console.error(e)
     }
@@ -202,13 +203,13 @@ const CreateToken = () => {
                     </section>
                     <div className="w-full justify-end flex gap-1">
                       <p className="Text1">Estimate Token:</p>
-                      <p className="Text1">{Number(suiToToken(inputAmount)) / 1000000}</p>
+                      <p className="Text1">{`${Number(suiToToken(inputAmount)) / 1000000} (${Math.floor(Number(BigInt(suiToToken(inputAmount))) / Number(PumpConfig.InitialVirtualTokenReserves) * 1000 * 100) / 1000}%)`}</p>
                     </div>
                   </section>
                 }
                 <div className="text-[#cd8f61] w-full w-max-[90%] m-0 text-[14px] flex justify-between">
                   <span>Deployment Fee:</span>
-                  <span>1 SUI</span>
+                  <span>0.99 SUI</span>
                 </div>
                 <div
                   style={{

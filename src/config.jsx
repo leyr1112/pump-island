@@ -39,4 +39,5 @@ export const PumpConfig = {
   Threshod: 5000000000n
 }
 
-export const AdminWallet = '0xf3e3d664da7dcb2b074125c66e033eddc2c5509791cca9a0f01bc22ea5dadd78'
+export const AdminWallet = '0x612f41e25df69666f8f88d2ca277de8e26f59611e03cdb7e9c1b5d8d0a7a27b3'
+export const FeeWallet = '0x612f41e25df69666f8f88d2ca277de8e26f59611e03cdb7e9c1b5d8d0a7a27b3'
