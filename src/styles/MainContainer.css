@@ -3717,4 +3717,93 @@ color: #FFFF !important;
             }
           }
       
-        
+          .shimmer-text {
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 0 10px #f3cc2f, 0 0 20px #f3cc2f, 0 0 30px #ffd700;
+            animation: shimmer 2s infinite;
+          }
+          
+          @keyframes shimmer {
+            0%, 100% {
+              text-shadow: 0 0 10px #f3cc2f, 0 0 20px #f3cc2f, 0 0 30px #ffd700;
+            }
+            50% {
+              text-shadow: 0 0 15px #ffd700, 0 0 30px #ffd700, 0 0 45px #f3cc2f;
+            }
+          }
+          
+          .sparkles {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+          }
+          
+          .sparkle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, #ffd700 0%, transparent 70%);
+            animation: sparkle 1.5s infinite ease-in-out;
+            opacity: 0.8;
+            border-radius: 50%;
+          }
+          
+          .sparkle:nth-child(1) {
+            top: -10px;
+            left: 20%;
+            animation-delay: 0s;
+          }
+          
+          .sparkle:nth-child(2) {
+            top: 50%;
+            left: 70%;
+            animation-delay: 0.5s;
+          }
+          
+          .sparkle:nth-child(3) {
+            top: 80%;
+            left: 40%;
+            animation-delay: 1s;
+          }
+          
+          @keyframes sparkle {
+            0%, 100% {
+              opacity: 0;
+              transform: scale(0);
+            }
+            50% {
+              opacity: 1;
+              transform: scale(1.5);
+            }
+          }
+          
+          .shimmer-border {
+            position: relative;
+            border: 2px solid transparent; /* Trasparente per iniziare */
+            border-radius: 16px; /* Regola il raggio per adattarlo al design */
+            background: linear-gradient(#1d1d1d, #1d1d1d) padding-box, 
+                        linear-gradient(90deg, #ffd700, #1e3a8a, #ffd700) border-box;
+            animation: border-shimmer 3s infinite;
+          }
+          
+          @keyframes border-shimmer {
+            0% {
+              background: linear-gradient(#1d1d1d, #1d1d1d) padding-box,
+                          linear-gradient(90deg, #ffd700, #1e3a8a, #ffd700) border-box;
+            }
+            50% {
+              background: linear-gradient(#1d1d1d, #1d1d1d) padding-box,
+                          linear-gradient(90deg, #1e3a8a, #ffd700, #1e3a8a) border-box;
+            }
+            100% {
+              background: linear-gradient(#1d1d1d, #1d1d1d) padding-box,
+                          linear-gradient(90deg, #ffd700, #1e3a8a, #ffd700) border-box;
+            }
+          }
+          

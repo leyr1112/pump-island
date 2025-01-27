@@ -245,10 +245,18 @@ const App = () => {
                 kingData && (
                   <>
                     <div className="mb-8 flex justify-center">
-                      <p className='text-[#cd8e60] text-[28px]'>King of the see</p>
+                    <p className="text-[#f3cc2f] text-[28px] font-bold shimmer-text">
+                        TSUNAMI WAVE
+                      </p>
+                      <div className="sparkles">
+                        <div className="sparkle"></div>
+                        <div className="sparkle"></div>
+                        <div className="sparkle"></div>
+                      </div>
                     </div>
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
                       <div />
+                      <div className="relative shimmer-border">
                       <LaunchpadCard
                         progress={kingData.progress}
                         liquidity={kingData.liquidity}
@@ -263,6 +271,7 @@ const App = () => {
                         telegram={kingData.telegram}
                         poolCompleted={kingData.poolCompleted}
                       />
+                    </div>
                       <div />
                     </div>
                   </>
