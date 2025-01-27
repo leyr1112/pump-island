@@ -74,11 +74,19 @@ const ClaimCard = ({
             {description}
           </div>
 
-          <div className="launchpad-progress-container bg-[#1d1d1d] p-4 rounded-[16px] flex flex-col gap-6">
+          <div className="launchpad-progress-container bg-[#1d1d1d] p-4 rounded-[16px] flex flex-col gap-6  " >
             <div className="h-6">
+            <p 
+            className="hover:text-[#cd8e60] flex justify-center items-center  "
+            style={{
+              color: '#cd8e60', // Testo oro
+              transition: 'color 0.3s ease', // Transizione colore al hover
+            }}
+            
+            >Bonding Curve </p>
               <div className="relative w-full h-full bg-[#00f3ef17] rounded-[16px]">
                 <div
-                  className=" items-center overflow-hidden rounded-[16px] launchpad-progress-bar-filled h-full"
+                  className=" items-center overflow-hidden rounded-[16px] launchpad-progress-bar-filled h-full mt-[6px]"
                   style={{ width: `${progress}%` }}
                 ></div>
                 <span className="select-none absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-[16px]">
@@ -86,7 +94,7 @@ const ClaimCard = ({
                 </span>
               </div>
             </div>
-            <div className="flex justify-center items-center">
+            <div className="flex justify-center items-center mt-[20px]">
               <button
                 className="text-[16px] focus:outline-none h-[36px] flex justify-center items-center select-none font-bold text-center px-6 bg-transparent border rounded-[8px] transition"
                 style={{
@@ -110,14 +118,25 @@ const ClaimCard = ({
               </button>
 
             </div>
+            
             <div className="h-6">
+            <p 
+            className="hover:text-[#1e3a8a] flex justify-center items-center "
+            style={{
+              color: '#ffd700', // Testo oro
+              transition: 'color 0.3s ease', // Transizione colore al hover
+            }}
+            
+            >Tsuinami Wave </p>
               <div className="relative w-full h-full bg-[#00f3ef17] rounded-[16px]">
                 <div
-                  className=" items-center overflow-hidden rounded-[16px] launchpad-progress-bar-wave-filled h-full"
+                  className=" items-center overflow-hidden rounded-[16px] launchpad-progress-bar-wave-filled h-full mt-[6px]"
                   style={{ width: `${Math.floor((progress * 2 > 100 ? 100 : progress * 2) * 1000) / 1000}%` }}
                 ></div>
+                 
                 <span className="select-none absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-[16px]">
-                  Tsuinami Wave progress: {Math.floor((progress * 2 > 100 ? 100 : progress * 2) * 1000) / 1000}%
+                 
+                   {Math.floor((progress * 2 > 100 ? 100 : progress * 2) * 1000) / 1000}%
                 </span>
               </div>
             </div>

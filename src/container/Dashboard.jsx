@@ -240,7 +240,7 @@ const App = () => {
         <div>
           <TopBar />
           <div className="max-w-7xl m-auto px-4 md:px-12">
-            <div className="py-[32px] w-full h-auto">
+          <div className="py-[32px] w-full h-auto mt-[70px] sm:mt-0">
               {
                 kingData && (
                   <>
