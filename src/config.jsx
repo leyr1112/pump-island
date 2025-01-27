@@ -20,7 +20,7 @@ export const config = createConfig({
 export const OBJECTS = {
   Configuration: "0x4f4ad9255c2bc69e7cff8f2989ffdb1315613f6894d0783961f7810a08d0d057",
   Package: "0x242818b79ffc1e055147116b98d628c0c547daee1529590193cc4e5f6914fb11",
-  Threshold: "0xaac1ced0598914100f5c2b116cd04176b6b8421c519679d9dcf85b47e0f06ac8",
+  Threshold: "0xea801a462802c2bf11d4d93e87ec57b5985520d428f92de8601ebeec4e1481ed",
   Package_Boost: "0x242818b79ffc1e055147116b98d628c0c547daee1529590193cc4e5f6914fb11",
   Boost_Config: "0x230a466fae4a10ec12c85438f32cf876356a34385c111ee76eceb35850ffeade",
 }
@@ -36,7 +36,7 @@ export const PumpConfig = {
   InitialVirtualTokenReserves: 10000000000000000n,
   InitialVirtualSuiReseves: 500000000000n,
   RemainTokenReserves: 2000000000000000n,
-  Threshod: 5000000000n
+  Threshod: 1800000000000n
 }
 
 export const AdminWallet = '0x612f41e25df69666f8f88d2ca277de8e26f59611e03cdb7e9c1b5d8d0a7a27b3'

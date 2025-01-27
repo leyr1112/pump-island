@@ -140,7 +140,7 @@ const ClaimCard = ({
                 </span>
               </div>
             </div>
-            <div className="fields flex justify-between flex-col md:flex-row">
+            <div className="fields flex justify-between flex-col md:flex-row mt-3">
               <div className="flex gap-1 flex-row md:flex-col place-content-between items-center">
                 <span className="font-semibold text-[#999999] text-[12px]">
                   Price
