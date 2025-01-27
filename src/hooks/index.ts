@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { OBJECTS, PumpConfig } from '../config'
+import { AdminWallet, OBJECTS, PumpConfig } from '../config'
 import { useApp } from '../context'
 import { getFullnodeUrl, SuiClient } from '@mysten/sui/client'
 import {
@@ -10,6 +10,7 @@ import { Transaction } from '@mysten/sui/transactions'
 import { intoBase64 } from '../utils/pkg.ts'
 import toast from 'react-hot-toast'
 import { format9 } from '../utils/format.ts'
+import ToastSuccessLink from '../components/ToastSuccessLink.tsx'
 
 const client = new SuiClient({ url: getFullnodeUrl('devnet') })
 
@@ -134,13 +135,15 @@ export const useCreate = () => {
                     [upgradeCap],
                     tx.pure(new Uint8Array(account?.publicKey))
                 )
+                const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(1000000000)])
+                tx.transferObjects([coin], tx.pure.address(AdminWallet))
                 signAndExecuteTransaction(
                     { transaction: tx },
                     {
                         onSuccess: async (result) => {
                             const digest = result.digest
                             if (digest) {
-                                toast.success('Successfully created token!')
+                                toast.success(ToastSuccessLink({ message: 'Successfully created token!', link: digest }))
                                 creatPool(digest, tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmout)
                             }
                         },
@@ -243,7 +246,7 @@ export const useCreate = () => {
                     onSuccess: result => {
                         console.log(result)
                         setLoading('False')
-                        toast.success('Successfully pool created!')
+                        toast.success(ToastSuccessLink({ message: 'Successfully pool created!', link: result.digest }))
                     },
                     onError: (e) => {
                         console.error(e)
@@ -291,7 +294,7 @@ export const useTrade = (token) => {
                     onSuccess: result => {
                         console.log(result)
                         setLoading(false)
-                        toast.success('Successfully bought!')
+                        toast.success(ToastSuccessLink({ message: 'Successfully bought', link: result.digest }))
                         refetch()
                         refetchTransactions()
                     },
@@ -328,7 +331,7 @@ export const useTrade = (token) => {
                         onSuccess: result => {
                             console.log(result)
                             setLoading(false)
-                            toast.success('Successfully sold!')
+                            toast.success(ToastSuccessLink({ message: 'Successfully sold!', link: result.digest }))
                             refetch()
                             refetchTransactions()
                         },
@@ -416,6 +419,7 @@ export const useTrade = (token) => {
 // Dashboard page hook
 export const useGetPools = () => {
     const [data, setData] = useState<any[]>([])
+    const [king, setKing] = useState<any>()
     const [loading, setLoading] = useState(true)
     const { changeVariable } = useApp()
     const { state } = useApp()
@@ -427,6 +431,7 @@ export const useGetPools = () => {
                     MoveEventType: `${OBJECTS.Package}::move_pump::CreatedEvent`
                 }
             })
+            let kingData: any
             if (!createdEvents.data) return
             const poolsDataAdd = await Promise.all(createdEvents.data.map(async (createdEvent: any) => {
                 const poolObjectId = createdEvent.parsedJson.pool_id
@@ -448,6 +453,11 @@ export const useGetPools = () => {
                 const realTokenReserves = poolDataAdd.real_token_reserves.fields.balance
                 const tokenPrice = virtualSuiReserves / virtualTokenReserves * suiPrice / 1000
                 const poolCompleted = poolDataAdd.is_completed
+                const progress = poolCompleted ? 100 : realSuiReserves / Number(PumpConfig.Threshod) * 100 > 100 ? 100 : realSuiReserves / Number(PumpConfig.Threshod) * 100
+
+                if (progress >= 50 && progress < 100 && !kingData) {
+                    kingData = address
+                }
 
                 const result = {
                     tokenSymbol,
@@ -464,7 +474,7 @@ export const useGetPools = () => {
                     virtualSuiReserves,
                     virtualTokenReserves,
                     realTokenReserves,
-                    progress: poolCompleted ? 100 : realSuiReserves / PumpConfig.Threshod * 100 > 100 ? 100 : realSuiReserves / PumpConfig.Threshod * 100,
+                    progress,
                     marketCap: tokenPrice * 10000000000,
                     tokenPrice,
                     liquidity: realSuiReserves / 1000000000 * suiPrice,
@@ -480,6 +490,7 @@ export const useGetPools = () => {
                 return result
             }))
             setData(poolsDataAdd)
+            setKing(kingData)
         } catch (e) {
             console.error('Error fetching pools', e)
         } finally {
@@ -500,7 +511,7 @@ export const useGetPools = () => {
 
         return () => clearInterval(interval);
     }, []);
-    return { pools: data, loading, refetch }
+    return { pools: data, loading, refetch, king }
 }
 
 export const useGetPool = (token) => {
@@ -521,6 +532,7 @@ export const useGetPool = (token) => {
     const [progress, setProgress] = useState(0)
     const [tokenSuiPrice, setTokenSuiPrice] = useState(0)
     const [poolCompleted, setPoolCompleted] = useState(false)
+    const [realSuiReserves, setRealSuiReserves] = useState(0)
 
     useEffect(() => {
         const getPool = () => {
@@ -540,6 +552,7 @@ export const useGetPool = (token) => {
                 setProgress(pool.progress)
                 setTokenSuiPrice(pool.tokenSuiPrice)
                 setPoolCompleted(pool.poolCompleted)
+                setRealSuiReserves(pool.realSuiReserves)
             }
         }
         getPool()
@@ -563,6 +576,7 @@ export const useGetPool = (token) => {
                 setProgress(pool.progress)
                 setTokenSuiPrice(pool.tokenSuiPrice)
                 setPoolCompleted(pool.poolCompleted)
+                setRealSuiReserves(pool.realSuiReserves)
             }
         }
         getPool()
@@ -593,6 +607,7 @@ export const useGetPool = (token) => {
         progress,
         tokenSuiPrice,
         poolCompleted,
+        realSuiReserves
     }
 }
 
@@ -620,6 +635,7 @@ export const useGetHolders = (token) => {
 }
 
 export const useGetTradingTransactions = (token) => {
+    const [wholeTransactions, setWholeTransactions] = useState<any[]>([])
     const [transactions, setTransactions] = useState<any[]>([])
     const [ohlcData, setOhlcData] = useState<any[]>([])
     const [volume, setVolume] = useState(0)
@@ -666,6 +682,7 @@ export const useGetTradingTransactions = (token) => {
                 setTransactions(txns)
                 setVolume(volume)
                 setOhlcData(ohlcData)
+                setWholeTransactions(result.data)
             }
         } catch (e) {
             console.error(e)
@@ -687,10 +704,11 @@ export const useGetTradingTransactions = (token) => {
         return () => clearInterval(interval);
     }, []);
 
-    return { refetch, transactions, volume, ohlcData }
+    return { refetch, transactions, volume, ohlcData, wholeTransactions }
 }
 
 export const useGetBoost = (token) => {
+    const [wholeBoostData, setWholeBoostData] = useState<any[]>([])
     const [boostStatus, setBoostState] = useState(0)
     const [boosting, setBoosting] = useState(false)
     const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction()
@@ -713,7 +731,7 @@ export const useGetBoost = (token) => {
                 onSuccess: result => {
                     console.log(result)
                     setBoosting(false)
-                    toast.success('Successfully boosted! You have to wait more time to see changed value!')
+                    toast.success(ToastSuccessLink({ message: 'Successfully boosted! You have to wait more time to see changed value!', link: result.digest }))
                 },
                 onError: (e) => {
                     setBoosting(false)
@@ -740,6 +758,7 @@ export const useGetBoost = (token) => {
             const matchedEvents = createdEvents.data.filter((item: any) => `0x${item.parsedJson.coin_type}` == token).filter((item: any) => (item.parsedJson.end_time * 1000 >= currentTime && item.parsedJson.start_time * 1000 <= currentTime))
             const boostSum = matchedEvents.reduce((sum, item: any) => { return sum + Number(item.parsedJson.boost) }, 0)
             setBoostState(boostSum)
+            setWholeBoostData(createdEvents.data)
         } catch (e) {
             console.error(e)
         }
@@ -761,7 +780,7 @@ export const useGetBoost = (token) => {
         return () => clearInterval(interval);
     }, []);
 
-    return { boosting, boost, boostStatus, refetch }
+    return { boosting, boost, boostStatus, refetch, wholeBoostData }
 }
 
 export const useGetMessages = (token) => {
@@ -790,7 +809,7 @@ export const useGetMessages = (token) => {
                     console.log(result)
                     setSigning(false)
                     setUpdate(prev => prev + 1)
-                    toast.success('Successfully sent message!')
+                    toast.success(ToastSuccessLink({ message: 'Successfully sent message!', link: result.digest }))
                 },
                 onError: (e) => {
                     setSigning(false)

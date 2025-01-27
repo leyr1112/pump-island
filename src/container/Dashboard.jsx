@@ -10,13 +10,13 @@ import { useGetPools } from '../hooks/index.ts'
 
 const App = () => {
   const [search, setSearch] = useState('')
-  const { pools, loading } = useGetPools()
+  const { pools, loading, king } = useGetPools()
+
+  const kingData = pools.find(pools => pools.address === king)
 
   const sortOptions = [
     { value: 'Market Cap', label: 'Market Cap' },
     { value: 'Time', label: 'Time' },
-    { value: 'Volume', label: 'Volume' },
-    { value: 'Last Reply', label: 'Last Reply' }
   ]
 
   const orderOptions = [
@@ -161,30 +161,6 @@ const App = () => {
           }
         })
         break
-      case 'Volume':
-        sortedList = [...filteredChadLists].sort((a, b) => {
-          if (orderValue.value === 'Ascending') {
-            return a.depositedAmount - b.depositedAmount
-          } else {
-            return b.depositedAmount - a.depositedAmount
-          }
-        })
-        break
-      case 'Last Reply':
-        sortedList = [...filteredChadLists].sort((a, b) => {
-          if (orderValue.value === 'Ascending') {
-            const timestampA = timestampMap.get(a.contractAddress) || 0
-            const timestampB = timestampMap.get(b.contractAddress) || 0
-
-            return timestampA - timestampB
-          } else {
-            const timestampA = timestampMap.get(a.contractAddress) || 0
-            const timestampB = timestampMap.get(b.contractAddress) || 0
-
-            return timestampB - timestampA
-          }
-        })
-        break
       default:
         break
     }
@@ -265,6 +241,33 @@ const App = () => {
           <TopBar />
           <div className="max-w-7xl m-auto px-4 md:px-12">
             <div className="py-[32px] w-full h-auto">
+              {
+                kingData && (
+                  <>
+                    <div className="mb-8 flex justify-center">
+                      <p className='text-[#cd8e60] text-[28px]'>King of the see</p>
+                    </div>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                      <div />
+                      <LaunchpadCard
+                        progress={kingData.progress}
+                        liquidity={kingData.liquidity}
+                        tokenName={kingData.tokenName}
+                        Logo={kingData.logoUrl}
+                        chadAddress={kingData.address}
+                        tokenAddress={kingData.address}
+                        devAddress={kingData.devAddress}
+                        marketCap={kingData.marketCap}
+                        website={kingData.website}
+                        twitter={kingData.twitter}
+                        telegram={kingData.telegram}
+                        poolCompleted={kingData.poolCompleted}
+                      />
+                      <div />
+                    </div>
+                  </>
+                )
+              }
               <div className="flex flex-col lg:flex-row gap-3 lg:gap-2.5 h-full justify-between">
                 <div className="border border-[#f6f7f9] rounded-full relative w-full xl:w-[calc(1200px_-_435px)] lg:w-[calc(100vw_-_484px)] h-10 lg:h-full">
                   <svg

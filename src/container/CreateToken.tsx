@@ -14,6 +14,7 @@ import TextArea from '../components/TextArea.tsx'
 import Footer from '../components/Footer.jsx'
 import TopBar from '../components/TopBar.jsx'
 import { format9 } from '../utils/format.ts'
+import { suiToToken } from '../utils/firstBuy.ts'
 
 const CreateToken = () => {
   const { isConnected } = useCurrentWallet();
@@ -199,11 +200,15 @@ const CreateToken = () => {
                         />
                       </section>
                     </section>
+                    <div className="w-full justify-end flex gap-1">
+                      <p className="Text1">Estimate Token:</p>
+                      <p className="Text1">{Number(suiToToken(inputAmount)) / 1000000}</p>
+                    </div>
                   </section>
                 }
                 <div className="text-[#cd8f61] w-full w-max-[90%] m-0 text-[14px] flex justify-between">
                   <span>Deployment Fee:</span>
-                  <span>0.1 SUI</span>
+                  <span>1 SUI</span>
                 </div>
                 <div
                   style={{

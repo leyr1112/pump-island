@@ -77,35 +77,35 @@ public struct BoostOption has copy, drop, store {
             index      : 0, 
             duration   : 86400, 
             boost      : 10, 
-            amount_sui : 990000000,
+            amount_sui : 1799000000,
         };
         0x2::vec_map::insert<u64, BoostOption>(&mut v0, 0, v1);
         let v2 = BoostOption{
             index      : 1, 
             duration   : 86400, 
             boost      : 30, 
-            amount_sui : 2450000000,
+            amount_sui : 4490000000,
         };
         0x2::vec_map::insert<u64, BoostOption>(&mut v0, 1, v2);
         let v3 = BoostOption{
             index      : 2, 
             duration   : 86400, 
             boost      : 50, 
-            amount_sui : 3990000000,
+            amount_sui : 7190000000,
         };
         0x2::vec_map::insert<u64, BoostOption>(&mut v0, 2, v3);
         let v4 = BoostOption{
             index      : 3, 
             duration   : 86400, 
             boost      : 100, 
-            amount_sui : 7490000000,
+            amount_sui : 13490000000,
         };
         0x2::vec_map::insert<u64, BoostOption>(&mut v0, 3, v4);
         let v5 = BoostOption{
             index      : 4, 
             duration   : 86400, 
             boost      : 500, 
-            amount_sui : 35900000000,
+            amount_sui : 64790000000,
         };
         0x2::vec_map::insert<u64, BoostOption>(&mut v0, 4, v5);
         let v6 = Config{

@@ -61,14 +61,12 @@ const MyChart = ({
     if (data) {
       let priceList;
       let tokenPriceDatas = [];
-      console.log(data)
       for (let i = 0; i < data.length; i++) {
         let openPrice = Number(data[i].open) * ethPrice
         let closePrice = Number(data[i].close) * ethPrice
         let high = Math.max(openPrice, closePrice);
         let low = Math.min(openPrice, closePrice);
         priceList = { time: Number(data[i].start), open: openPrice, high: high, low, close: closePrice };
-        console.log(priceList)
         tokenPriceDatas.push(priceList);
       }
       if(tokenPriceDatas.length > 0) {

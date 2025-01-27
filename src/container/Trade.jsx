@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import '../App.css'
 import '../styles/MainContainer.css'
@@ -12,7 +12,7 @@ import { useGetHolders, useGetMessages, useGetPool, useGetTradingTransactions } 
 import { useCurrentAccount, useCurrentWallet } from '@mysten/dapp-kit'
 import TradeCardBox from '../components/TradeCardBox.jsx'
 import { format9 } from '../utils/format.ts'
-import { ScanUrl } from '../config.jsx'
+import { PumpConfig, ScanUrl } from '../config.jsx'
 import { ConnectButton } from '@mysten/dapp-kit'
 
 const Trade = () => {
@@ -34,11 +34,11 @@ const Trade = () => {
     logoUrl,
     progress,
     tokenSuiPrice,
-    poolCompleted: lpCreated
+    poolCompleted: lpCreated,
+    realSuiReserves,
   } = useGetPool(token)
 
   const { transactions: transactionDatas, volume, ohlcData: tokenPriceDatas } = useGetTradingTransactions(token)
-  console.log(transactionDatas)
 
   const { isConnected } = useCurrentWallet()
 
@@ -147,12 +147,13 @@ const Trade = () => {
                       tokenAddress={tokenAddress}
                       tokenLogo={tokenLogo}
                       tokenSymbol={tokenSymbol}
+                      realSuiReserves={realSuiReserves}
                     />
                   </div>
                   <div className="">
                     {lpCreated ? (
                       <iframe
-                        src={`https://dexscreener.com/sui/${tokenAddress}?embed=1&trades=0&info=0&theme=light`}
+                        src={`https://app.cetus.zone/swap?from=${token}&to=0x2::sui::SUI`}
                         className="chart"
                         title="chart"
                       />
@@ -493,6 +494,7 @@ const Trade = () => {
                     tokenAddress={tokenAddress}
                     tokenLogo={tokenLogo}
                     tokenSymbol={tokenSymbol}
+                    realSuiReserves={realSuiReserves}
                   />
                 </div>
                 {/* <br />

@@ -7,8 +7,12 @@ import ClipLoader from 'react-spinners/ClipLoader'
 import SuiIcon from '../icons/sui.png'
 import cetusBannerImg from '../icons/cetus-banner.png'
 import swapIcon from '../icons/swapIcon.svg'
+import { PumpConfig } from "../config.jsx";
 
-const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }) => {
+const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol, realSuiReserves }) => {
+  const maxBuyAmount = useMemo(() => {
+    return Math.ceil(Number(PumpConfig.Threshod) - realSuiReserves) / 1000000000 + 0.1
+  }, [realSuiReserves])
   const { isConnected } = useCurrentWallet()
   const { state } = useApp()
   const { buy, getEstimateOut, ouput, loading } = useTrade(token)
@@ -39,7 +43,7 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
       setInputAmount('')
     }
   }
-  
+
   const [inputAmount, setInputAmount] = useState()
   const [debouncedAmount, setDebouncedAmount] = useState(inputAmount);
 
@@ -57,7 +61,7 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
 
   const setMaxAmount = async () => {
     if (inputTokenType === 'SUI') {
-      setInputAmount(suiBalance > 0.1 ? suiBalance - 0.1 : 0)
+      setInputAmount(suiBalance > 0.1 ? suiBalance - 0.1 > maxBuyAmount ? maxBuyAmount : suiBalance - 0.1 : 0)
     } else {
       setInputAmount(Math.floor(tokenBalance * 100) / 100)
     }
@@ -73,7 +77,7 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
       target="_blank"
     >
       <div className="overflow-hidden rounded-[25px] sm:mx-0 mx-[-15px]">
-      <img src={cetusBannerImg} className="cetus-banner" alt="Cetus Banner" />
+        <img src={cetusBannerImg} className="cetus-banner" alt="Cetus Banner" />
 
       </div>
     </a>
@@ -120,7 +124,7 @@ const TradeCardBox = ({ token, lpCreated, tokenAddress, tokenLogo, tokenSymbol }
                   value={inputAmount}
                   onChange={e => {
                     if (inputTokenType == "SUI") {
-                      if (Number(e.target.value) < Number(18446744073709551615n / 1000000000n)) setInputAmount(e.target.value)
+                      if (Number(e.target.value) < Number(18446744073709551615n / 1000000000n)) setInputAmount(e.target.value > maxBuyAmount ? maxBuyAmount : e.target.value)
                     }
                     else {
                       if (Number(e.target.value) < Number(18446744073709551615n / 1000000n)) setInputAmount(e.target.value)

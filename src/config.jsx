@@ -34,6 +34,9 @@ export const ScanUrl = {
 
 export const PumpConfig = {
   InitialVirtualTokenReserves: 10000000000000000n,
-  RemainTokenReserves: 2000000000000000,
-  Threshod: 4000000000
+  InitialVirtualSuiReseves: 500000000000n,
+  RemainTokenReserves: 2000000000000000n,
+  Threshod: 5000000000n
 }
+
+export const AdminWallet = '0xf3e3d664da7dcb2b074125c66e033eddc2c5509791cca9a0f01bc22ea5dadd78'
