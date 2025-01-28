@@ -56,18 +56,20 @@ const MyChart = ({
       setCreated(true)
     }
   }, [created]);
+  console.log(data)
 
   useEffect(() => {
     if (data.length > 0) {
       let currentBucket;
       let tokenPriceDatas = [];
-      data.reverse().forEach(item => {
+      console.log(data.reverse())
+      data.reverse().slice(-1).forEach(item => {
         const bucketStart = Math.floor(Number(item.parsedJson.ts) / 300000) * 300000;
         const price = item.parsedJson.sui_amount / item.parsedJson.token_amount / 1000 * ethPrice
         if (!currentBucket || currentBucket.start !== bucketStart) {
           if (currentBucket) tokenPriceDatas.push(currentBucket);
           currentBucket = {
-            time: bucketStart / 1000,
+            start: bucketStart / 1000,
             open: price,
             high: price,
             low: price,

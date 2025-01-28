@@ -18,11 +18,11 @@ export const config = createConfig({
 })
 
 export const OBJECTS = {
-  Configuration: "0x4f4ad9255c2bc69e7cff8f2989ffdb1315613f6894d0783961f7810a08d0d057",
-  Package: "0x242818b79ffc1e055147116b98d628c0c547daee1529590193cc4e5f6914fb11",
-  Threshold: "0xea801a462802c2bf11d4d93e87ec57b5985520d428f92de8601ebeec4e1481ed",
-  Package_Boost: "0x242818b79ffc1e055147116b98d628c0c547daee1529590193cc4e5f6914fb11",
-  Boost_Config: "0x230a466fae4a10ec12c85438f32cf876356a34385c111ee76eceb35850ffeade",
+  Configuration: "0x29fc820afba69b4e4b9b8b6b8ec007d9729d45efb784fc0a84c90034c195fbbd",
+  Package: "0x65f259a3e023d195c09bb09851773e744b4888131f7b43bc2345ffa9a92d6d78",
+  Threshold: "0x94794552be4a804efc86e7ce65c99acd7ef7213562a75a7d5344370ae37f387c",
+  Package_Boost: "0x65f259a3e023d195c09bb09851773e744b4888131f7b43bc2345ffa9a92d6d78",
+  Boost_Config: "0x8b27c49eb899467e7ea941242813eabe1e526f66b799f12a195021e315401ce0",
 }
 
 export const ScanUrl = {
@@ -39,5 +39,5 @@ export const PumpConfig = {
   Threshod: 1800000000000n
 }
 
-export const AdminWallet = '0x612f41e25df69666f8f88d2ca277de8e26f59611e03cdb7e9c1b5d8d0a7a27b3'
-export const FeeWallet = '0x612f41e25df69666f8f88d2ca277de8e26f59611e03cdb7e9c1b5d8d0a7a27b3'
+export const AdminWallet = '0xf3e3d664da7dcb2b074125c66e033eddc2c5509791cca9a0f01bc22ea5dadd78'
+export const FeeWallet = '0xf3e3d664da7dcb2b074125c66e033eddc2c5509791cca9a0f01bc22ea5dadd78'
