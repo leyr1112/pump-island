@@ -261,6 +261,7 @@ export const useCreate = () => {
 
     return { loading, createToken };
 };
+
 export const useTrade = (token) => {
     const account = useCurrentAccount()
     const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction()

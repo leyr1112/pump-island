@@ -130,7 +130,7 @@ const ClaimCard = ({
                   transition: 'color 0.3s ease', // Transizione colore al hover
                 }}
 
-              >Tsuinami Wave </p>
+              >King of the islands </p>
               <div className="relative w-full h-full bg-[#00f3ef17] rounded-[16px]">
                 <div
                   className=" items-center overflow-hidden rounded-[16px] launchpad-progress-bar-wave-filled h-full mt-[6px]"
