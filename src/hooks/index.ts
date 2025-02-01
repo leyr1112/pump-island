@@ -108,59 +108,60 @@ export const useGetSuiPrice = () => {
 
 // Action
 export const useCreate = () => {
-    const account = useCurrentAccount()
-    const [loading, setLoading] = useState<'Creating' | 'Adding' | 'False'>('False')
-    const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction()
-    const createToken = async (tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmout, outputTokenAmount) => {
-        setLoading('Creating')
-        tokenSymbol = tokenSymbol.toUpperCase()
+    const account = useCurrentAccount();
+    const [loading, setLoading] = useState<'Creating' | 'Adding' | 'False'>('False');
+    const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+
+    const createToken = async (tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmount, outputTokenAmount) => {
+        setLoading('Creating');
+        tokenSymbol = tokenSymbol.toUpperCase();
         try {
-            if (account?.publicKey) {
-                const tx = new Transaction()
+            if (account?.address) {
+                const tx = new Transaction();
                 const pkg = intoBase64({
                     symbol: tokenSymbol,
                     name: tokenName,
                     description: tokenDescription,
                     iconUrl: tokenLogo
-                })
+                });
                 const dependencies = [
                     '0x0000000000000000000000000000000000000000000000000000000000000001',
                     '0x0000000000000000000000000000000000000000000000000000000000000002'
-                ]
+                ];
                 const [upgradeCap] = tx.publish({
                     modules: [pkg],
                     dependencies
-                })
+                });
                 tx.transferObjects(
                     [upgradeCap],
-                    tx.pure(new Uint8Array(account?.publicKey))
-                )
-                const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(990000000)])
-                tx.transferObjects([coin], tx.pure.address(FeeWallet))
-                tx.setGasBudget(1000000000)
+                    tx.pure.address(account.address) // ✅ Corretto per SUI Wallet
+                );
+                const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(BigInt(990000000))]);
+                tx.transferObjects([coin], tx.pure.address(FeeWallet));
+                tx.setGasBudget(BigInt(1000000000));
                 signAndExecuteTransaction(
                     { transaction: tx },
                     {
                         onSuccess: async (result) => {
-                            const digest = result.digest
+                            const digest = result.digest;
                             if (digest) {
-                                toast.success(ToastSuccessLink({ message: 'Successfully created token!', link: digest }))
-                                creatPool(digest, tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmout, outputTokenAmount)
+                                toast.success(ToastSuccessLink({ message: 'Successfully created token!', link: digest }));
+                                createPool(digest, tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmount, outputTokenAmount);
                             }
                         },
                         onError: (e) => {
-                            toast.error('Token creation failed!')
-                            setLoading('False')
+                            toast.error('Token creation failed!');
+                            setLoading('False');
                         }
                     }
-                )
+                );
             }
         } catch (e) {
-            console.error(e)
-            toast.error('Token creation failed!')
-            setLoading('False')
+            console.error(e);
+            toast.error('Token creation failed!');
+            setLoading('False');
         }
-    }
+    };
 
     const waitForTransaction = async (digest, retries = 10, delay = 2000) => {
         let transactionResult;
@@ -170,7 +171,6 @@ export const useCreate = () => {
                     digest: digest,
                     options: { showObjectChanges: true },
                 });
-
                 if (transactionResult) {
                     console.log('Transaction found:', transactionResult);
                     return transactionResult;
@@ -178,33 +178,29 @@ export const useCreate = () => {
             } catch (error) {
                 console.error('Error fetching transaction:', error);
             }
-
             console.log(`Retrying in ${delay / 1000} seconds...`);
             await new Promise(resolve => setTimeout(resolve, delay));
         }
-
-        // If all retries fail, throw an error
         throw new Error(`Transaction not found after ${retries} attempts.`);
     };
 
-    const creatPool = async (digest, tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmout, outputTokenAmount) => {
-        setLoading('Adding')
+    const createPool = async (digest, tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmount, outputTokenAmount) => {
+        setLoading('Adding');
         try {
-            const transactionResult = await waitForTransaction(digest)
-            const { objectChanges } = transactionResult
-            let treasuryCap, packageId
-            objectChanges?.forEach((objectChange: any) => {
+            const transactionResult = await waitForTransaction(digest);
+            const { objectChanges } = transactionResult;
+            let treasuryCap, packageId;
+            objectChanges?.forEach((objectChange) => {
                 if (objectChange?.objectType?.includes('::coin::TreasuryCap<')) {
-                    treasuryCap = objectChange?.objectId
+                    treasuryCap = objectChange?.objectId;
                 }
                 if (objectChange?.type === 'published') {
-                    packageId = objectChange?.packageId
+                    packageId = objectChange?.packageId;
                 }
-            })
+            });
             if (treasuryCap && packageId) {
-                const tx = new Transaction()
-
-                if (inputAmout == 0) {
+                const tx = new Transaction();
+                if (inputAmount == 0) {
                     tx.moveCall({
                         arguments: [
                             tx.object(OBJECTS.Configuration),
@@ -220,15 +216,15 @@ export const useCreate = () => {
                         ],
                         typeArguments: [`${packageId}::${tokenSymbol.toLowerCase()}::${tokenSymbol.toUpperCase()}`],
                         target: `${OBJECTS.Package}::move_pump::create`
-                    })
+                    });
                 } else {
-                    const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(inputAmout * 1000000000)])
+                    const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(BigInt(inputAmount * 1000000000))]);
                     tx.moveCall({
                         arguments: [
                             tx.object(OBJECTS.Configuration),
                             tx.object(treasuryCap),
                             coin,
-                            tx.pure.u64(outputTokenAmount),
+                            tx.pure.u64(BigInt(outputTokenAmount)),
                             tx.object('0x6'),
                             tx.pure.string(tokenName),
                             tx.pure.string(tokenSymbol),
@@ -240,33 +236,31 @@ export const useCreate = () => {
                         ],
                         typeArguments: [`${packageId}::${tokenSymbol.toLowerCase()}::${tokenSymbol.toUpperCase()}`],
                         target: `${OBJECTS.Package}::move_pump::create_and_first_buy`
-                    })
+                    });
                 }
-                tx.setGasBudget(1000000000)
-
+                tx.setGasBudget(BigInt(1000000000));
                 signAndExecuteTransaction({ transaction: tx }, {
                     onSuccess: result => {
-                        console.log(result)
-                        setLoading('False')
-                        toast.success(ToastSuccessLink({ message: 'Successfully pool created!', link: result.digest }))
+                        console.log(result);
+                        setLoading('False');
+                        toast.success(ToastSuccessLink({ message: 'Successfully pool created!', link: result.digest }));
                     },
                     onError: (e) => {
-                        console.error(e)
-                        setLoading('False')
-                        toast.error('Pool creation faild!')
+                        console.error(e);
+                        setLoading('False');
+                        toast.error('Pool creation failed!');
                     }
-                })
+                });
             }
         } catch (e) {
-            console.error(e)
-            setLoading('False')
-            toast.error('Pool creation faild!')
+            console.error(e);
+            setLoading('False');
+            toast.error('Pool creation failed!');
         }
-    }
+    };
 
-    return { loading, createToken }
-}
-
+    return { loading, createToken };
+};
 export const useTrade = (token) => {
     const account = useCurrentAccount()
     const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction()
