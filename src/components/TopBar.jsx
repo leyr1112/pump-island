@@ -23,6 +23,32 @@ const TopBar = () => {
   const toggleCard = () => {
     setIsOpen(!isOpen);
   };
+  const [phantomProvider, setPhantomProvider] = useState(null);
+  const [phantomAddress, setPhantomAddress] = useState(null);
+
+  // 🔹 Rileva Phantom Wallet
+  useEffect(() => {
+    if (window.phantom?.sui) {
+      setPhantomProvider(window.phantom.sui);
+    }
+  }, []);
+
+  // 🔹 Connessione a Phantom
+  const connectPhantom = async () => {
+    if (phantomProvider) {
+      try {
+        const response = await phantomProvider.request({ method: "sui_connect" });
+        setPhantomAddress(response.address);
+      } catch (error) {
+        console.error("Phantom Connection Failed", error);
+      }
+    }
+  };
+
+  // 🔹 Disconnessione da Phantom
+  const disconnectPhantom = () => {
+    setPhantomAddress(null);
+  };
 
   // Calcolo del saldo SUI
   const suiBalance = useMemo(() => {
@@ -261,6 +287,8 @@ const TopBar = () => {
 
             </div>
           </div>
+            {/* 🔹 Connect Button modificato per supportare sia Phantom che Sui Wallet */}
+     
 
           {/* Icone social e pulsanti */}
           <div className="flex items-center gap-4">
