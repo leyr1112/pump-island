@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { AdminWallet, FeeWallet, OBJECTS, PumpConfig } from '../config'
+import { AdminWallet, FeeWallet, OBJECTS, POP, PumpConfig } from '../config'
 import { useApp } from '../context'
 import { getFullnodeUrl, SuiClient } from '@mysten/sui/client'
 import {
@@ -137,6 +137,7 @@ export const useCreate = () => {
                 )
                 const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(990000000)])
                 tx.transferObjects([coin], tx.pure.address(FeeWallet))
+                tx.setGasBudget(1000000000)
                 signAndExecuteTransaction(
                     { transaction: tx },
                     {
@@ -241,6 +242,7 @@ export const useCreate = () => {
                         target: `${OBJECTS.Package}::move_pump::create_and_first_buy`
                     })
                 }
+                tx.setGasBudget(1000000000)
 
                 signAndExecuteTransaction({ transaction: tx }, {
                     onSuccess: result => {
@@ -696,6 +698,7 @@ export const useGetBoost = (token) => {
     const [boostStatus, setBoostState] = useState(0)
     const [boosting, setBoosting] = useState(false)
     const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction()
+    const account = useCurrentAccount()
     const boost = async (suiAmount, option) => {
         setBoosting(true)
         try {
@@ -710,6 +713,48 @@ export const useGetBoost = (token) => {
                 ],
                 typeArguments: [token],
                 target: `${OBJECTS.Package_Boost}::boost_payement::pay`
+            })
+            signAndExecuteTransaction({ transaction: tx }, {
+                onSuccess: result => {
+                    console.log(result)
+                    setBoosting(false)
+                    toast.success(ToastSuccessLink({ message: 'Successfully boosted! You have to wait more time to see changed value!', link: result.digest }))
+                },
+                onError: (e) => {
+                    setBoosting(false)
+                    toast.error('There is a problem to boost!')
+                    console.error(e)
+                }
+            })
+        } catch (e) {
+            console.error(e)
+            toast.error('There is a problem to boost!')
+            setBoosting(false)
+        }
+    }
+
+    const boostWithPop = async (popAmount, option) => {
+        setBoosting(true)
+        try {
+            const tx = new Transaction()
+            const coinObjects = await client.getCoins({ owner: (account as any).address, coinType: POP })
+            const coinObject1 = tx.object(coinObjects.data[0].coinObjectId)
+            const ohterCoinObjects = (coinObjects as any).data.slice(1).map((item) => {
+                return tx.object(item.coinObjectId)
+            })
+            if (ohterCoinObjects.length > 0) {
+                tx.mergeCoins(coinObject1, ohterCoinObjects)
+            }
+            const [coin] = tx.splitCoins(coinObject1, [tx.pure.u64(popAmount)])
+            tx.moveCall({
+                arguments: [
+                    tx.object(OBJECTS.Boost_Config),
+                    coin,
+                    tx.pure.u64(option),
+                    tx.object('0x6')
+                ],
+                typeArguments: [token],
+                target: `${OBJECTS.Package_Boost}::boost_payement::pay_with_pop`
             })
             signAndExecuteTransaction({ transaction: tx }, {
                 onSuccess: result => {
@@ -764,7 +809,7 @@ export const useGetBoost = (token) => {
         return () => clearInterval(interval);
     }, []);
 
-    return { boosting, boost, boostStatus, refetch, wholeBoostData }
+    return { boosting, boost, boostStatus, refetch, wholeBoostData, boostWithPop }
 }
 
 export const useGetMessages = (token) => {

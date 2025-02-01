@@ -68,7 +68,7 @@ const App = () => {
         <div>
           <QueryClientProvider client={queryClient}>
             <SuiClientProvider networks={networks} defaultNetwork="devnet">
-              <WalletProvider walletFilter={(wallet) => wallet == "Suiet"}>
+              <WalletProvider>
                 <AppProvider>
                   <WagmiProvider config={config}>
                     <Toaster

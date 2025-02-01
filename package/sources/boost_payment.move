@@ -1,4 +1,6 @@
 module pump_island::boost_payement {
+    use pop_coin::pop::POP;
+
     public struct Config has store, key {
         id: 0x2::object::UID,
         setter: address,
@@ -18,6 +20,7 @@ module pump_island::boost_payement {
         duration: u64,
         boost: u64,
         amount_sui: u64,
+        amount_pop: u64,
     }
     
     public struct PaymentEvent has copy, drop, store {
@@ -61,7 +64,7 @@ module pump_island::boost_payement {
     }
     
     public entry fun create_mange_config(arg0: address, arg1: u64, arg2: &mut 0x2::tx_context::TxContext) {
-        assert!(0x2::tx_context::sender(arg2) == @0x5a33bfac999f5a51614a91744379b54cb07ab7fecc9bb762d2b924b587fff890, 1);
+        assert!(0x2::tx_context::sender(arg2) == @0xf3e3d664da7dcb2b074125c66e033eddc2c5509791cca9a0f01bc22ea5dadd78, 1);
         let v0 = ManageConfig{
             id      : 0x2::object::new(arg2), 
             pay_to  : arg0, 
@@ -78,6 +81,7 @@ module pump_island::boost_payement {
             duration   : 86400, 
             boost      : 10, 
             amount_sui : 1799000000,
+            amount_pop : 179000000,
         };
         0x2::vec_map::insert<u64, BoostOption>(&mut v0, 0, v1);
         let v2 = BoostOption{
@@ -85,6 +89,7 @@ module pump_island::boost_payement {
             duration   : 86400, 
             boost      : 30, 
             amount_sui : 4490000000,
+            amount_pop : 449000000,
         };
         0x2::vec_map::insert<u64, BoostOption>(&mut v0, 1, v2);
         let v3 = BoostOption{
@@ -92,6 +97,7 @@ module pump_island::boost_payement {
             duration   : 86400, 
             boost      : 50, 
             amount_sui : 7190000000,
+            amount_pop : 719000000,
         };
         0x2::vec_map::insert<u64, BoostOption>(&mut v0, 2, v3);
         let v4 = BoostOption{
@@ -99,6 +105,7 @@ module pump_island::boost_payement {
             duration   : 86400, 
             boost      : 100, 
             amount_sui : 13490000000,
+            amount_pop : 1349000000,
         };
         0x2::vec_map::insert<u64, BoostOption>(&mut v0, 3, v4);
         let v5 = BoostOption{
@@ -106,12 +113,13 @@ module pump_island::boost_payement {
             duration   : 86400, 
             boost      : 500, 
             amount_sui : 64790000000,
+            amount_pop : 6479000000,
         };
         0x2::vec_map::insert<u64, BoostOption>(&mut v0, 4, v5);
         let v6 = Config{
             id           : 0x2::object::new(arg0), 
-            setter       : @0x5a33bfac999f5a51614a91744379b54cb07ab7fecc9bb762d2b924b587fff890, 
-            pay_to       : @0x5a33bfac999f5a51614a91744379b54cb07ab7fecc9bb762d2b924b587fff890, 
+            setter       : @0xf3e3d664da7dcb2b074125c66e033eddc2c5509791cca9a0f01bc22ea5dadd78, 
+            pay_to       : @0xf3e3d664da7dcb2b074125c66e033eddc2c5509791cca9a0f01bc22ea5dadd78, 
             boost_option : v0,
         };
         0x2::transfer::public_share_object<Config>(v6);
@@ -132,10 +140,26 @@ module pump_island::boost_payement {
         };
         0x2::event::emit<PaymentEvent>(v2);
     }
+
+    public entry fun pay_with_pop<T0>(arg0: &mut Config, arg1: 0x2::coin::Coin<POP>, arg2: u64, arg3: &0x2::clock::Clock, arg4: &mut 0x2::tx_context::TxContext) {
+        let v0 = 0x2::vec_map::get<u64, BoostOption>(&arg0.boost_option, &arg2);
+        assert!(v0.amount_sui <= 0x2::coin::value<POP>(&arg1), 3);
+        let v1 = 0x2::clock::timestamp_ms(arg3) / 1000;
+        0x2::transfer::public_transfer<0x2::coin::Coin<POP>>(arg1, arg0.pay_to);
+        let v2 = PaymentEvent{
+            user       : 0x2::tx_context::sender(arg4), 
+            coin_type  : 0x1::type_name::into_string(0x1::type_name::get<T0>()), 
+            start_time : v1, 
+            end_time   : v1 + v0.duration, 
+            boost      : v0.boost, 
+            amount_sui : v0.amount_sui,
+        };
+        0x2::event::emit<PaymentEvent>(v2);
+    }
     
     public entry fun replace_boost_options(arg0: &mut Config, arg1: vector<u64>, arg2: vector<u64>, arg3: vector<u64>, arg4: &mut 0x2::tx_context::TxContext) {
         let v0 = 0x2::tx_context::sender(arg4);
-        assert!(v0 == arg0.setter || v0 == @0x5a33bfac999f5a51614a91744379b54cb07ab7fecc9bb762d2b924b587fff890, 1);
+        assert!(v0 == arg0.setter || v0 == @0xf3e3d664da7dcb2b074125c66e033eddc2c5509791cca9a0f01bc22ea5dadd78, 1);
         assert!(0x1::vector::length<u64>(&arg1) == 0x1::vector::length<u64>(&arg2) && 0x1::vector::length<u64>(&arg2) == 0x1::vector::length<u64>(&arg3), 4);
         while (!0x2::vec_map::is_empty<u64, BoostOption>(&arg0.boost_option)) {
             let (_, _) = 0x2::vec_map::pop<u64, BoostOption>(&mut arg0.boost_option);
@@ -147,6 +171,7 @@ module pump_island::boost_payement {
                 duration   : *0x1::vector::borrow<u64>(&arg1, v3), 
                 boost      : *0x1::vector::borrow<u64>(&arg2, v3), 
                 amount_sui : *0x1::vector::borrow<u64>(&arg3, v3),
+                amount_pop : *0x1::vector::borrow<u64>(&arg3, v3),
             };
             0x2::vec_map::insert<u64, BoostOption>(&mut arg0.boost_option, v3, v4);
             v3 = v3 + 1;
@@ -191,18 +216,18 @@ module pump_island::boost_payement {
     
     public entry fun set_pay_to(arg0: &mut Config, arg1: address, arg2: &mut 0x2::tx_context::TxContext) {
         let v0 = 0x2::tx_context::sender(arg2);
-        assert!(v0 == @0x5a33bfac999f5a51614a91744379b54cb07ab7fecc9bb762d2b924b587fff890 || v0 == arg0.setter, 1);
+        assert!(v0 == @0xf3e3d664da7dcb2b074125c66e033eddc2c5509791cca9a0f01bc22ea5dadd78 || v0 == arg0.setter, 1);
         arg0.pay_to = arg1;
     }
     
     public entry fun set_to_setter(arg0: &mut Config, arg1: address, arg2: &mut 0x2::tx_context::TxContext) {
         let v0 = 0x2::tx_context::sender(arg2);
-        assert!(v0 == @0x5a33bfac999f5a51614a91744379b54cb07ab7fecc9bb762d2b924b587fff890 || v0 == arg0.setter, 1);
+        assert!(v0 == @0xf3e3d664da7dcb2b074125c66e033eddc2c5509791cca9a0f01bc22ea5dadd78 || v0 == arg0.setter, 1);
         arg0.setter = arg1;
     }
     
     public entry fun update_manage_config(arg0: &mut ManageConfig, arg1: address, arg2: u64, arg3: bool, arg4: &mut 0x2::tx_context::TxContext) {
-        assert!(0x2::tx_context::sender(arg4) == @0x5a33bfac999f5a51614a91744379b54cb07ab7fecc9bb762d2b924b587fff890, 1);
+        assert!(0x2::tx_context::sender(arg4) == @0xf3e3d664da7dcb2b074125c66e033eddc2c5509791cca9a0f01bc22ea5dadd78, 1);
         arg0.is_live = arg3;
         arg0.pay_to = arg1;
         arg0.fee = arg2;

@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { SocialSection } from './SocialSection'
 import { Link } from 'react-alice-carousel'
-import { ScanUrl } from '../config'
+import { POP, ScanUrl } from '../config'
 import sui from '../icons/sui.png'
-import { useGetBoost } from '../hooks/index.ts'
+import { useGetBoost, useGetTokenBalance } from '../hooks/index.ts'
 import {
   ConnectButton,
   useCurrentAccount,
@@ -36,9 +36,12 @@ const ClaimCard = ({
     setIsOpen(!isOpen)
   }
 
-  const { boost, boostStatus } = useGetBoost(tokenAddress)
+  const { boost, boostStatus, boostWithPop } = useGetBoost(tokenAddress)
   const { state } = useApp()
+  const { tokenBalance: popBalance } = useGetTokenBalance(POP)
   const maxSuiBalance = state.suiBalance > 100000000 ? state.suiBalance - 100000000 : 0
+
+  const [isPop, setPop] = useState(false)
 
   return (
     <>
@@ -76,14 +79,14 @@ const ClaimCard = ({
 
           <div className="launchpad-progress-container bg-[#1d1d1d] p-4 rounded-[16px] flex flex-col gap-6  " >
             <div className="h-6">
-            <p 
-            className="hover:text-[#cd8e60] flex justify-center items-center  "
-            style={{
-              color: '#cd8e60', // Testo oro
-              transition: 'color 0.3s ease', // Transizione colore al hover
-            }}
-            
-            >Bonding Curve </p>
+              <p
+                className="hover:text-[#cd8e60] flex justify-center items-center  "
+                style={{
+                  color: '#cd8e60', // Testo oro
+                  transition: 'color 0.3s ease', // Transizione colore al hover
+                }}
+
+              >Bonding Curve </p>
               <div className="relative w-full h-full bg-[#00f3ef17] rounded-[16px]">
                 <div
                   className=" items-center overflow-hidden rounded-[16px] launchpad-progress-bar-filled h-full mt-[6px]"
@@ -118,25 +121,25 @@ const ClaimCard = ({
               </button>
 
             </div>
-            
+
             <div className="h-6">
-            <p 
-            className="hover:text-[#1e3a8a] flex justify-center items-center "
-            style={{
-              color: '#ffd700', // Testo oro
-              transition: 'color 0.3s ease', // Transizione colore al hover
-            }}
-            
-            >Tsuinami Wave </p>
+              <p
+                className="hover:text-[#1e3a8a] flex justify-center items-center "
+                style={{
+                  color: '#ffd700', // Testo oro
+                  transition: 'color 0.3s ease', // Transizione colore al hover
+                }}
+
+              >Tsuinami Wave </p>
               <div className="relative w-full h-full bg-[#00f3ef17] rounded-[16px]">
                 <div
                   className=" items-center overflow-hidden rounded-[16px] launchpad-progress-bar-wave-filled h-full mt-[6px]"
                   style={{ width: `${Math.floor((progress * 2 > 100 ? 100 : progress * 2) * 1000) / 1000}%` }}
                 ></div>
-                 
+
                 <span className="select-none absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-[16px]">
-                 
-                   {Math.floor((progress * 2 > 100 ? 100 : progress * 2) * 1000) / 1000}%
+
+                  {Math.floor((progress * 2 > 100 ? 100 : progress * 2) * 1000) / 1000}%
                 </span>
               </div>
             </div>
@@ -193,6 +196,14 @@ const ClaimCard = ({
             <p className="mb-2 text-white text-center text-sm sm:text-base">
               Showcase your support, boost Trending Score and unlock the Golden Ticker!
             </p>
+            <div className='flex justify-center mb-2 gap-2'>
+              <div className={`${!isPop ? 'text-black' : 'text-[#ffd700]'} ${isPop ? 'bg-transparent' : 'bg-[#ffd700]'} border border-[#1e3a8a] rounded-lg px-4 py-2 cursor-pointer`} onClick={() => { setPop(false) }}>
+                SUI
+              </div>
+              <div className={`${isPop ? 'text-black' : 'text-[#ffd700]'} ${!isPop ? 'bg-transparent' : 'bg-[#ffd700]'} border border-[#1e3a8a] rounded-lg px-4 py-2 cursor-pointer`} onClick={() => { setPop(true) }}>
+                POP
+              </div>
+            </div>
             <p className="mb-4 text-[#ffd700] text-center font-semibold text-sm sm:text-base">
               Choose a boost pack
             </p>
@@ -209,21 +220,29 @@ const ClaimCard = ({
               ) : (
                 <>
                   {[ // Boost Pack Configuration
-                    { multiplier: '10x', price: 1.79, boostValue: 1799000000 },
-                    { multiplier: '30x', price: 4.49, boostValue: 4490000000 },
-                    { multiplier: '50x', price: 7.19, boostValue: 7190000000 },
-                    { multiplier: '100x', price: 13.49, boostValue: 13490000000 },
-                    { multiplier: '500x', price: 64.79, boostValue: 64790000000 },
+                    { multiplier: '10x', price: 1.79, boostValue: 1799000000, boostPopValue: 179900000 },
+                    { multiplier: '30x', price: 4.49, boostValue: 4490000000, boostPopValue: 449000000 },
+                    { multiplier: '50x', price: 7.19, boostValue: 7190000000, boostPopValue: 719000000 },
+                    { multiplier: '100x', price: 13.49, boostValue: 13490000000, boostPopValue: 1349000000 },
+                    { multiplier: '500x', price: 64.79, boostValue: 64790000000, boostPopValue: 6479000000 },
                   ].map((pack, index) => (
                     <button
                       key={index}
                       className="bg-transparent text-[#ffd700] border border-[#1e3a8a] rounded-lg px-3 py-4 hover:bg-[#1e3a8a33] transition w-full"
                       onClick={() => {
-                        if (maxSuiBalance < pack.boostValue) {
-                          toast.error('Insufficient sui balance!');
-                          return;
+                        if (!isPop) {
+                          if (maxSuiBalance < pack.boostValue) {
+                            toast.error('Insufficient sui balance!');
+                            return;
+                          }
+                          boost(pack.boostValue, index);
+                        } else {
+                          if (popBalance < pack.boostPopValue) {
+                            toast.error('Insufficient pop balance!');
+                            return;
+                          }
+                          boostWithPop(pack.boostValue, index);
                         }
-                        boost(pack.boostValue, index);
                       }}
                     >
                       <div className="flex items-center gap-2 justify-center">
@@ -239,12 +258,16 @@ const ClaimCard = ({
                       <span className="text-white text-xs sm:text-sm">24 hours</span>
                       <br />
                       <span className="text-white flex items-center justify-center text-sm sm:text-base font-bold">
-                        {pack.price}{' '}
-                        <img
+                        {!isPop ? pack.price : pack.boostPopValue / 1000000}{' '}
+                        {!isPop ? <img
                           src={sui}
                           className="w-[12px] sm:w-[15px] h-[12px] sm:h-[15px] ml-1"
                           alt="SUI Icon"
-                        />
+                        /> : <img
+                          src="https://api.movepump.com/uploads/immagine_3_67b7728860.png"
+                          className="w-[12px] sm:w-[15px] h-[12px] sm:h-[15px] ml-1"
+                          alt="POP Icon"
+                        />}
                       </span>
                     </button>
                   ))}
