@@ -404,7 +404,16 @@ const TopBar = () => {
                 </a>
 
               </span>
-
+              <Link to="/ranking" className="left-bar-link">
+                <span
+                  className={`text-[20px] ${currentPath === '/ranking'
+                    ? 'text-[#cd8f61]'
+                    : 'text-[#f6f7f9] hover:text-[#cd8f61]'
+                    }`}
+                >
+                  Ranking
+                </span>
+              </Link>
               <span
                 className={`text-[20px] animate-pulse`}
                 style={{ color: isOpen ? '#cd8f61' : '#f3cc30' }}
