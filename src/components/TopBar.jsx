@@ -404,7 +404,7 @@ const TopBar = () => {
                 </a>
 
               </span>
-              <Link to="/ranking" className="left-bar-link">
+              <Link to="/ranking" >
                 <span
                   className={`text-[20px] ${currentPath === '/ranking'
                     ? 'text-[#cd8f61]'
