@@ -81,7 +81,7 @@ module pump_island::boost_payement {
             duration   : 86400, 
             boost      : 10, 
             amount_sui : 1799000000,
-            amount_pop : 179000000,
+            amount_pop : 406000000000,
         };
         0x2::vec_map::insert<u64, BoostOption>(&mut v0, 0, v1);
         let v2 = BoostOption{
@@ -89,7 +89,7 @@ module pump_island::boost_payement {
             duration   : 86400, 
             boost      : 30, 
             amount_sui : 4490000000,
-            amount_pop : 449000000,
+            amount_pop : 1015000000000,
         };
         0x2::vec_map::insert<u64, BoostOption>(&mut v0, 1, v2);
         let v3 = BoostOption{
@@ -97,7 +97,7 @@ module pump_island::boost_payement {
             duration   : 86400, 
             boost      : 50, 
             amount_sui : 7190000000,
-            amount_pop : 719000000,
+            amount_pop : 1982160000000,
         };
         0x2::vec_map::insert<u64, BoostOption>(&mut v0, 2, v3);
         let v4 = BoostOption{
@@ -105,7 +105,7 @@ module pump_island::boost_payement {
             duration   : 86400, 
             boost      : 100, 
             amount_sui : 13490000000,
-            amount_pop : 1349000000,
+            amount_pop : 3900000000000,
         };
         0x2::vec_map::insert<u64, BoostOption>(&mut v0, 3, v4);
         let v5 = BoostOption{
@@ -113,7 +113,7 @@ module pump_island::boost_payement {
             duration   : 86400, 
             boost      : 500, 
             amount_sui : 64790000000,
-            amount_pop : 6479000000,
+            amount_pop : 18900000000000,
         };
         0x2::vec_map::insert<u64, BoostOption>(&mut v0, 4, v5);
         let v6 = Config{
