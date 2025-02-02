@@ -56,31 +56,38 @@ const MyChart = ({
       setCreated(true)
     }
   }, [created]);
-  console.log(data)
 
   useEffect(() => {
     if (data.length > 0) {
-      let currentBucket;
       let tokenPriceDatas = [];
-      console.log(data.reverse())
-      data.reverse().slice(-1).forEach(item => {
-        const bucketStart = Math.floor(Number(item.parsedJson.ts) / 300000) * 300000;
+
+      data.reverse().forEach((item) => {
         const price = item.parsedJson.sui_amount / item.parsedJson.token_amount / 1000 * ethPrice
-        if (!currentBucket || currentBucket.start !== bucketStart) {
-          if (currentBucket) tokenPriceDatas.push(currentBucket);
-          currentBucket = {
-            start: bucketStart / 1000,
+        const bucketStart = Math.floor(Number(item.parsedJson.ts) / 1000 / 300) * 300;
+        if (tokenPriceDatas.length == 0) {
+          tokenPriceDatas.push({
+            time: bucketStart,
             open: price,
-            high: price,
-            low: price,
             close: price,
-          };
+            high: price,
+            low: price
+          })
         } else {
-          currentBucket.high = Math.max(currentBucket.high, price);
-          currentBucket.low = Math.min(currentBucket.low, price);
-          currentBucket.close = price;
+          if (bucketStart != tokenPriceDatas[tokenPriceDatas.length - 1].time) {
+            tokenPriceDatas.push({
+              time: bucketStart,
+              open: tokenPriceDatas[tokenPriceDatas.length - 1].close,
+              close: price,
+              high: price,
+              low: price
+            })
+          } else {
+            tokenPriceDatas[tokenPriceDatas.length - 1].high = Math.max(price, tokenPriceDatas[tokenPriceDatas.length - 1].high)
+            tokenPriceDatas[tokenPriceDatas.length - 1].low = Math.max(price, tokenPriceDatas[tokenPriceDatas.length - 1].low)
+            tokenPriceDatas[tokenPriceDatas.length - 1].close = price
+          }
         }
-      });
+      })
 
       if (tokenPriceDatas.length > 0) {
         newSeries.current.setData(
@@ -89,6 +96,8 @@ const MyChart = ({
       }
     }
   }, [data]);
+
+
 
   return (
     <div className="chartTab_outer px-6">
