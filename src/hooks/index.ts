@@ -200,6 +200,7 @@ export const useCreate = () => {
             });
             if (treasuryCap && packageId) {
                 const tx = new Transaction();
+                
                 if (inputAmount == 0) {
                     tx.moveCall({
                         arguments: [
