@@ -3,6 +3,7 @@ import '@mysten/dapp-kit/dist/index.css';
 import React from "react";
 import Dashboard from "./container/Dashboard";
 import CreateToken from "./container/CreateToken.tsx";
+import Ranking from "./container/Ranking.tsx";
 import NotFound from "./container/NotFound";
 import Trade from "./container/Trade";
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
@@ -98,6 +99,10 @@ const App = () => {
                       <Route exact path="/create">
                         <CreateToken />
                       </Route>
+                      <Route exact path="/ranking">
+                        <Ranking />
+                        </Route>
+
                       <Route exact path="/trade">
                         <Trade />
                       </Route>
