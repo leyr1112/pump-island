@@ -26,9 +26,9 @@ export const OBJECTS = {
 }
 
 export const ScanUrl = {
-  Coin: 'https://suivision.xyz/coin/',
+  Coin: 'https://devnet.suivision.xyz/coin/',
   Package: 'https://suivision.xyz/package/',
-  TxBlock: 'https://suivision.xyz/txblock/',
+  TxBlock: 'https://devnet.suivision.xyz/txblock/',
   Object: 'https://suivision.xyz/object/'
 }
 

@@ -165,10 +165,10 @@ const LaunchpadCard = ({
 
           <div className="launchpad-addresses text-[#fff] flex justify-between items-center">
             <span className="left-aligned">
-              <b>${Math.round(marketCap).toLocaleString()}</b>
+              <b>${Math.round(marketCap).toLocaleString("en-US", { maximumFractionDigits: 0 })}</b>
             </span>
             <span className="right-aligned">
-              <b>${(Math.round(liquidity * 1000) / 1000).toLocaleString()}</b>
+              <b>${(Math.round(liquidity * 1000) / 1000).toLocaleString("en-US", { maximumFractionDigits: 0 })}</b>
             </span>
           </div>
         </div>

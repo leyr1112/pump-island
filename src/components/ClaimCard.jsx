@@ -157,15 +157,16 @@ const ClaimCard = ({
                   MC
                 </span>
                 <span className="font-bold text-white text-[20px]">
-                  ${marketCap.toLocaleString()}
+                ${marketCap.toLocaleString("en-US", { maximumFractionDigits: 0 })}
                 </span>
+
               </div>
               <div className="flex gap-1 flex-row md:flex-col place-content-between items-center">
                 <span className="font-semibold text-[#999999] text-[12px]">
-                  VL
+                  LP
                 </span>
                 <span className="font-bold text-white text-[20px]">
-                  ${liquidity.toLocaleString()}
+                  ${liquidity.toLocaleString("en-US", { maximumFractionDigits: 0 })}
                 </span>
               </div>
               <div className="flex gap-1 flex-row md:flex-col place-content-between items-center">
@@ -173,7 +174,7 @@ const ClaimCard = ({
                   Volume
                 </span>
                 <span className="font-bold text-white text-[20px]">
-                  ${(volume * state.suiPrice / 10 ** 9).toLocaleString()}
+                  ${(volume * state.suiPrice / 10 ** 9).toLocaleString("en-US", { maximumFractionDigits: 0 })}
                 </span>
               </div>
             </div>
