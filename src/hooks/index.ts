@@ -12,7 +12,7 @@ import toast from 'react-hot-toast'
 import { format9 } from '../utils/format.ts'
 import ToastSuccessLink from '../components/ToastSuccessLink.tsx'
 
-const client = new SuiClient({ url: getFullnodeUrl('devnet') })
+const client = new SuiClient({ url: getFullnodeUrl('mainnet') })
 
 export const useGetSuiBalance = () => {
     const [suiBalance, setSuiBalance] = useState<any>()
@@ -614,7 +614,7 @@ export const useGetHolders = (token) => {
     useEffect(() => {
         const getHolders = async () => {
             try {
-                const holders = await fetch(`https://internal.suivision.xyz/mainnet/api/coin/holders?coinType=0x62f293070ec1c34f022680a14c181fe1237524cef7c53c334347eaf358dfb6bd::suiru::SUIRU&pageSize=20&pageIndex=1`)
+                const holders = await fetch(`https://internal.suivision.xyz/mainnet/api/coin/holders?coinType=0xa5acaa0f77c701fc014550491ea2f126b06124750f3237de18aa3b5dc66be87d::pop::POP&pageSize=20&pageIndex=1`)
                 const data = await holders.json()
                 const holdersData = data.result.map((item: any) => {
                     return {

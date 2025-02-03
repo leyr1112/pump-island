@@ -57,7 +57,7 @@ createWeb3Modal({
 
 const queryClient = new QueryClient();
 const networks = {
-  devnet: { url: getFullnodeUrl('devnet') },
+  mainnet: { url: getFullnodeUrl('mainnet') },
   mainnet: { url: getFullnodeUrl('mainnet') },
 };
 
@@ -68,7 +68,7 @@ const App = () => {
       <QueryParamProvider>
         <div>
           <QueryClientProvider client={queryClient}>
-            <SuiClientProvider networks={networks} defaultNetwork="devnet">
+            <SuiClientProvider networks={networks} defaultNetwork="mainnet">
               <WalletProvider autoConnect>
                 <AppProvider>
                   <WagmiProvider config={config}>

@@ -4,8 +4,9 @@ version = "0.0.1"
 edition = "2024"
 
 [dependencies]
-Sui = { git = "https://github.com/MystenLabs/sui.git", subdir="crates/sui-framework/packages/sui-framework/", rev = "testnet" }
-pop_coin = { git = "https://github.com/leyr1112/pop-coin.git", rev="main"}
+Sui = { git = "https://github.com/MystenLabs/sui.git", rev = "testnet", subdir = "crates/sui-framework/packages/sui-framework", override = true }
+pop_coin = { git = "https://github.com/leyr1112/pop-coin.git", rev = "main", override = true }
+
 
 [addresses]
 pump_island = "0x0"
