@@ -12,7 +12,7 @@ import toast from 'react-hot-toast'
 import { format9 } from '../utils/format.ts'
 import ToastSuccessLink from '../components/ToastSuccessLink.tsx'
 
-const client = new SuiClient({ url: getFullnodeUrl('mainnet') })
+const client = new SuiClient({ url: getFullnodeUrl('devnet') })
 
 export const useGetSuiBalance = () => {
     const [suiBalance, setSuiBalance] = useState<any>()
@@ -200,7 +200,7 @@ export const useCreate = () => {
             });
             if (treasuryCap && packageId) {
                 const tx = new Transaction();
-                
+
                 if (inputAmount == 0) {
                     tx.moveCall({
                         arguments: [
@@ -614,15 +614,24 @@ export const useGetHolders = (token) => {
     useEffect(() => {
         const getHolders = async () => {
             try {
-                const holders = await fetch(`https://internal.suivision.xyz/mainnet/api/coin/holders?coinType=0xa5acaa0f77c701fc014550491ea2f126b06124750f3237de18aa3b5dc66be87d::pop::POP&pageSize=20&pageIndex=1`)
-                const data = await holders.json()
-                const holdersData = data.result.map((item: any) => {
-                    return {
-                        address: item.account,
-                        value: Math.round(item.balance * 1000) / 1000
+                const holders = await fetch(`https://api.blockvision.org/v2/sui/coin/holders?coinType=${token}&pageIndex=1&pageSize=20`, {
+                    method: "GET",
+                    headers: {
+                        "x-api-key": "2sW8RuLUC8XsFAbN8oeW1IgOqXs",
+                        "Content-Type": "application/json"
                     }
                 })
-                setHolders(holdersData)
+                const data = await holders.json()
+                if (data.message == "Success") {
+                    console.log(data)
+                    const holdersData = data.result.data.map((item: any) => {
+                        return {
+                            address: item.address,
+                            percentage: item.percentage
+                        }
+                    })
+                    setHolders(holdersData)
+                }
             } catch (e) {
                 console.error('Error fetching holders', e)
             }

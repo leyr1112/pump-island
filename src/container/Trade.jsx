@@ -534,7 +534,7 @@ const Trade = () => {
                       Holders Distribution
                     </span>
                   </div>
-                  {tokenHolders.slice(-10).map(({ address, value }) => (
+                  {tokenHolders.slice(-10).map(({ address, percentage }) => (
                     <div className="holderBox py-1">
                       <a
                         className="holderContent"
@@ -578,7 +578,7 @@ const Trade = () => {
                         }}
                         className="tokenLists font-bold"
                       >
-                        {value.toFixed(2)} %
+                        {percentage} %
                       </p>
                     </div>
                   ))}
