@@ -242,7 +242,7 @@ const ClaimCard = ({
                             toast.error('Insufficient pop balance!');
                             return;
                           }
-                          boostWithPop(pack.boostValue, index);
+                          boostWithPop(pack.boostPopValue, index);
                         }
                       }}
                     >
