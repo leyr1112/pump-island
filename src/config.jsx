@@ -18,11 +18,11 @@ export const config = createConfig({
 })
 
 export const OBJECTS = {
-  Configuration: "0xeb2871d773358a9ac8ca774c060a856b41d763cd8bfdd09534cae5bdeaf99db0",
-  Package: "0x76fc233683cfa8780c829e2725eaf50371c13d9a79f98305cd43a55e9908fc7d",
-  Threshold: "0x487104794b6192db0845b70127c61dc344170ab61562fee915aee590b39a67f5",
-  Package_Boost: "0x76fc233683cfa8780c829e2725eaf50371c13d9a79f98305cd43a55e9908fc7d",
-  Boost_Config: "0xcbff93c91fb03b995ffc72bb4b7164145f1c80a971cc90f8f2927ee0df883ef0",
+  Configuration: "0x3030ad89f6063124b4a2e4febb59088ed73fe61ac71da5ebb68a67bf5cd142a0",
+  Package: "0x7f80040a1b057974e88794fc4562a63a6d0939f063681794c6de51681f104131",
+  Threshold: "0x8dd7b36b34c63edf706bae5e5a6323241d9a38eeb0fa2b776bd137f81e482514",
+  Package_Boost: "0x7f80040a1b057974e88794fc4562a63a6d0939f063681794c6de51681f104131",
+  Boost_Config: "0x97d76f03eb09f43ec7a66428cd63e8eb8cb973e6697b6522c2a493f6e79a6cf2",
 }
 
 export const ScanUrl = {
@@ -37,10 +37,10 @@ export const PumpConfig = {
   InitialVirtualTokenReserves: 10000000000000000n,
   InitialVirtualSuiReseves: 500000000000n,
   RemainTokenReserves: 2000000000000000n,
-  Threshod: 2000000000n
+  Threshod: 1800000000n
 }
 
-export const AdminWallet = '0x6a87033a7c2b0a3054fd767fbb82d6348e1e8cbdd685faa90d17e45a6c1fd7aa'
-export const FeeWallet = '0x6a87033a7c2b0a3054fd767fbb82d6348e1e8cbdd685faa90d17e45a6c1fd7aa'
+export const AdminWallet = '0x051f95cd060f4bd4841e271b78d2aa3af45afe3493c2ea2057833ee2a1038f9b'
+export const FeeWallet = '0xa3385a039f3dda78a198bb559404ebacd4327e496215cb2410582b54d1f2d99a'
 
-export const POP = '0xbdbfa86e800b120d9648884791bec4d8e982b3a8d4e16afe422c8fe317930618::pop::POP'
+export const POP = '0xa5acaa0f77c701fc014550491ea2f126b06124750f3237de18aa3b5dc66be87d::pop::POP'

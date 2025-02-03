@@ -12,7 +12,7 @@ const RankingCard = ({ index, pool }) => {
           </Link>
         </div>
         <div className="ranking-column ranking-symbol">{pool.tokenSymbol}</div>
-        <div className="ranking-column ranking-marketcap">${pool.marketCap.toLocaleString()}</div>
+        <div className="ranking-column ranking-marketcap">${pool.marketCap.toLocaleString("en-US", { maximumFractionDigits: 0 })}</div>
         <div className="ranking-column ranking-bonding-curve">
           <div className="progress-bar" style={{ width: `${pool.bondingCurve}%` }}>
               {pool.bondingCurve.toFixed(2)}%

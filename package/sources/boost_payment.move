@@ -64,7 +64,7 @@ module pump_island::boost_payement {
     }
     
     public entry fun create_mange_config(arg0: address, arg1: u64, arg2: &mut 0x2::tx_context::TxContext) {
-        assert!(0x2::tx_context::sender(arg2) == @0x6a87033a7c2b0a3054fd767fbb82d6348e1e8cbdd685faa90d17e45a6c1fd7aa, 1);
+        assert!(0x2::tx_context::sender(arg2) == @0x051f95cd060f4bd4841e271b78d2aa3af45afe3493c2ea2057833ee2a1038f9b, 1);
         let v0 = ManageConfig{
             id      : 0x2::object::new(arg2), 
             pay_to  : arg0, 
@@ -118,8 +118,8 @@ module pump_island::boost_payement {
         0x2::vec_map::insert<u64, BoostOption>(&mut v0, 4, v5);
         let v6 = Config{
             id           : 0x2::object::new(arg0), 
-            setter       : @0x6a87033a7c2b0a3054fd767fbb82d6348e1e8cbdd685faa90d17e45a6c1fd7aa, 
-            pay_to       : @0x6a87033a7c2b0a3054fd767fbb82d6348e1e8cbdd685faa90d17e45a6c1fd7aa, 
+            setter       : @0x051f95cd060f4bd4841e271b78d2aa3af45afe3493c2ea2057833ee2a1038f9b, 
+            pay_to       : @0x051f95cd060f4bd4841e271b78d2aa3af45afe3493c2ea2057833ee2a1038f9b, 
             boost_option : v0,
         };
         0x2::transfer::public_share_object<Config>(v6);
@@ -159,7 +159,7 @@ module pump_island::boost_payement {
     
     public entry fun replace_boost_options(arg0: &mut Config, arg1: vector<u64>, arg2: vector<u64>, arg3: vector<u64>, arg4: &mut 0x2::tx_context::TxContext) {
         let v0 = 0x2::tx_context::sender(arg4);
-        assert!(v0 == arg0.setter || v0 == @0x6a87033a7c2b0a3054fd767fbb82d6348e1e8cbdd685faa90d17e45a6c1fd7aa, 1);
+        assert!(v0 == arg0.setter || v0 == @0x051f95cd060f4bd4841e271b78d2aa3af45afe3493c2ea2057833ee2a1038f9b, 1);
         assert!(0x1::vector::length<u64>(&arg1) == 0x1::vector::length<u64>(&arg2) && 0x1::vector::length<u64>(&arg2) == 0x1::vector::length<u64>(&arg3), 4);
         while (!0x2::vec_map::is_empty<u64, BoostOption>(&arg0.boost_option)) {
             let (_, _) = 0x2::vec_map::pop<u64, BoostOption>(&mut arg0.boost_option);
@@ -216,18 +216,18 @@ module pump_island::boost_payement {
     
     public entry fun set_pay_to(arg0: &mut Config, arg1: address, arg2: &mut 0x2::tx_context::TxContext) {
         let v0 = 0x2::tx_context::sender(arg2);
-        assert!(v0 == @0x6a87033a7c2b0a3054fd767fbb82d6348e1e8cbdd685faa90d17e45a6c1fd7aa || v0 == arg0.setter, 1);
+        assert!(v0 == @0x051f95cd060f4bd4841e271b78d2aa3af45afe3493c2ea2057833ee2a1038f9b || v0 == arg0.setter, 1);
         arg0.pay_to = arg1;
     }
     
     public entry fun set_to_setter(arg0: &mut Config, arg1: address, arg2: &mut 0x2::tx_context::TxContext) {
         let v0 = 0x2::tx_context::sender(arg2);
-        assert!(v0 == @0x6a87033a7c2b0a3054fd767fbb82d6348e1e8cbdd685faa90d17e45a6c1fd7aa || v0 == arg0.setter, 1);
+        assert!(v0 == @0x051f95cd060f4bd4841e271b78d2aa3af45afe3493c2ea2057833ee2a1038f9b || v0 == arg0.setter, 1);
         arg0.setter = arg1;
     }
     
     public entry fun update_manage_config(arg0: &mut ManageConfig, arg1: address, arg2: u64, arg3: bool, arg4: &mut 0x2::tx_context::TxContext) {
-        assert!(0x2::tx_context::sender(arg4) == @0x6a87033a7c2b0a3054fd767fbb82d6348e1e8cbdd685faa90d17e45a6c1fd7aa, 1);
+        assert!(0x2::tx_context::sender(arg4) == @0x051f95cd060f4bd4841e271b78d2aa3af45afe3493c2ea2057833ee2a1038f9b, 1);
         arg0.is_live = arg3;
         arg0.pay_to = arg1;
         arg0.fee = arg2;
