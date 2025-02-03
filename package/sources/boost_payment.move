@@ -29,7 +29,6 @@ module pump_island::boost_payement {
         start_time: u64,
         end_time: u64,
         boost: u64,
-        amount_sui: u64,
     }
     
     public struct MessageEvent has copy, drop, store {
@@ -136,14 +135,13 @@ module pump_island::boost_payement {
             start_time : v1, 
             end_time   : v1 + v0.duration, 
             boost      : v0.boost, 
-            amount_sui : v0.amount_sui,
         };
         0x2::event::emit<PaymentEvent>(v2);
     }
 
     public entry fun pay_with_pop<T0>(arg0: &mut Config, arg1: 0x2::coin::Coin<POP>, arg2: u64, arg3: &0x2::clock::Clock, arg4: &mut 0x2::tx_context::TxContext) {
         let v0 = 0x2::vec_map::get<u64, BoostOption>(&arg0.boost_option, &arg2);
-        assert!(v0.amount_sui <= 0x2::coin::value<POP>(&arg1), 3);
+        assert!(v0.amount_pop <= 0x2::coin::value<POP>(&arg1), 3);
         let v1 = 0x2::clock::timestamp_ms(arg3) / 1000;
         0x2::transfer::public_transfer<0x2::coin::Coin<POP>>(arg1, arg0.pay_to);
         let v2 = PaymentEvent{
@@ -152,7 +150,6 @@ module pump_island::boost_payement {
             start_time : v1, 
             end_time   : v1 + v0.duration, 
             boost      : v0.boost, 
-            amount_sui : v0.amount_sui,
         };
         0x2::event::emit<PaymentEvent>(v2);
     }
