@@ -538,7 +538,7 @@ const Trade = () => {
                     <div className="holderBox py-1">
                       <a
                         className="holderContent"
-                        href={'address/' + address}
+                        href={`${ScanUrl.Address}${address}`}                        
                         target="_blank"
                         rel="noreferrer"
                       >

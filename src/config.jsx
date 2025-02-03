@@ -29,7 +29,8 @@ export const ScanUrl = {
   Coin: 'https://suivision.xyz/coin/',
   Package: 'https://suivision.xyz/package/',
   TxBlock: 'https://suivision.xyz/txblock/',
-  Object: 'https://suivision.xyz/object/'
+  Object: 'https://suivision.xyz/object/',
+  Address: `https://suivision.xyz/address/`,
 }
 
 export const PumpConfig = {
