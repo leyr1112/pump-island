@@ -647,6 +647,8 @@ export const useGetTradingTransactions = (token) => {
     const [ohlcData, setOhlcData] = useState<any[]>([])
     const [volume, setVolume] = useState(0)
     const intervalMs = 300000
+    const [isFirstLoad, setIsFirstLoad] = useState(true); // ✅ Flag per il primo caricamento
+
     const getTransactions = async () => {
         try {
             const result = await client.queryEvents({
@@ -680,23 +682,28 @@ export const useGetTradingTransactions = (token) => {
         }
     }
     useEffect(() => {
-        getTransactions()
-    }, [])
+        getTransactions(); // ✅ Primo caricamento immediato
+
+        setTimeout(() => {
+            getTransactions(); // ✅ Secondo aggiornamento dopo 3 secondi
+            setIsFirstLoad(false); // ✅ Disabilita il flag del primo caricamento
+        }, 3000);
+    }, []);
 
     const refetch = useCallback(() => {
-        getTransactions()
-    }, [])
+        getTransactions();
+    }, []);
 
     useEffect(() => {
         const interval = setInterval(() => {
             refetch();
-        }, 60000);
+        }, isFirstLoad ? 3000 : 10000); // ✅ Dopo il primo update, passa a 10 sec
 
         return () => clearInterval(interval);
-    }, []);
+    }, [isFirstLoad, refetch]);
 
-    return { refetch, transactions, volume, ohlcData, wholeTransactions }
-}
+    return { refetch, transactions, volume, ohlcData, wholeTransactions };
+};
 
 export const useGetBoost = (token) => {
     const [wholeBoostData, setWholeBoostData] = useState<any[]>([])

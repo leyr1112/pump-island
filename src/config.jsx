@@ -37,7 +37,7 @@ export const PumpConfig = {
   InitialVirtualTokenReserves: 10000000000000000n,
   InitialVirtualSuiReseves: 500000000000n,
   RemainTokenReserves: 2000000000000000n,
-  Threshod: 1800000000n
+  Threshod: 1800000000000n
 }
 
 export const AdminWallet = '0x051f95cd060f4bd4841e271b78d2aa3af45afe3493c2ea2057833ee2a1038f9b'
