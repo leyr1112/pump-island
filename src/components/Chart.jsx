@@ -20,7 +20,17 @@ const MyChart = ({ data, ethPrice }) => {
         vertLines: { color: "rgba(200, 200, 200, 0.2)" },
         horzLines: { color: "rgba(200, 200, 200, 0.2)" },
       },
-      crosshair: { mode: CrosshairMode.Normal }, // ✅ Cursore libero
+      crosshair: {
+        mode: CrosshairMode.Normal,
+        vertLine: {
+          visible: true,
+          labelVisible: true,
+        },
+        horzLine: {
+          visible: true,
+          labelVisible: true,
+        },
+      },
       priceScale: {
         borderColor: "#f3cc2f",
         priceLineVisible: true,
@@ -40,25 +50,42 @@ const MyChart = ({ data, ethPrice }) => {
       newSeries.current = chart.current.addCandlestickSeries({
         priceFormat: { type: "price", precision: 9, minMove: 0.000000001 },
       });
+
       setCreated(true);
     }
 
-    // 🔥 Tooltip sopra la chart con Open, High, Low, Close e Volume
     if (chart.current) {
       chart.current.subscribeCrosshairMove((param) => {
         if (!tooltipRef.current) return;
 
-        if (!param || !param.seriesData || !newSeries.current) return;
+        if (!param || !param.point || !param.seriesData || !newSeries.current) {
+          tooltipRef.current.style.display = "none";
+          return;
+        }
 
         const candleData = param.seriesData.get(newSeries.current);
-        if (!candleData) return;
+        if (!candleData) {
+          tooltipRef.current.style.display = "none";
+          return;
+        }
 
         const { time, open, high, low, close, volume } = candleData;
         const date = new Date(time * 1000).toISOString().slice(0, 16).replace("T", " ");
 
-        // ✅ Mantiene il tooltip fisso nella parte superiore
+        // ✅ Mostra il tooltip e lo posiziona sopra la candela selezionata
         tooltipRef.current.innerHTML = `
-          <div style="display: flex; gap: 10px; font-family: monospace; background: rgba(0,0,0,0.9); padding: 8px; border-radius: 5px;">
+          <div style="
+            display: flex; 
+            flex-direction: column;
+            gap: 5px; 
+            font-family: monospace; 
+            background: rgba(0,0,0,0.9); 
+            padding: 8px; 
+            border-radius: 5px;
+            white-space: nowrap;
+            font-size: 12px;
+            text-align: center;
+          ">
             <span><b>Time:</b> ${date}</span>
             <span><b>Open:</b> ${open.toFixed(9)}</span>
             <span><b>High:</b> ${high.toFixed(9)}</span>
@@ -67,7 +94,16 @@ const MyChart = ({ data, ethPrice }) => {
             <span><b>Volume:</b> ${volume ? volume.toFixed(2) : "N/A"}</span>
           </div>
         `;
+
         tooltipRef.current.style.display = "block";
+        tooltipRef.current.style.left = `${param.point.x}px`;
+        tooltipRef.current.style.top = `${param.point.y - 40}px`; // 🔥 Evita il pallino nero
+      });
+
+      chart.current.subscribeCrosshairMove((param) => {
+        if (!param || !param.point) {
+          tooltipRef.current.style.display = "none";
+        }
       });
     }
   }, [created]);
@@ -122,17 +158,8 @@ const MyChart = ({ data, ethPrice }) => {
         ref={tooltipRef}
         style={{
           position: "absolute",
-          top: "5px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          background: "rgba(0, 0, 0, 0.9)",
-          color: "#fff",
-          padding: "8px",
-          borderRadius: "5px",
-          fontSize: "14px",
           display: "none",
           pointerEvents: "none",
-          whiteSpace: "nowrap",
           zIndex: "1000",
         }}
       ></div>
