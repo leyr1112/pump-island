@@ -153,7 +153,7 @@ const Trade = () => {
                   <div className="">
                     {lpCreated ? (
                       <iframe
-                        src={`https://app.cetus.zone/swap?from=${token}&to=0x2::sui::SUI`}
+                        src={`https://dexscreener.com/sui/${token}`}
                         className="chart"
                         title="chart"
                       />
