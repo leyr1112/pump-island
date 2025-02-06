@@ -16,6 +16,10 @@ import TopBar from '../components/TopBar.jsx'
 import { format9 } from '../utils/format.ts'
 import { suiToToken } from '../utils/firstBuy.ts'
 import { PumpConfig } from '../config.jsx'
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import imageCompression from "browser-image-compression";
+import { storage } from "../../firebase.config.js"; // Assicurati di importare Firebase
+
 
 const CreateToken = () => {
   const { isConnected } = useCurrentWallet();
@@ -23,23 +27,36 @@ const CreateToken = () => {
 
   const { loading, createToken } = useCreate()
 
-  const [tokenName, setTokenName] = useState('Name')
-  const [tokenSymbol, setTokenSymbol] = useState('Symbol')
-  const [tokenDescription, setTokenDescription] = useState('Description')
-  const [tokenLogo, setTokenLogo] = useState('Logo')
-  const [website, setWebsite] = useState('https://www.popisland.it')
+  const [tokenName, setTokenName] = useState('')
+  const [tokenSymbol, setTokenSymbol] = useState('')
+  const [tokenDescription, setTokenDescription] = useState('')
+  const [tokenLogo, setTokenLogo] = useState('')
+  const [website, setWebsite] = useState('https://')
   const [telegram, setTelegram] = useState('https://t.me')
   const [twitter, setTwitter] = useState('https://x.com')
   const [inputAmount, setInputAmount] = useState('0')
   const [isFirstBuy, setIsFirstBuy] = useState(false)
+  const [uploading, setUploading] = useState(false);
 
   const handleCreate = () => {
-    try {
-      createToken(tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmount, suiToToken(inputAmount))
-    } catch (e) {
-      console.error(e)
+    if (!tokenLogo) {
+      alert("❌ You must upload a logo before creating the token.");
+      return;
     }
+
+    try {
+      createToken(tokenName, tokenSymbol, tokenDescription, tokenLogo, website, telegram, twitter, inputAmount, suiToToken(inputAmount));
+    } catch (e) {
+      console.error(e);
+    }
+};
+
+useEffect(() => {
+  const savedLogo = localStorage.getItem("tokenLogo");
+  if (savedLogo) {
+      setTokenLogo(savedLogo);
   }
+}, []);
 
   useEffect(() => {
     if (!isFirstBuy) {
@@ -48,7 +65,83 @@ const CreateToken = () => {
   }, [isFirstBuy])
 
   const format9Suibalance = format9(state.suiBalance)
+  
+  
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
 
+    setUploading(true);
+
+    try {
+        console.log("📂 File selected:", file.name, file.size, file.type);
+
+        // 🔹 Controllo tipi di file ammessi
+        const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
+        if (!allowedTypes.includes(file.type)) {
+            alert("❌ Unsupported file type. Only JPG, JPEG, PNG, and GIF files are allowed.");
+            setUploading(false);
+            return;
+        }
+
+        // 🔹 Controllo dimensioni e risoluzione
+        const image = new Image();
+        image.src = URL.createObjectURL(file);
+        
+        await new Promise<void>((resolve, reject) => {
+            image.onload = () => {
+                if (image.width > 5000 || image.height > 5000) {
+                    alert("❌ Image dimensions exceed 5000x5000 pixels. Please upload a smaller image.");
+                    setUploading(false);
+                    reject();
+                } else {
+                    resolve();
+                }
+            };
+            image.onerror = () => {
+                alert("❌ Error loading the image. Please try again.");
+                setUploading(false);
+                reject();
+            };
+        });
+
+        let finalFile = file;
+        let fileName = `uploads/${file.name}`;
+
+        if (file.type === "image/gif") {
+            console.log("🎥 GIF detected: uploading without compression...");
+            // Mantiene la GIF originale senza modificarla
+        } else {
+            console.log("📦 Compressing image to WebP...");
+            const options = {
+                maxSizeMB: 2,
+                maxWidthOrHeight: 512,
+                useWebWorker: true,
+                fileType: "image/webp"
+            };
+
+            finalFile = await imageCompression(file, options);
+            fileName = `uploads/${file.name.split('.')[0]}.webp`; // Cambia estensione in .webp
+        }
+
+        // 🔹 Upload to Firebase Storage
+        const storageRef = ref(storage, fileName);
+        await uploadBytes(storageRef, finalFile);
+
+        // 🔹 Get public URL from Firebase
+        const fileUrl = await getDownloadURL(storageRef);
+        console.log("✅ File uploaded to Firebase:", fileUrl);
+
+        // 🔹 Update state with the uploaded file URL
+        setTokenLogo(fileUrl);
+
+    } catch (error) {
+        console.error("❌ Upload error:", error);
+        alert("An error occurred during upload. Please try again.");
+    } finally {
+        setUploading(false);
+    }
+};
   return (
     <div>
       <div className="GlobalContainer launches-all-padding">
@@ -96,26 +189,27 @@ const CreateToken = () => {
                     </section>
                   </section>
                 </section>
+                <section className="w-full">
+  <div className="LpBalance mb-2 text-left"> {/* Allinea a sinistra */}
+    <p className="Text1">Logo<span style={{ color: '#cd8f61' }}> *</span></p>
+  </div>
+  <section className="inputPanel">
+    <section className="inputPanelHeader w-full flex flex-col items-start gap-2"> {/* Cambiato `items-center` in `items-start` */}
+      {!uploading && !tokenLogo && (
+        <label className="bg-[#cd8e60] flex justify-center items-center h-6 text-white py-[2px] px-[12px] rounded-[6px] text-sm cursor-pointer mt-2" htmlFor="file-upload">
+          Upload Image
+        </label>
+      )}
+      <input id="file-upload" type="file" accept="image/*" onChange={handleFileUpload} style={{ display: 'none' }} />
+      {uploading && <p className="text-sm text-gray-400">Uploading...</p>}
+      {tokenLogo && <img src={tokenLogo} alt="Token Logo" className="mt-2 w-24 h-24 rounded-md" />}
+    </section>
+  </section>
+</section>
+
+
                 <section className="flex flex-col gap-4 w-full">
-                  <div className="LpBalance">
-                    <p className="Text1">
-                      Logo Url<span style={{ color: '#cd8f61' }}> *</span>
-                    </p>
-                  </div>
-                  <section className="inputPanel">
-                    <section className="inputPanelHeader w-full">
-                      <Input
-                        placeholder="Enter Logo Url"
-                        label=""
-                        type="text"
-                        changeValue={setTokenLogo}
-                        value={tokenLogo}
-                      />
-                    </section>
-                  </section>
-                </section>
-                <section className="flex flex-col gap-4 w-full">
-                  <p className="Text1">
+                  <p className="Text1 text-left">
                     Description (Max 1000 characters)
                     <span style={{ color: '#cd8f61' }}> *</span>
                   </p>
