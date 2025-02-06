@@ -19,7 +19,7 @@ import { PumpConfig } from '../config.jsx'
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import imageCompression from "browser-image-compression";
 import { storage } from "../../firebase.config.js"; // Assicurati di importare Firebase
-
+import toast from "react-hot-toast";
 
 const CreateToken = () => {
   const { isConnected } = useCurrentWallet();
@@ -40,7 +40,7 @@ const CreateToken = () => {
 
   const handleCreate = () => {
     if (!tokenLogo) {
-      alert("❌ You must upload a logo before creating the token.");
+      toast.error("❌ You must upload a logo before creating the token.");
       return;
     }
 
@@ -49,14 +49,14 @@ const CreateToken = () => {
     } catch (e) {
       console.error(e);
     }
-};
+  };
 
-useEffect(() => {
-  const savedLogo = localStorage.getItem("tokenLogo");
-  if (savedLogo) {
+  useEffect(() => {
+    const savedLogo = localStorage.getItem("tokenLogo");
+    if (savedLogo) {
       setTokenLogo(savedLogo);
-  }
-}, []);
+    }
+  }, []);
 
   useEffect(() => {
     if (!isFirstBuy) {
@@ -65,8 +65,8 @@ useEffect(() => {
   }, [isFirstBuy])
 
   const format9Suibalance = format9(state.suiBalance)
-  
-  
+
+
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -74,74 +74,75 @@ useEffect(() => {
     setUploading(true);
 
     try {
-        console.log("📂 File selected:", file.name, file.size, file.type);
+      console.log("📂 File selected:", file.name, file.size, file.type);
 
-        // 🔹 Controllo tipi di file ammessi
-        const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
-        if (!allowedTypes.includes(file.type)) {
-            alert("❌ Unsupported file type. Only JPG, JPEG, PNG, and GIF files are allowed.");
+      // 🔹 Controllo tipi di file ammessi
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error("❌ Unsupported file type. Only JPG, JPEG, PNG, and GIF files are allowed.");
+        setUploading(false);
+        return;
+      }
+
+      // 🔹 Controllo dimensioni e risoluzione
+      const image = new Image();
+      image.src = URL.createObjectURL(file);
+
+      await new Promise<void>((resolve, reject) => {
+        image.onload = () => {
+          if (image.width > 10 || image.height > 5000) {
+            toast.error("❌ Image dimensions exceed 5000x5000 pixels. Please upload a smaller image.");
             setUploading(false);
-            return;
-        }
+            reject();
+          } else {
+            resolve();
+          }
+        };
+        image.onerror = () => {
+          toast.error("❌ Error loading the image. Please try again.");
+          setUploading(false);
+          reject();
+        };
+      });
 
-        // 🔹 Controllo dimensioni e risoluzione
-        const image = new Image();
-        image.src = URL.createObjectURL(file);
-        
-        await new Promise<void>((resolve, reject) => {
-            image.onload = () => {
-                if (image.width > 5000 || image.height > 5000) {
-                    alert("❌ Image dimensions exceed 5000x5000 pixels. Please upload a smaller image.");
-                    setUploading(false);
-                    reject();
-                } else {
-                    resolve();
-                }
-            };
-            image.onerror = () => {
-                alert("❌ Error loading the image. Please try again.");
-                setUploading(false);
-                reject();
-            };
-        });
+      let finalFile = file;
+      let fileName = `uploads/${file.name}`;
 
-        let finalFile = file;
-        let fileName = `uploads/${file.name}`;
+      if (file.type === "image/gif") {
+        console.log("🎥 GIF detected: uploading without compression...");
+        // Mantiene la GIF originale senza modificarla
+      } else {
+        console.log("📦 Compressing image to WebP...");
+        const options = {
+          maxSizeMB: 2,
+          maxWidthOrHeight: 512,
+          useWebWorker: true,
+          fileType: "image/webp"
+        };
 
-        if (file.type === "image/gif") {
-            console.log("🎥 GIF detected: uploading without compression...");
-            // Mantiene la GIF originale senza modificarla
-        } else {
-            console.log("📦 Compressing image to WebP...");
-            const options = {
-                maxSizeMB: 2,
-                maxWidthOrHeight: 512,
-                useWebWorker: true,
-                fileType: "image/webp"
-            };
+        finalFile = await imageCompression(file, options);
+        fileName = `uploads/${file.name.split('.')[0]}.webp`; // Cambia estensione in .webp
+      }
 
-            finalFile = await imageCompression(file, options);
-            fileName = `uploads/${file.name.split('.')[0]}.webp`; // Cambia estensione in .webp
-        }
+      // 🔹 Upload to Firebase Storage
+      const storageRef = ref(storage, fileName);
+      await uploadBytes(storageRef, finalFile);
 
-        // 🔹 Upload to Firebase Storage
-        const storageRef = ref(storage, fileName);
-        await uploadBytes(storageRef, finalFile);
+      // 🔹 Get public URL from Firebase
+      const fileUrl = await getDownloadURL(storageRef);
+      console.log("✅ File uploaded to Firebase:", fileUrl);
 
-        // 🔹 Get public URL from Firebase
-        const fileUrl = await getDownloadURL(storageRef);
-        console.log("✅ File uploaded to Firebase:", fileUrl);
-
-        // 🔹 Update state with the uploaded file URL
-        setTokenLogo(fileUrl);
+      // 🔹 Update state with the uploaded file URL
+      setTokenLogo(fileUrl);
 
     } catch (error) {
-        console.error("❌ Upload error:", error);
-        alert("An error occurred during upload. Please try again.");
+      console.error("❌ Upload error:", error);
+      toast.error("An error occurred during upload. Please try again.");
     } finally {
-        setUploading(false);
+      setUploading(false);
     }
-};
+  };
+  
   return (
     <div>
       <div className="GlobalContainer launches-all-padding">
@@ -190,22 +191,22 @@ useEffect(() => {
                   </section>
                 </section>
                 <section className="w-full">
-  <div className="LpBalance mb-2 text-left"> {/* Allinea a sinistra */}
-    <p className="Text1">Logo<span style={{ color: '#cd8f61' }}> *</span></p>
-  </div>
-  <section className="inputPanel">
-    <section className="inputPanelHeader w-full flex flex-col items-start gap-2"> {/* Cambiato `items-center` in `items-start` */}
-      {!uploading && !tokenLogo && (
-        <label className="bg-[#cd8e60] flex justify-center items-center h-6 text-white py-[2px] px-[12px] rounded-[6px] text-sm cursor-pointer mt-2" htmlFor="file-upload">
-          Upload Image
-        </label>
-      )}
-      <input id="file-upload" type="file" accept="image/*" onChange={handleFileUpload} style={{ display: 'none' }} />
-      {uploading && <p className="text-sm text-gray-400">Uploading...</p>}
-      {tokenLogo && <img src={tokenLogo} alt="Token Logo" className="mt-2 w-24 h-24 rounded-md" />}
-    </section>
-  </section>
-</section>
+                  <div className="LpBalance mb-2 text-left"> {/* Allinea a sinistra */}
+                    <p className="Text1">Logo<span style={{ color: '#cd8f61' }}> *</span></p>
+                  </div>
+                  <section className="inputPanel">
+                    <section className="inputPanelHeader w-full flex flex-col items-start gap-2"> {/* Cambiato `items-center` in `items-start` */}
+                      {!uploading && !tokenLogo && (
+                        <label className="bg-[#cd8e60] flex justify-center items-center h-6 text-white py-[2px] px-[12px] rounded-[6px] text-sm cursor-pointer mt-2" htmlFor="file-upload">
+                          Upload Image
+                        </label>
+                      )}
+                      <input id="file-upload" type="file" accept="image/*" onChange={handleFileUpload} style={{ display: 'none' }} />
+                      {uploading && <p className="text-sm text-gray-400">Uploading...</p>}
+                      {tokenLogo && <img src={tokenLogo} alt="Token Logo" className="mt-2 w-24 h-24 rounded-md" />}
+                    </section>
+                  </section>
+                </section>
 
 
                 <section className="flex flex-col gap-4 w-full">
